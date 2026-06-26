@@ -2,7 +2,8 @@
 
 A static portfolio site for the **ClientIQ** product case study, plus the home and work index pages.
 
-🔗 **Live site:** _add your Vercel URL here once deployed_
+🔗 **Live site:** https://clientiq-case-study.vercel.app
+📄 **Case study:** https://clientiq-case-study.vercel.app/clientiq.html
 
 ## Pages
 - `index.html` — home
