@@ -45,7 +45,7 @@
 .msp-journey .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:14px}
 .msp-journey h1{font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.01em;margin:0 0 14px}
 .msp-journey .subtitle{font-size:16px;line-height:1.5;color:var(--ink-2);margin:0}
-.msp-journey .meta{background:var(--neutral-bg);border-radius:14px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.msp-journey .meta{background:#fff;border-radius:14px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
 .msp-journey .meta-title{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .msp-journey .legend{display:flex;flex-wrap:wrap;gap:8px 10px}
 
