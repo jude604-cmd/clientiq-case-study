@@ -580,7 +580,7 @@
   #v2 .quote-card cite::before{content:'';width:22px;height:1.5px;background:var(--accent)}
   /* video-background variant (MSP-user quote card) */
   #v2 .quote-card.quote-vid{overflow:hidden;min-height:420px;display:flex;flex-direction:column;justify-content:center;padding:72px 44px}
-  #v2 .quote-card.quote-vid .qc-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:1;transition:opacity .6s ease}
+  #v2 .quote-card.quote-vid .qc-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:1;transition:opacity 1.2s ease}
   #v2 .quote-card.quote-vid::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(150deg,rgba(7,16,11,.88),rgba(7,16,11,.64) 55%,rgba(7,16,11,.82))}
   #v2 .quote-card.quote-vid::before{z-index:2}
   #v2 .quote-card.quote-vid .qc-content{position:relative;z-index:2}
@@ -1766,18 +1766,20 @@
 (function(){
   var v = document.querySelector('#v2 .quote-vid .qc-vid');
   if (!v) return;
-  var HOLD = 1100, replaying = false;
+  var END_HOLD = 1000, FADE = 1200, replaying = false;
   function inView(){ var r = v.getBoundingClientRect(); var vh = innerHeight || document.documentElement.clientHeight; return r.bottom > 0 && r.top < vh; }
   function start(){ v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function(){}); }
   v.addEventListener('ended', function(){
     if (replaying) return; replaying = true;
-    v.style.opacity = '0';                       // fade out (CSS transition .6s)
-    setTimeout(function(){
-      try { v.currentTime = 0; } catch(e){}
-      start();
-      requestAnimationFrame(function(){ v.style.opacity = '1'; });   // fade back in
-      replaying = false;
-    }, HOLD);
+    setTimeout(function(){                          // 1) pause/hold on the last frame
+      v.style.opacity = '0';                        // 2) fade out (CSS transition 1.2s)
+      setTimeout(function(){                         // 3) once faded, restart hidden…
+        try { v.currentTime = 0; } catch(e){}
+        start();
+        requestAnimationFrame(function(){ v.style.opacity = '1'; });   // 4) …then fade back in
+        replaying = false;
+      }, FADE + 80);
+    }, END_HOLD);
   });
   /* light stall recovery — never seeks to 0, so it can't fight the fade/replay */
   ['stalled','waiting','suspend'].forEach(function(ev){
