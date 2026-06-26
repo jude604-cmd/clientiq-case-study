@@ -524,6 +524,13 @@
   #v2 .shift-row .mvp{color:var(--dark-ink-3);font-size:15.5px;line-height:1.4}
   #v2 .shift-row .ar{color:var(--accent);font-family:var(--mono);font-size:15px;text-align:center}
   #v2 .shift-row .now{color:var(--dark-ink);font-weight:600;font-size:15.5px;line-height:1.4}
+  /* AI trust model table */
+  #v2 .v2-trust{border-top:1px solid var(--dark-line)}
+  #v2 .trust-row{display:grid;grid-template-columns:1fr 1.15fr;align-items:start;gap:32px;padding:17px 2px;border-bottom:1px solid var(--dark-line)}
+  #v2 .trust-row.head{padding:0 2px 13px}
+  #v2 .trust-row.head span{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dark-ink-3)}
+  #v2 .trust-row .risk{color:var(--dark-ink-3);font-size:15.5px;line-height:1.42}
+  #v2 .trust-row .resp{color:var(--dark-ink);font-weight:600;font-size:15.5px;line-height:1.42}
   /* feature grid */
   #v2 .v2-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
   #v2 .feat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:24px 24px 26px;transition:transform .25s ease,border-color .25s ease,background .25s ease}
@@ -648,6 +655,9 @@
     #v2 .v2-feats{grid-template-columns:1fr;gap:14px}
     #v2 .shift-row{grid-template-columns:1fr;gap:6px;text-align:left}
     #v2 .shift-row .ar{display:none}
+    #v2 .trust-row{grid-template-columns:1fr;gap:5px}
+    #v2 .trust-row.head{display:none}
+    #v2 .trust-row .risk{font-weight:500;color:var(--dark-ink-2)}
   }
   @media (max-width:860px){
     #mvp .mvp-arrow{display:none}
@@ -1675,13 +1685,14 @@
     </figure>
 
     <div class="reveal">
-      <p class="v2-kicker">What changed, MVP → 2.0</p>
-      <div class="v2-shift">
-        <div class="shift-row"><span class="mvp">A lightweight layer embedded inside Lifecycle Manager</span><span class="ar">→</span><span class="now">A standalone product with its own client workspace</span></div>
-        <div class="shift-row"><span class="mvp">A few inputs — website context and saved Goals</span><span class="ar">→</span><span class="now">Many data points — summary, sentiment, metrics, recommendations, goals, meetings</span></div>
-        <div class="shift-row"><span class="mvp">Static AI summaries you read and moved on from</span><span class="ar">→</span><span class="now">Deeper analytics you open up — evidence drawers, recovery-tracking metrics</span></div>
-        <div class="shift-row"><span class="mvp">One-way outputs, no way to ask follow-ups</span><span class="ar">→</span><span class="now">A contextual AI chat for digging deep into a single client</span></div>
-        <div class="shift-row"><span class="mvp">Useful prep support, limited grounding</span><span class="ar">→</span><span class="now">Every score and insight backed by openable, citable evidence</span></div>
+      <p class="v2-kicker">AI trust model</p>
+      <div class="v2-trust">
+        <div class="trust-row head"><span>Trust risk</span><span>Design response</span></div>
+        <div class="trust-row"><span class="risk">AI may hallucinate</span><span class="resp">Source-backed claims and openable evidence</span></div>
+        <div class="trust-row"><span class="risk">AI may overstate confidence</span><span class="resp">Confidence badge / evidence-quality signal</span></div>
+        <div class="trust-row"><span class="risk">Users need control</span><span class="resp">Editable, modular outputs; user approves before action</span></div>
+        <div class="trust-row"><span class="risk">Generic AI advice may be irrelevant</span><span class="resp">Client-scoped data and workflow-specific recommendations</span></div>
+        <div class="trust-row"><span class="risk">Recommendations need to become work</span><span class="resp">Push to Goals, Roadmap, Meetings, and Initiatives</span></div>
       </div>
     </div>
 
