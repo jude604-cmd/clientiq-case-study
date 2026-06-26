@@ -369,12 +369,19 @@
   .rc-head .sub{margin:0;align-self:center;font-size:clamp(19px,2vw,23px);line-height:1.15}
   .role-cards .card .sub{color:#fff}
   .role-cards .card .body{color:rgba(255,255,255,.86);margin-top:auto;padding-top:44px}
-  /* Error-color variant — same frosted-glass tilt as .role-cards, recolored red.
-     Used on the #challenges consequence cards. (No red token in the DS.) */
+  /* Error variant — LIGHT insight-03 palette (light-red bg, deep-red icon, dark text),
+     but keeps the cursor-tilt interaction + a 3D lift shadow. Used on #challenges. */
   .role-cards.danger .card{
-    background:linear-gradient(140deg,rgba(220,38,38,.96),rgba(220,38,38,.82));
-    box-shadow:0 30px 66px -26px rgba(220,38,38,.6),inset 0 1px 0 rgba(255,255,255,.28)}
-  .role-cards.danger .card.tilt{box-shadow:0 48px 96px -28px rgba(220,38,38,.72),inset 0 1px 0 rgba(255,255,255,.34)}
+    background:#FDEDEC;border-color:#F1C4C4;
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 26px 52px -26px rgba(180,35,24,.42)}
+  .role-cards.danger .card.tilt{box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 42px 84px -28px rgba(180,35,24,.52)}
+  .role-cards.danger .card .sub{color:var(--ink)}
+  .role-cards.danger .card .body{color:var(--ink-3)}
+  .role-cards.danger .rc-icon{color:#B42318}
+  /* recolor the cursor glare so the tilt still reads on a light surface */
+  .role-cards.danger .card::before{
+    background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(180,35,24,.10),rgba(180,35,24,0) 72%)}
   @media (prefers-reduced-motion:reduce){.role-cards .card{transition:none}}
 
   /* Glossary terms (MSP / vCIO / QBR) — underline + info icon. Tooltip = shared DS .ds-tip element (JS). */
@@ -1204,17 +1211,17 @@
       <h3 class="sub reveal" style="margin-bottom:28px">Three friction points</h3>
       <div class="grid-cards c3 role-cards danger">
         <div class="card reveal">
-          <i class="ph-fill ph-arrows-split" style="font-size:26px;color:rgba(255,255,255,.85);margin-bottom:14px" aria-hidden="true"></i>
+          <i class="ph-fill ph-arrows-split" style="font-size:26px;color:#B42318;margin-bottom:14px" aria-hidden="true"></i>
           <h3 class="sub">Disconnected context</h3>
           <p class="body">Client signals scattered across multiple disconnected places.</p>
         </div>
         <div class="card reveal d1">
-          <i class="ph-fill ph-hand" style="font-size:26px;color:rgba(255,255,255,.85);margin-bottom:14px" aria-hidden="true"></i>
+          <i class="ph-fill ph-hand" style="font-size:26px;color:#B42318;margin-bottom:14px" aria-hidden="true"></i>
           <h3 class="sub">Manual interpretation</h3>
           <p class="body">Teams manually connected technical issues to business priorities.</p>
         </div>
         <div class="card reveal d2">
-          <i class="ph-fill ph-chats-circle" style="font-size:26px;color:rgba(255,255,255,.85);margin-bottom:14px" aria-hidden="true"></i>
+          <i class="ph-fill ph-chats-circle" style="font-size:26px;color:#B42318;margin-bottom:14px" aria-hidden="true"></i>
           <h3 class="sub">Inconsistent conversations</h3>
           <p class="body">QBRs depended on individual effort and defaulted to reactive summaries.</p>
         </div>
