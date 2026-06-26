@@ -600,14 +600,13 @@
   #v2 .v2-fig figcaption{margin-top:14px;font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--dark-ink-3);padding:0}
   #v2 .v2-cta .btn.ghost{border:1px solid rgba(255,255,255,.25);color:var(--dark-ink)}
   #v2 .v2-cta .btn.ghost:hover{border-color:var(--dark-ink);transform:translateY(-2px)}
-  /* green 3D cards — same raised treatment as #scoping's scope-cards, recolored green */
-  #v2 .card{position:relative;background:linear-gradient(155deg,#18c96a 0%,var(--accent) 46%,#06773e 100%);border:0;border-radius:var(--r-lg);
-    box-shadow:0 1px 0 rgba(255,255,255,.30) inset,0 -10px 26px rgba(4,70,30,.4) inset,0 18px 30px -12px rgba(0,150,60,.22),0 40px 60px -28px rgba(0,194,72,.22);
-    transform:translateY(0);transition:transform .25s ease,box-shadow .25s ease}
-  #v2 .card::after{content:'';position:absolute;inset:0;border-radius:inherit;border:1px solid rgba(255,255,255,.24);pointer-events:none;mask:linear-gradient(#000,transparent 60%);-webkit-mask:linear-gradient(#000,transparent 60%)}
-  #v2 .card:hover{transform:translateY(-4px);box-shadow:0 1px 0 rgba(255,255,255,.34) inset,0 -10px 26px rgba(4,70,30,.4) inset,0 26px 40px -12px rgba(0,150,60,.28),0 56px 80px -30px rgba(0,194,72,.34)}
-  #v2 .card .sub{color:#fff}
-  #v2 .card .body{color:rgba(255,255,255,.86)}
+  /* outcome cards use the SAME frosted-glass cursor-tilt treatment as #role's cards,
+     recolored green (the .role-cards class on the grid wires up the tilt + glare JS) */
+  #v2 .role-cards .card{
+    background:linear-gradient(140deg,rgba(0,194,72,.96),rgba(0,194,72,.82));
+    border:1px solid rgba(255,255,255,.22);
+    box-shadow:0 30px 66px -26px rgba(0,194,72,.55),inset 0 1px 0 rgba(255,255,255,.28)}
+  #v2 .role-cards .card.tilt{box-shadow:0 48px 96px -28px rgba(0,194,72,.66),inset 0 1px 0 rgba(255,255,255,.34)}
   @media (max-width:860px){
     #v2 .v2-feats{grid-template-columns:1fr;gap:14px}
     #v2 .shift-row{grid-template-columns:1fr;gap:6px;text-align:left}
@@ -1719,7 +1718,7 @@
         </table>
       </div>
       <p class="v2-kicker reveal" style="margin-top:36px;margin-bottom:0">2.0 directional validation</p>
-      <div class="grid-cards c3" style="margin-top:20px">
+      <div class="grid-cards c3 role-cards" style="margin-top:20px">
         <div class="card reveal"><h3 class="sub">Validated demand</h3><p class="body" style="margin-top:30px">For strategic planning — not generic AI.</p></div>
         <div class="card reveal d1"><h3 class="sub">Aligned to growth</h3><p class="body" style="margin-top:30px">Matched ScalePad’s model: impact → trust → expansion.</p></div>
         <div class="card reveal d2"><h3 class="sub">A CS capability</h3><p class="body" style="margin-top:30px">Positioned as Customer Success, not a standalone AI.</p></div>
