@@ -28,10 +28,11 @@
   --green-strong-bg:#1B4DFF;
   --green-strong-fg:#FFFFFF;
   --green-strong-tint:#DEE6F6;
-  --amber-bg:#FAEAD0;
-  --amber-fg:#8A5A1F;
-  --amber-line:#EBD3A6;
-  --amber-tint:#FDF4E2;
+  /* "amber" tokens recolored to the error-red family (names kept for stability) */
+  --amber-bg:#FBE3E3;
+  --amber-fg:#B42318;
+  --amber-line:#F1C4C4;
+  --amber-tint:#FDEDEC;
   color:var(--ink);
   font-family:var(--sans);
   -webkit-font-smoothing:antialiased;
@@ -60,7 +61,7 @@
 .msp-journey .pill.green-strong{background:var(--green-strong-bg);color:#fff}
 .msp-journey .pill.green-strong .dot{background:#A7BEE8}
 .msp-journey .pill.amber  {background:var(--amber-bg);color:var(--amber-fg)}
-.msp-journey .pill.amber  .dot{background:#C68A2E}
+.msp-journey .pill.amber  .dot{background:#DC2626}
 
 /* ───── Top summary flow ───── */
 .msp-journey .flow-row{display:grid;grid-template-columns:168px 1fr;min-width:1408px;margin-bottom:28px}
