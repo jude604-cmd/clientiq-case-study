@@ -42,7 +42,8 @@
 
 /* ───── Header ───── */
 .msp-journey .header{display:grid;grid-template-columns:1fr 270px;gap:40px;align-items:start;margin-bottom:40px}
-.msp-journey .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:14px}
+.msp-journey .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:14px}
+.msp-journey .eyebrow::before{display:none}
 .msp-journey h1{font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.01em;margin:0 0 14px}
 .msp-journey .subtitle{font-size:16px;line-height:1.5;color:var(--ink-2);margin:0}
 .msp-journey .meta{background:#fff;border-radius:14px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
