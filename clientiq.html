@@ -638,7 +638,7 @@
   .proc-chart{--p-out:#eef1ff;--p-card:#e3e8ff;--p-bd:#ccd6fb;--p-dash:#aebdf6;--p-title:#1b4dff;--p-body:#2f47c9;--p-pill:#c6d2fb;--p-pink:#2c3a8c;
     --t-bg:#eafaf6;--t-bd:#a9ddd0;--t-title:#17806f;--t-body:#3f7468;--t-pill:#c5faf6;--t-pink:#0c6b5e;
     --a-bg:#fdf6e6;--a-bd:#e7c982;--a-title:#c4710a;--a-body:#9a6410;--a-pill:#ffecbd;--a-pink:#9a6410;
-    --pc-line:#b4b8c4;
+    --pc-line:#b4b8c4;--pc-arrow:#1b4dff;
     margin:0;background:transparent;border:none;border-radius:var(--r-lg);box-shadow:none;overflow:hidden;position:relative;padding:clamp(16px,2.6vw,34px);padding-left:clamp(34px,3.6vw,52px)}
   .proc-chart .ps{position:relative;border-radius:18px;padding:clamp(20px,2.4vw,30px) clamp(16px,2.4vw,28px) clamp(22px,2.6vw,30px)}
   .proc-chart .ps-tag,.proc-chart .pcard-tag{position:absolute;top:12px;left:12px;font-size:12px;font-weight:600;line-height:1;padding:5px 10px;border-radius:7px;letter-spacing:.01em}
@@ -655,7 +655,7 @@
   .proc-chart .ps-frame .ps-tag{background:var(--p-pill);color:var(--p-pink)}
   .proc-chart .ps-row{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.6vw,20px);margin-top:30px}
   /* Learn → Define arrow (sits in the gap between the two cards) */
-  .proc-chart .ps-row::after{content:"→";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--p-title);font-size:24px;line-height:1;font-weight:500;z-index:2}
+  .proc-chart .ps-row::after{content:"→";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--pc-arrow);font-size:24px;line-height:1;font-weight:500;z-index:2}
   .proc-chart .pcard{position:relative;display:flex;flex-direction:column;justify-content:center;background:var(--p-card);border:1px solid var(--p-bd);border-radius:14px;padding:30px clamp(16px,1.8vw,22px) 22px}
   .proc-chart .pcard-tag{background:var(--p-pill);color:var(--p-pink)}
   .proc-chart .pcard h4{color:var(--p-title);font-size:clamp(17px,1.8vw,21px)}
@@ -663,8 +663,8 @@
   .proc-chart .pcard .pc-ai{color:var(--p-body);justify-content:center;text-align:center}
   .proc-chart .pcard-wide{position:relative;margin-top:clamp(22px,2.2vw,30px)}
   /* Define → Plan down arrow (in the gap above the Plan card) */
-  .proc-chart .pcard-wide::before{content:"";position:absolute;left:50%;top:calc(-1*clamp(22px,2.2vw,30px));height:clamp(22px,2.2vw,30px);width:1.5px;transform:translateX(-50%);background:var(--p-dash)}
-  .proc-chart .pcard-wide::after{content:"";position:absolute;left:50%;top:-7px;width:7px;height:7px;border-right:1.5px solid var(--p-dash);border-bottom:1.5px solid var(--p-dash);transform:translate(-50%,0) rotate(45deg)}
+  .proc-chart .pcard-wide::before{content:"";position:absolute;left:50%;top:calc(-1*clamp(22px,2.2vw,30px));height:clamp(22px,2.2vw,30px);width:1.5px;transform:translateX(-50%);background:var(--pc-arrow)}
+  .proc-chart .pcard-wide::after{content:"";position:absolute;left:50%;top:-7px;width:7px;height:7px;border-right:1.5px solid var(--pc-arrow);border-bottom:1.5px solid var(--pc-arrow);transform:translate(-50%,0) rotate(45deg)}
 
   /* EXPLORE (teal) + DEVELOP (amber) */
   .proc-chart .ps-explore,.proc-chart .ps-develop{padding-top:clamp(42px,4vw,48px)}
@@ -682,24 +682,24 @@
   .proc-chart .pflow span{position:relative;padding:0 4px}
   .proc-chart .pflow span + span{margin-left:30px}
   .proc-chart .pflow span + span::before{content:"→";position:absolute;left:-24px;top:50%;transform:translateY(-50%);font-weight:500;color:var(--fl)}
-  .proc-chart .ps-explore .pflow{--fl:var(--t-title);color:#243b39}
-  .proc-chart .ps-develop .pflow{--fl:var(--a-title);color:#4a3a26}
+  .proc-chart .ps-explore .pflow{--fl:var(--pc-arrow);color:#243b39}
+  .proc-chart .ps-develop .pflow{--fl:var(--pc-arrow);color:#4a3a26}
   .proc-chart .pflow-wrap{position:relative;margin-top:22px}
   /* the cycle bracket arcs over the four steps and loops Iterate → Create */
-  .proc-chart .pflow-bracket{position:relative;width:min(80%,360px);height:15px;margin:0 auto;border:1.5px solid var(--t-title);border-bottom:none;border-radius:10px 10px 0 0}
+  .proc-chart .pflow-bracket{position:relative;width:min(80%,360px);height:15px;margin:0 auto;border:1.5px solid var(--pc-arrow);border-bottom:none;border-radius:10px 10px 0 0}
   .proc-chart .pflow-bracket .pflow-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--t-bg);padding:0 9px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--t-body);white-space:nowrap}
   /* loop-back arrowhead on the left leg, pointing down into Create */
-  .proc-chart .pflow-bracket::after{content:"";position:absolute;left:-4px;bottom:-6px;width:7px;height:7px;border-right:1.5px solid var(--t-title);border-bottom:1.5px solid var(--t-title);transform:rotate(45deg)}
+  .proc-chart .pflow-bracket::after{content:"";position:absolute;left:-4px;bottom:-6px;width:7px;height:7px;border-right:1.5px solid var(--pc-arrow);border-bottom:1.5px solid var(--pc-arrow);transform:rotate(45deg)}
   .proc-chart .pflow.cyc{margin-top:9px}
 
   /* connectors between stages */
   .proc-chart .ps-conn{height:34px;position:relative}
-  .proc-chart .ps-conn::before{content:"";position:absolute;left:50%;top:4px;bottom:9px;width:1.5px;transform:translateX(-50%);background:var(--pc-line)}
-  .proc-chart .ps-conn::after{content:"";position:absolute;left:50%;bottom:6px;width:8px;height:8px;border-right:1.5px solid var(--pc-line);border-bottom:1.5px solid var(--pc-line);transform:translate(-50%,0) rotate(45deg)}
+  .proc-chart .ps-conn::before{content:"";position:absolute;left:50%;top:4px;bottom:9px;width:1.5px;transform:translateX(-50%);background:var(--pc-arrow)}
+  .proc-chart .ps-conn::after{content:"";position:absolute;left:50%;bottom:6px;width:8px;height:8px;border-right:1.5px solid var(--pc-arrow);border-bottom:1.5px solid var(--pc-arrow);transform:translate(-50%,0) rotate(45deg)}
   .proc-chart .proc-outcome{display:block;width:max-content;max-width:100%;margin:0 auto;text-align:center;font-size:clamp(18px,1.9vw,23px);font-weight:700;letter-spacing:-.01em;color:#1a1d26;padding:14px 30px;background:#f5f6fa;border:1px solid var(--pc-line);border-radius:14px}
   /* feedback loop: Product outcome routes back up to Research (left gutter) */
-  .proc-chart .proc-feedback{position:absolute;left:11px;top:92px;bottom:58px;width:17px;border:1.5px solid var(--pc-line);border-right:none;border-radius:9px 0 0 9px;pointer-events:none}
-  .proc-chart .proc-feedback::after{content:"";position:absolute;right:-4px;top:-1px;width:7px;height:7px;border-top:1.5px solid var(--pc-line);border-right:1.5px solid var(--pc-line);transform:rotate(45deg)}
+  .proc-chart .proc-feedback{position:absolute;left:11px;top:92px;bottom:58px;width:17px;border:1.5px solid var(--pc-arrow);border-right:none;border-radius:9px 0 0 9px;pointer-events:none}
+  .proc-chart .proc-feedback::after{content:"";position:absolute;right:-4px;top:-1px;width:7px;height:7px;border-top:1.5px solid var(--pc-arrow);border-right:1.5px solid var(--pc-arrow);transform:rotate(45deg)}
   .proc-chart .proc-feedback .pf-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(180deg);writing-mode:vertical-rl;font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:#8a8f9c;white-space:nowrap;background:var(--bg);padding:6px 0}
 
   @media (max-width:720px){
