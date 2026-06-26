@@ -676,8 +676,8 @@
   #mvp .mvp-ba figcaption{font-family:var(--sans);font-size:15px;line-height:1.45;color:var(--ink-2);max-width:46ch}
   #mvp .mvp-ba figcaption b{color:var(--ink);font-weight:600}
   #mvp .mvp-lead{margin-top:22px!important;color:var(--ink-2);max-width:62ch}
-  #mvp .mvp-constraint{margin-top:48px;max-width:54ch;font-size:clamp(21px,2.3vw,29px);font-weight:500;line-height:1.4;letter-spacing:-.015em;color:var(--ink-2)}
-  #mvp .mvp-constraint b{color:var(--ink);font-weight:600}
+  #mvp .mvp-constraint{margin-top:48px;max-width:54ch;font-size:clamp(21px,2.3vw,29px);font-weight:500;line-height:1.4;letter-spacing:-.015em;color:var(--accent)}
+  #mvp .mvp-constraint .ec-badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--accent);padding:3px 11px 4px;border-radius:5px;margin-bottom:14px;vertical-align:middle}
   @media (max-width:860px){
     #mvp .mvp-ba{grid-template-columns:1fr;gap:36px}
   }
@@ -1597,7 +1597,7 @@
         <figcaption><b>Launched MVP.</b> A focused, lightweight briefing — Goals as the strategic anchor, structured outputs, embedded in Lifecycle Manager.</figcaption>
       </figure>
     </div>
-    <p class="mvp-constraint reveal"><b>Engineering constraint:</b> broad ingestion across tickets, transcripts, PSA data, KB systems, and invoices was not MVP-realistic. I worked with PM/engineering to separate the experience model from ingestion maturity: design the full strategic loop, then ship the smallest input set that could validate usefulness and trust.</p>
+    <p class="mvp-constraint reveal"><span class="ec-badge">Engineering constraint</span><br>broad ingestion across tickets, transcripts, PSA data, KB systems, and invoices was not MVP-realistic. I worked with PM/engineering to separate the experience model from ingestion maturity: design the full strategic loop, then ship the smallest input set that could validate usefulness and trust.</p>
     <div class="mvp-flow reveal">
       <p class="flow-kicker">ClientIQ MVP flow</p>
       <ol class="flow-row">
