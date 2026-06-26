@@ -445,7 +445,9 @@
   /* MVP product flow — single horizontal 5-step row, thin connectors */
   #mvp .mvp-flow{margin-top:80px}
   #mvp .flow-kicker{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-  #mvp .flow-row{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:40px 36px;align-items:start}
+  #mvp .flow-row{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:34px 40px;align-items:start}
+  /* steps 3 & 4 share the third column, stacked tightly */
+  #mvp .flow-col3{position:relative;margin:0;display:flex;flex-direction:column;gap:34px}
   #mvp .flow-step{position:relative;margin:0}
   #mvp .flow-thumb{position:relative;border-radius:12px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 10px 24px -16px rgba(15,23,42,.4)}
   #mvp .flow-thumb img{display:block;width:100%;height:auto;background:#fff}
@@ -453,39 +455,16 @@
   #mvp .flow-thumb.pending span{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-4);text-align:center;padding:0 10px}
   #mvp .flow-n{position:absolute;top:8px;left:8px;z-index:2;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--mono);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center}
   #mvp .flow-cap{margin:12px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-2)}
-  /* zoom affordance on the screenshot thumbnails */
-  #mvp .flow-thumb:not(.flow-badges){cursor:zoom-in}
-  #mvp .flow-thumb:not(.flow-badges)::after{content:'\\2922';position:absolute;top:8px;right:8px;z-index:2;width:26px;height:26px;border-radius:7px;background:rgba(15,23,42,.55);color:#fff;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s ease;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-  #mvp .flow-thumb:not(.flow-badges):hover::after{opacity:1}
+  /* connector arrows — horizontal 1→2→3, vertical 3↓4 */
+  #mvp .flow-row > .flow-step:nth-child(2)::before,#mvp .flow-col3::before{content:'';position:absolute;top:70px;left:-30px;width:20px;height:1.5px;background:var(--accent)}
+  #mvp .flow-row > .flow-step:nth-child(2)::after,#mvp .flow-col3::after{content:'';position:absolute;top:70px;left:-16px;width:6px;height:6px;border-top:1.5px solid var(--accent);border-right:1.5px solid var(--accent);transform:translateY(-50%) rotate(45deg)}
+  #mvp .flow-col3 .is4::before{content:'';position:absolute;top:-25px;left:50%;width:1.5px;height:17px;background:var(--accent);transform:translateX(-50%)}
+  #mvp .flow-col3 .is4::after{content:'';position:absolute;top:-13px;left:50%;width:6px;height:6px;border-right:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:translate(-50%,0) rotate(45deg)}
+  #mvp .flow-col3 .is4{position:relative}
   /* step 4 — output badges instead of a screenshot */
   #mvp .flow-badges{display:flex;flex-direction:column;justify-content:center;gap:12px;padding:26px 22px}
   #mvp .flow-badge{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;font-size:14px;font-weight:600;color:var(--accent);background:rgba(27,77,255,.10);border:1px solid rgba(27,77,255,.22);border-radius:999px;padding:8px 14px;line-height:1}
   #mvp .flow-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent)}
-  /* ── flow lightbox / carousel ── */
-  .fl-lb{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    background:rgba(10,14,26,.78);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-    padding:clamp(20px,5vw,64px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
-  .fl-lb.open{opacity:1;visibility:visible}
-  .fl-stage{position:relative;max-width:1100px;width:100%;display:flex;flex-direction:column;align-items:center;gap:18px}
-  .fl-frame{width:100%;max-height:78vh;display:flex;align-items:center;justify-content:center}
-  .fl-frame img{max-width:100%;max-height:78vh;width:auto;height:auto;border-radius:12px;box-shadow:0 30px 80px -30px rgba(0,0,0,.7);background:#fff}
-  .fl-badges{display:flex;flex-direction:column;gap:16px;padding:56px 48px;background:#fff;border-radius:16px;box-shadow:0 30px 80px -30px rgba(0,0,0,.7)}
-  .fl-badges span{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;font-size:20px;font-weight:600;color:var(--accent);background:rgba(27,77,255,.10);border:1px solid rgba(27,77,255,.22);border-radius:999px;padding:12px 22px;line-height:1}
-  .fl-badges span::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--accent)}
-  .fl-meta{display:flex;align-items:center;gap:14px;color:#fff;font-size:15px;line-height:1.4;text-align:center;max-width:62ch}
-  .fl-meta .fl-step{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--accent);padding:3px 11px;border-radius:5px;flex:0 0 auto}
-  .fl-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;cursor:pointer;
-    background:rgba(255,255,255,.14);color:#fff;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;
-    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .15s ease}
-  .fl-nav:hover{background:rgba(255,255,255,.28)}
-  .fl-prev{left:-8px}.fl-next{right:-8px}
-  .fl-close{position:fixed;top:22px;right:26px;width:44px;height:44px;border-radius:50%;border:0;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center}
-  .fl-close:hover{background:rgba(255,255,255,.28)}
-  .fl-dots{display:flex;gap:9px;margin-top:2px}
-  .fl-dots button{width:8px;height:8px;border-radius:50%;border:0;padding:0;cursor:pointer;background:rgba(255,255,255,.3);transition:background .15s ease,transform .15s ease}
-  .fl-dots button.on{background:#fff;transform:scale(1.25)}
-  @media (max-width:640px){.fl-nav{width:40px;height:40px}.fl-prev{left:2px}.fl-next{right:2px}.fl-badges{padding:36px 28px}.fl-badges span{font-size:16px}}
-  @media (prefers-reduced-motion:reduce){.fl-lb{transition:none}}
   #mvp .outcome-eyebrow{margin-top:96px}
   #mvp .outcome-title{margin-top:16px!important;max-width:24ch}
   #mvp .outcome-lead{margin-top:20px!important;max-width:60ch;color:var(--ink-2)}
@@ -506,6 +485,8 @@
   }
   @media (max-width:860px){
     #mvp .flow-row{grid-template-columns:1fr;gap:24px}
+    #mvp .flow-col3{gap:24px}
+    #mvp .flow-step::before,#mvp .flow-step::after,#mvp .flow-col3::before,#mvp .flow-col3::after,#mvp .flow-col3 .is4::before,#mvp .flow-col3 .is4::after{display:none}
   }
   /* MVP scoping conclusion — glance-friendly decision cards (dark section) */
   #scoping .scope-concl{margin-top:72px;border-top:1px solid var(--dark-line);padding-top:40px}
@@ -1614,63 +1595,18 @@
           <div class="flow-thumb"><img src="uploads/clientiq/clientiq-mvp-new.png" alt="Client &amp; industry summary generated by ClientIQ" loading="lazy"><span class="flow-n">2</span></div>
           <p class="flow-cap">System generates client &amp; industry summary</p>
         </li>
-        <li class="flow-step">
-          <div class="flow-thumb"><img src="uploads/clientiq/clientiq-concept.png" alt="Suggested meeting topics and questions" loading="lazy"><span class="flow-n">3</span></div>
-          <p class="flow-cap">User reviews suggested meeting topics</p>
-        </li>
-        <li class="flow-step">
-          <div class="flow-thumb flow-badges"><span class="flow-badge">Roadmap initiatives</span><span class="flow-badge">Meeting agendas</span><span class="flow-badge">Action items</span><span class="flow-n">4</span></div>
-          <p class="flow-cap">User turns suggestions into planning outputs</p>
+        <li class="flow-col3">
+          <div class="flow-step">
+            <div class="flow-thumb"><img src="uploads/clientiq/clientiq-concept.png" alt="Suggested meeting topics and questions" loading="lazy"><span class="flow-n">3</span></div>
+            <p class="flow-cap">User reviews suggested meeting topics</p>
+          </div>
+          <div class="flow-step is4">
+            <div class="flow-thumb flow-badges"><span class="flow-badge">Roadmap initiatives</span><span class="flow-badge">Meeting agendas</span><span class="flow-badge">Action items</span><span class="flow-n">4</span></div>
+            <p class="flow-cap">User turns suggestions into planning outputs</p>
+          </div>
         </li>
       </ol>
     </div>
-    <script>
-    (function(){
-      var flow=document.querySelector('#mvp .mvp-flow');if(!flow)return;
-      var steps=[].slice.call(flow.querySelectorAll('.flow-step'));
-      var slides=steps.map(function(st,i){
-        var img=st.querySelector('.flow-thumb img');
-        var badges=st.querySelector('.flow-badges');
-        var cap=st.querySelector('.flow-cap');
-        return {n:i+1,
-          img:img?{src:img.getAttribute('src'),alt:img.getAttribute('alt')||''}:null,
-          badges:badges?[].slice.call(badges.querySelectorAll('.flow-badge')).map(function(b){return b.textContent;}):null,
-          cap:cap?cap.textContent.trim():''};
-      });
-      var lb=document.createElement('div');lb.className='fl-lb';lb.setAttribute('role','dialog');lb.setAttribute('aria-modal','true');
-      lb.innerHTML=
-        '<button class="fl-close" aria-label="Close">✕</button>'+
-        '<div class="fl-stage">'+
-          '<button class="fl-nav fl-prev" aria-label="Previous">‹</button>'+
-          '<div class="fl-frame"></div>'+
-          '<button class="fl-nav fl-next" aria-label="Next">›</button>'+
-          '<div class="fl-meta"><span class="fl-step"></span><span class="fl-cap"></span></div>'+
-          '<div class="fl-dots"></div>'+
-        '</div>';
-      document.body.appendChild(lb);
-      var frame=lb.querySelector('.fl-frame'),stepEl=lb.querySelector('.fl-step'),capEl=lb.querySelector('.fl-cap'),dotsEl=lb.querySelector('.fl-dots');
-      slides.forEach(function(s,i){var d=document.createElement('button');d.setAttribute('aria-label','Step '+s.n);d.addEventListener('click',function(){go(i);});dotsEl.appendChild(d);});
-      var dots=[].slice.call(dotsEl.children);
-      var cur=0;
-      function render(){
-        var s=slides[cur];
-        if(s.img){frame.innerHTML='';var im=new Image();im.src=s.img.src;im.alt=s.img.alt;frame.appendChild(im);}
-        else if(s.badges){frame.innerHTML='<div class="fl-badges">'+s.badges.map(function(b){return '<span>'+b+'</span>';}).join('')+'</div>';}
-        stepEl.textContent='Step '+s.n;capEl.textContent=s.cap;
-        dots.forEach(function(d,i){d.className=i===cur?'on':'';});
-      }
-      function go(i){cur=(i+slides.length)%slides.length;render();}
-      function open(i){go(i);lb.classList.add('open');document.body.style.overflow='hidden';}
-      function close(){lb.classList.remove('open');document.body.style.overflow='';}
-      steps.forEach(function(st,i){var t=st.querySelector('.flow-thumb');if(!t)return;t.style.cursor='pointer';t.addEventListener('click',function(){open(i);});});
-      lb.querySelector('.fl-prev').addEventListener('click',function(){go(cur-1);});
-      lb.querySelector('.fl-next').addEventListener('click',function(){go(cur+1);});
-      lb.querySelector('.fl-close').addEventListener('click',close);
-      lb.addEventListener('click',function(e){if(e.target===lb)close();});
-      document.addEventListener('keydown',function(e){if(!lb.classList.contains('open'))return;
-        if(e.key==='Escape')close();else if(e.key==='ArrowLeft')go(cur-1);else if(e.key==='ArrowRight')go(cur+1);});
-    })();
-    </script>
   </div>
   <div class="wrap">
     <div class="eyebrow reveal outcome-eyebrow"><span>MVP outcome</span></div>
