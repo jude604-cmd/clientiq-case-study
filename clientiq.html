@@ -646,6 +646,9 @@
     justify-content:center;
     box-shadow:0 30px 66px -26px rgba(0,194,72,.55),inset 0 1px 0 rgba(255,255,255,.28)}
   #v2 .role-cards .card.tilt{box-shadow:0 48px 96px -28px rgba(0,194,72,.66),inset 0 1px 0 rgba(255,255,255,.34)}
+  /* tighter gap between stacked outcome cards on narrow screens (default role gap is 48px) */
+  @media (max-width:860px){ #v2 .grid-cards.c3.role-cards{gap:14px} }
+  @media (max-width:520px){ #v2 .grid-cards.c3.role-cards{gap:10px} }
   @media (max-width:860px){
     #v2 .v2-feats{grid-template-columns:1fr;gap:14px}
     #v2 .shift-row{grid-template-columns:1fr;gap:6px;text-align:left}
