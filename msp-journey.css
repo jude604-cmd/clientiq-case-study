@@ -169,7 +169,7 @@
 }
 .msp-journey .card.green{border-color:var(--green-line);background:#fff}
 .msp-journey .card.green-strong{border-color:#9CB4E0;background:#F2F6FD}
-.msp-journey .card.amber{border-color:var(--amber-line);background:#FFFBEF}
+.msp-journey .card.amber{border-color:var(--amber-line);background:#FDEDEC}
 .msp-journey .card .ct{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px;color:var(--ink-3)}
 .msp-journey .card.green .ct{color:var(--green-fg)}
 .msp-journey .card.green-strong .ct{color:var(--green-strong-bg)}
@@ -191,7 +191,7 @@
 .msp-journey .insight p{margin:0;font-size:14px;line-height:1.55;color:var(--ink-2)}
 .msp-journey .insight.green{background:#F2F6FD;border-color:var(--green-line)}
 .msp-journey .insight.green .badge{color:var(--green-fg)}
-.msp-journey .insight.amber{background:#FFFAEC;border-color:var(--amber-line)}
+.msp-journey .insight.amber{background:#FDEDEC;border-color:var(--amber-line)}
 .msp-journey .insight.amber .badge{color:var(--amber-fg)}
 .msp-journey .insight.dark{background:var(--green-strong-bg);border-color:var(--green-strong-bg);color:#fff}
 .msp-journey .insight.dark .badge{color:#A7BEE8}
