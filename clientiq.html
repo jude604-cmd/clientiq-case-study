@@ -678,6 +678,10 @@
   #mvp .mvp-lead{margin-top:22px!important;color:var(--ink-2);max-width:62ch}
   #mvp .mvp-constraint{margin-top:48px;max-width:54ch;font-size:clamp(21px,2.3vw,29px);font-weight:500;line-height:1.4;letter-spacing:-.015em;color:var(--accent)}
   #mvp .mvp-constraint .ec-badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--accent);padding:3px 11px 4px;border-radius:5px;margin-bottom:14px;vertical-align:middle}
+  /* closing image band — shorter on narrow screens */
+  .closing-band{height:62vh;min-height:420px}
+  @media (max-width:860px){.closing-band{height:42vh;min-height:300px}}
+  @media (max-width:520px){.closing-band{height:34vh;min-height:230px}}
   @media (max-width:860px){
     #mvp .mvp-ba{grid-template-columns:1fr;gap:36px}
   }
@@ -1968,7 +1972,7 @@
 </main>
 
 <!-- ══ CLOSING IMAGE BAND ══ -->
-<section aria-hidden="true" style="position:relative;height:62vh;min-height:420px;overflow:hidden;background:#0d0e13">
+<section class="closing-band" aria-hidden="true" style="position:relative;overflow:hidden;background:#0d0e13">
   <img src="uploads/clientiq/closing-apex.png" alt="ClientIQ open on a desktop in a working office" loading="lazy" style="width:100%;height:100%;object-fit:cover;opacity:.9" width="1775" height="886">
   <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,14,19,.1),rgba(18,19,25,.85))"></div>
   <div class="wrap" style="position:absolute;left:0;right:0;bottom:46px">
