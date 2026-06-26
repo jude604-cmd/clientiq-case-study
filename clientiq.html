@@ -547,7 +547,8 @@
   #v2 .trust-row:last-child{border-bottom:0}
   #v2 .trust-row.head{padding:14px 2px;align-items:center;background:transparent;border-bottom-color:rgba(255,255,255,.2)}
   #v2 .trust-row.head span{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(140,232,175,.95)}
-  #v2 .trust-row .risk{color:var(--dark-ink-3);font-size:15.5px;line-height:1.42}
+  #v2 .trust-row .risk{display:flex;align-items:start;gap:10px;color:var(--dark-ink-3);font-size:15.5px;line-height:1.42}
+  #v2 .trust-row .risk i{flex:0 0 auto;font-size:16px;line-height:1.42;color:#f5b53d}
   #v2 .trust-row .resp{color:var(--dark-ink);font-weight:600;font-size:15.5px;line-height:1.42}
   /* feature grid */
   #v2 .v2-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -1722,11 +1723,11 @@
       <p class="v2-kicker">AI trust model</p>
       <div class="v2-trust">
         <div class="trust-row head"><span>Trust risk</span><span>Design response</span></div>
-        <div class="trust-row"><span class="risk">AI may hallucinate</span><span class="resp">Source-backed claims and openable evidence</span></div>
-        <div class="trust-row"><span class="risk">AI may overstate confidence</span><span class="resp">Confidence badge / evidence-quality signal</span></div>
-        <div class="trust-row"><span class="risk">Users need control</span><span class="resp">Editable, modular outputs; user approves before action</span></div>
-        <div class="trust-row"><span class="risk">Generic AI advice may be irrelevant</span><span class="resp">Client-scoped data and workflow-specific recommendations</span></div>
-        <div class="trust-row"><span class="risk">Recommendations need to become work</span><span class="resp">Push to Goals, Roadmap, Meetings, and Initiatives</span></div>
+        <div class="trust-row"><span class="risk"><i class="ph-fill ph-warning" aria-hidden="true"></i>AI may hallucinate</span><span class="resp">Source-backed claims and openable evidence</span></div>
+        <div class="trust-row"><span class="risk"><i class="ph-fill ph-warning" aria-hidden="true"></i>AI may overstate confidence</span><span class="resp">Confidence badge / evidence-quality signal</span></div>
+        <div class="trust-row"><span class="risk"><i class="ph-fill ph-warning" aria-hidden="true"></i>Users need control</span><span class="resp">Editable, modular outputs; user approves before action</span></div>
+        <div class="trust-row"><span class="risk"><i class="ph-fill ph-warning" aria-hidden="true"></i>Generic AI advice may be irrelevant</span><span class="resp">Client-scoped data and workflow-specific recommendations</span></div>
+        <div class="trust-row"><span class="risk"><i class="ph-fill ph-warning" aria-hidden="true"></i>Recommendations need to become work</span><span class="resp">Push to Goals, Roadmap, Meetings, and Initiatives</span></div>
       </div>
 
       <p class="v2-kicker" style="margin-top:56px">Refined MSP workflow</p>
