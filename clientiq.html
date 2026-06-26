@@ -37,7 +37,7 @@
   #why{--dark-accent:#e668cf; --accent:#c5277f; --accent-soft:rgba(230,104,207,.09)}
 
   /* Per-section bottom-point variations on top of DS default mesh */
-  #v2{--accent:#00C248; --dark-accent:#39d978}
+  #v2{--accent:#00C248; --dark-accent:#39d978; overflow-x:clip}
   #v2.dark{background:
     radial-gradient(ellipse 90% 55% at 50%  -8%,  rgba(0,194,72,.34)   0%, transparent 56%),
     radial-gradient(ellipse 55% 42% at 105% 105%, rgba(0,194,72,.22)   0%, transparent 52%),
@@ -1708,9 +1708,9 @@
     <!-- folded in: Refined MSP workflow (was §14) -->
     <div class="reveal">
       <p class="v2-kicker">Refined MSP workflow</p>
-      <figure class="v2-fig" style="margin-top:36px;background:#fff;border-radius:18px;padding:clamp(18px,2.2vw,32px)">
-        <img src="uploads/clientiq/refined-workflow-v3.png" alt="ClientIQ 2.0 system flow: connected client signals → AI engine → modular recommendations → human review → MSP daily workflows (Goals, Roadmap, Meetings) → QBR meetings looping back to client signals" loading="lazy" width="3154" height="1152">
-        <figcaption style="color:#54565e">Context from multiple sources → judgment packaged into modular outputs → action inside existing planning surfaces.</figcaption>
+      <figure class="v2-fig" style="margin-top:36px;width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);box-sizing:border-box;padding:0 clamp(16px,4vw,56px)">
+        <img src="uploads/clientiq/refined-workflow-v3.png" alt="ClientIQ 2.0 system flow: connected client signals → AI engine → modular recommendations → human review → MSP daily workflows (Goals, Roadmap, Meetings) → QBR meetings looping back to client signals" loading="lazy" width="3154" height="1152" style="border-radius:0">
+        <figcaption>Context from multiple sources → judgment packaged into modular outputs → action inside existing planning surfaces.</figcaption>
       </figure>
 
       <h3 class="v2-subh" style="margin-top:56px">Three planning surfaces clients actually pay attention to.</h3>
