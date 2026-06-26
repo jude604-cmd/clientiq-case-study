@@ -598,6 +598,30 @@
   #v2 .v2-fig{margin:0;background:transparent;border:0}
   #v2 .v2-fig img{display:block;width:100%;height:auto;border-radius:14px}
   #v2 .v2-fig figcaption{margin-top:14px;font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--dark-ink-3);padding:0}
+  /* ── HTML rebuild of the ClientIQ 2.0 system-flow board (page-consistent palette) ── */
+  #v2 .sf-cap{font-family:var(--mono);font-size:12px;letter-spacing:.03em;color:var(--dark-ink-4);margin-bottom:12px}
+  #v2 .sysflow-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px}
+  #v2 .sysflow{min-width:1120px;background:#121319;border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:20px}
+  #v2 .sf-row{display:flex;align-items:stretch;gap:12px}
+  #v2 .sf-col{background:#181C24;border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:210px}
+  #v2 .sf-label{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8A8D99;margin-bottom:2px}
+  #v2 .sf-node{border-radius:7px;padding:9px 11px;font-size:12.5px;line-height:1.25;text-align:center}
+  #v2 .sf-data{background:transparent;border:1px solid #3A3E4A;color:#C9CBD3}
+  #v2 .sf-rec{background:#16224F;border:1px solid #2E50C8;color:#B9C9FF}
+  #v2 .sf-hero{background:#1B4DFF;color:#fff;font-weight:600;padding:16px 12px}
+  #v2 .sf-work{background:#0E2A1C;border:1px solid #1E9E5A;color:#7FE0AC}
+  #v2 .sf-qbr{background:#20242E;border:1px solid rgba(255,255,255,.12);color:#E4E6EC;min-width:200px}
+  #v2 .sf-arrow{align-self:center;color:#6E7079;font-size:20px;flex:none;line-height:1}
+  #v2 .sf-engine{justify-content:center}
+  #v2 .sf-engine-row{display:flex;align-items:center;gap:10px}
+  #v2 .sf-bullets{background:#16224F;border:1px solid #2E50C8;color:#B9C9FF;border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.55}
+  #v2 .sf-bullets ul{margin:0;padding-left:15px}
+  #v2 .sf-msp-row{display:flex;align-items:center;gap:12px}
+  #v2 .sf-diamond{width:158px;height:158px;flex:none;background:#00C248;display:flex;align-items:center;justify-content:center;transform:rotate(45deg);border-radius:14px;align-self:center}
+  #v2 .sf-diamond span{transform:rotate(-45deg);display:block;text-align:center;font-size:12px;font-weight:600;line-height:1.25;color:#04150B;max-width:120px}
+  #v2 .sf-work-stack{display:flex;flex-direction:column;gap:10px;justify-content:center}
+  #v2 .sf-row.qbr{align-items:center;gap:12px}
+  #v2 .sf-loop{font-family:var(--mono);font-size:12px;color:#8A8D99;margin-right:auto;display:inline-flex;align-items:center;gap:6px}
   #v2 .v2-cta .btn.ghost{border:1px solid rgba(255,255,255,.25);color:var(--dark-ink)}
   #v2 .v2-cta .btn.ghost:hover{border-color:var(--dark-ink);transform:translateY(-2px)}
   /* outcome cards use the SAME frosted-glass cursor-tilt treatment as #role's cards,
@@ -1688,6 +1712,67 @@
         <img src="uploads/clientiq/refined-workflow-v2.png?v=3" alt="ClientIQ 2.0 system flow: connected client signals → AI engine → modular recommendations → human review → MSP daily workflows (Goals, Roadmap, Meetings) → QBR meetings looping back to client signals" loading="lazy" width="7172" height="3056">
         <figcaption>Context from multiple sources → judgment packaged into modular outputs → action inside existing planning surfaces.</figcaption>
       </figure>
+
+      <figure class="v2-fig" style="margin-top:28px">
+        <p class="sf-cap">HTML rebuild — page-consistent palette (compare with the export above)</p>
+        <div class="sysflow-scroll">
+          <div class="sysflow" role="img" aria-label="ClientIQ 2.0 system flow: connected client signals feed the AI engine, which produces modular recommendations that go through human review into MSP daily workflows and QBR meetings, which loop back into client signals.">
+            <div class="sf-row">
+              <div class="sf-col">
+                <div class="sf-label">Connected client signals</div>
+                <div class="sf-node sf-data">Website + public data</div>
+                <div class="sf-node sf-data">Meeting transcripts / notes</div>
+                <div class="sf-node sf-data">Recent tickets</div>
+                <div class="sf-node sf-data">KB / documentation</div>
+                <div class="sf-node sf-data">Previous reports data</div>
+                <div class="sf-node sf-data">PSA opportunities</div>
+                <div class="sf-node sf-data">Contracts / invoices</div>
+                <div class="sf-node sf-data">Existing roadmap + goals</div>
+              </div>
+              <div class="sf-arrow" aria-hidden="true">→</div>
+              <div class="sf-col sf-engine">
+                <div class="sf-label">AI engine</div>
+                <div class="sf-engine-row">
+                  <div class="sf-node sf-hero">ClientIQ&nbsp;2.0</div>
+                  <div class="sf-arrow" aria-hidden="true">→</div>
+                  <div class="sf-bullets"><ul><li>Understands client business</li><li>Summarizes industry trends + risks</li><li>Finds service patterns and unmet needs</li><li>Translates signals into strategic context</li></ul></div>
+                </div>
+              </div>
+              <div class="sf-arrow" aria-hidden="true">→</div>
+              <div class="sf-col">
+                <div class="sf-label">Modular recommendations</div>
+                <div class="sf-node sf-rec">Client Satisfaction Index</div>
+                <div class="sf-node sf-rec">Client summary</div>
+                <div class="sf-node sf-rec">Industry summary</div>
+                <div class="sf-node sf-rec">Suggested questions / topics</div>
+                <div class="sf-node sf-rec">Suggested action items</div>
+                <div class="sf-node sf-rec">Suggested goals</div>
+                <div class="sf-node sf-rec">Suggested agenda items</div>
+              </div>
+              <div class="sf-arrow" aria-hidden="true">→</div>
+              <div class="sf-col">
+                <div class="sf-label">MSP daily work</div>
+                <div class="sf-msp-row">
+                  <div class="sf-diamond"><span>Human review, edit and selection</span></div>
+                  <div class="sf-arrow" aria-hidden="true">→</div>
+                  <div class="sf-work-stack">
+                    <div class="sf-node sf-work">Goals workflow</div>
+                    <div class="sf-node sf-work">Roadmap workflow</div>
+                    <div class="sf-node sf-work">Meetings workflow</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sf-row qbr">
+              <span class="sf-loop" aria-hidden="true">↺ QBR output feeds back into connected client signals</span>
+              <div class="sf-node sf-qbr">QBR conversation</div>
+              <div class="sf-arrow" aria-hidden="true">→</div>
+              <div class="sf-node sf-qbr">QBR output</div>
+            </div>
+          </div>
+        </div>
+      </figure>
+
       <h3 class="v2-subh" style="margin-top:56px">Three planning surfaces clients actually pay attention to.</h3>
       <blockquote class="quote-card quote-vid" style="margin-top:26px"><video class="qc-vid" src="uploads/clientiq/closing-loop.mp4" autoplay muted playsinline preload="metadata" aria-hidden="true"></video><div class="qc-content">Honestly, the things we use most are Meetings, Roadmaps and Goals — that’s the stuff clients actually pay attention to.<cite>MSP user</cite></div></blockquote>
       <div style="margin-top:36px">
