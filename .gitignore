@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Editor / app metadata
+.impeccable/
+
+# Local dev helpers (not needed for the deployed site)
+serve.py
+sync.sh
+watch.sh

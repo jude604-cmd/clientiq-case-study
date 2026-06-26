@@ -1,0 +1,229 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   MSP Journey Map — scoped styles for the journey map inlined into clientiq.html
+   #challenges (formerly an <iframe src="msp-journey-map.html">).
+
+   Every selector is scoped under .msp-journey so the map lives as page DOM:
+   the cursor glow can pass behind it (no iframe swallowing pointer events) and
+   it inherits the page font (--sans, Schibsted Grotesk) instead of Poppins.
+
+   NOTE: do NOT put a transform/filter (e.g. .reveal) on .msp-journey or any
+   ancestor — the sticky left rail and its backdrop-filter frost break inside a
+   transformed/filtered ancestor.
+   ───────────────────────────────────────────────────────────────────────── */
+.msp-journey{
+  --bg:#FFFFFF;
+  --canvas:#FAFAF8;
+  --ink:#111111;
+  --ink-2:#3D3D3A;
+  --ink-3:#6E6E69;
+  --line:#E6E5E0;
+  --line-2:#EFEEEA;
+  --neutral-bg:#F4F3EF;
+  --neutral-pill-bg:#EFEEEA;
+  --neutral-pill-fg:#3D3D3A;
+  --green-bg:#EAF3E9;
+  --green-fg:#3F6F3F;
+  --green-line:#C6DEC4;
+  --green-strong-bg:#2E6B43;
+  --green-strong-fg:#FFFFFF;
+  --green-strong-tint:#DDEBDF;
+  --amber-bg:#FAEAD0;
+  --amber-fg:#8A5A1F;
+  --amber-line:#EBD3A6;
+  --amber-tint:#FDF4E2;
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+.msp-journey *{box-sizing:border-box}
+.msp-journey .page{margin:0;background:transparent;padding:0}
+
+/* ───── Header ───── */
+.msp-journey .header{display:grid;grid-template-columns:1fr 270px;gap:40px;align-items:start;margin-bottom:40px}
+.msp-journey .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:14px}
+.msp-journey h1{font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.01em;margin:0 0 14px}
+.msp-journey .subtitle{font-size:16px;line-height:1.5;color:var(--ink-2);margin:0}
+.msp-journey .meta{background:var(--neutral-bg);border-radius:14px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.msp-journey .meta-title{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.msp-journey .legend{display:flex;flex-wrap:wrap;gap:8px 10px}
+
+/* ───── Pills ───── */
+.msp-journey .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;line-height:1;white-space:nowrap}
+.msp-journey .pill .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.msp-journey .stage-head .pill{white-space:normal;line-height:1.25;border-radius:14px;align-items:center;max-width:100%}
+.msp-journey .pill .dot-lm{width:14px;height:14px;flex-shrink:0;border-radius:3px;display:block}
+.msp-journey .pill.gray   {background:var(--neutral-pill-bg);color:var(--neutral-pill-fg)}
+.msp-journey .pill.gray   .dot{background:#9A9A93}
+.msp-journey .pill.green  {background:var(--green-bg);color:var(--green-fg)}
+.msp-journey .pill.green  .dot{background:#5C9D5C}
+.msp-journey .pill.green-strong{background:var(--green-strong-bg);color:#fff}
+.msp-journey .pill.green-strong .dot{background:#A7D3A7}
+.msp-journey .pill.amber  {background:var(--amber-bg);color:var(--amber-fg)}
+.msp-journey .pill.amber  .dot{background:#C68A2E}
+
+/* ───── Top summary flow ───── */
+.msp-journey .flow-row{display:grid;grid-template-columns:168px 1fr;min-width:1408px;margin-bottom:28px}
+.msp-journey .flow-gutter{
+  position:sticky;left:0;z-index:4;
+  background:#fff;
+  padding:18px 16px;
+  display:flex;flex-direction:column;gap:6px;justify-content:center;
+  box-shadow:6px 0 12px -10px rgba(20,20,15,.18);
+}
+.msp-journey .flow{display:grid;grid-template-columns:repeat(7, minmax(175px, 1fr));gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.msp-journey .flow-step{padding:18px 22px;display:flex;flex-direction:column;gap:6px;position:relative;border-right:1px solid var(--line)}
+.msp-journey .flow-step.span-2{grid-column:span 2}
+.msp-journey .flow-step:last-child{border-right:0}
+.msp-journey .flow-step.h-green{background:#F3F8F2}
+.msp-journey .flow-step.h-green-strong{background:var(--green-strong-tint)}
+.msp-journey .flow-step.h-amber{background:var(--amber-tint)}
+.msp-journey .flow-step .step-num{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.msp-journey .flow-step .step-name{font-size:15px;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:8px;align-self:flex-start}
+.msp-journey .flow-step .arrow{position:absolute;right:-9px;top:50%;transform:translateY(-50%);width:18px;height:18px;background:#fff;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;z-index:2}
+.msp-journey .flow-step:last-child .arrow{display:none}
+.msp-journey .flow-step .arrow svg{width:8px;height:8px;color:var(--ink-3)}
+
+/* ───── Journey grid ───── */
+.msp-journey .journey-scroll{
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-color:#C9C8C2 transparent;
+  cursor:grab;
+  -webkit-mask-image:linear-gradient(to right, #000 calc(100% - var(--fade-right,0px)), transparent 100%);
+  mask-image:linear-gradient(to right, #000 calc(100% - var(--fade-right,0px)), transparent 100%);
+}
+.msp-journey .journey-scroll.is-dragging{cursor:grabbing;user-select:none}
+.msp-journey .journey-scroll.is-dragging *{cursor:grabbing !important}
+.msp-journey .lane-label,.msp-journey .corner{cursor:default}
+.msp-journey .journey-scroll::-webkit-scrollbar{height:10px}
+.msp-journey .journey-scroll::-webkit-scrollbar-thumb{background:#D4D3CD;border-radius:999px}
+.msp-journey .journey-scroll::-webkit-scrollbar-track{background:transparent}
+.msp-journey .journey{
+  display:grid;
+  grid-template-columns: 168px repeat(7, minmax(175px, 1fr));
+  min-width:1408px;
+  border-radius:18px;
+  background:#fff;
+}
+.msp-journey .journey > * { border-right:1px solid #fff; border-bottom:1px solid #fff; }
+.msp-journey .journey > *:nth-child(8n){ border-right:0 }
+.msp-journey .row-last{border-bottom:0 !important}
+
+/* Header (stages) row */
+.msp-journey .corner{
+  background:#fff;
+  position:sticky;left:0;z-index:3;
+  padding:18px 16px;
+  display:flex;flex-direction:column;gap:6px;
+  border-right:1px solid #fff !important;
+  box-shadow:6px 0 12px -10px rgba(20,20,15,.18);
+}
+.msp-journey .stage-head{padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px;background:#FCFCFB;position:relative}
+.msp-journey .stage-head .num{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.msp-journey .stage-head .name{font-size:16px;font-weight:700;line-height:1.2;color:var(--ink);min-height:38px}
+.msp-journey .stage-head .tag{align-self:flex-start}
+.msp-journey .stage-head.h-green{background:#F3F8F2}
+.msp-journey .stage-head.h-green-strong{background:var(--green-strong-tint)}
+.msp-journey .stage-head.h-amber{background:var(--amber-tint)}
+.msp-journey .stage-head .annotation{font-size:11px;color:var(--ink-3);font-style:italic;line-height:1.35}
+
+/* Swimlane label column */
+.msp-journey .lane-label{
+  padding:18px 16px;
+  background:#fff;
+  display:flex;flex-direction:column;gap:6px;
+  position:sticky;left:0;z-index:2;
+  border-right:1px solid #fff !important;
+  box-shadow:6px 0 12px -10px rgba(20,20,15,.18);
+}
+.msp-journey .lab-eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.msp-journey .lab-title{font-size:15px;font-weight:700;color:var(--ink);line-height:1.25;display:inline-flex;align-items:center;gap:8px}
+.msp-journey .lab-sub{font-size:12px;color:var(--ink-3);line-height:1.4;margin-top:4px}
+
+/* Cells */
+.msp-journey .cell{padding:16px 16px 18px;display:flex;flex-direction:column;gap:10px;min-height:170px;background:#fff}
+.msp-journey .cell .pill{align-self:flex-start}
+.msp-journey .cell ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.msp-journey .cell li{font-size:13px;line-height:1.4;color:var(--ink-2);padding-left:12px;position:relative}
+.msp-journey .cell li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:#B6B6B0}
+.msp-journey .cell .note{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.msp-journey .cell.lane-2{background:#FCFCFB}
+.msp-journey .cell.lane-3{background:#FBFAF7}
+.msp-journey .cell.col-green{background:#F3F8F2 !important}
+.msp-journey .cell.col-green-strong{background:var(--green-strong-tint) !important}
+.msp-journey .cell.col-amber{background:var(--amber-tint) !important}
+
+/* Cell variant: outline card (scoped hard so the DS .card styles don't leak in) */
+.msp-journey .card{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px 12px;
+  background:#fff;
+  box-shadow:none;
+  font-size:13px;
+  line-height:1.4;
+  color:var(--ink-2);
+}
+.msp-journey .card.green{border-color:var(--green-line);background:#fff}
+.msp-journey .card.green-strong{border-color:#9CC79C;background:#F4F9F3}
+.msp-journey .card.amber{border-color:var(--amber-line);background:#FFFBEF}
+.msp-journey .card .ct{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px;color:var(--ink-3)}
+.msp-journey .card.green .ct{color:var(--green-fg)}
+.msp-journey .card.green-strong .ct{color:var(--green-strong-bg)}
+.msp-journey .card.amber .ct{color:var(--amber-fg)}
+
+/* ───── Insight cards ───── */
+.msp-journey .insights{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px}
+.msp-journey .insight{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:24px 26px 26px;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.msp-journey .insight .badge{align-self:flex-start;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+.msp-journey .insight h3{margin:0;font-size:18px;font-weight:700;line-height:1.25;letter-spacing:-.005em}
+.msp-journey .insight p{margin:0;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.msp-journey .insight.green{background:#F4F9F3;border-color:var(--green-line)}
+.msp-journey .insight.green .badge{color:var(--green-fg)}
+.msp-journey .insight.amber{background:#FFFAEC;border-color:var(--amber-line)}
+.msp-journey .insight.amber .badge{color:var(--amber-fg)}
+.msp-journey .insight.dark{background:var(--green-strong-bg);border-color:var(--green-strong-bg);color:#fff}
+.msp-journey .insight.dark .badge{color:#A7D3A7}
+.msp-journey .insight.dark p{color:#D9E7DC}
+
+/* ───── Phosphor icon sizing ───── */
+.msp-journey .flow-step .ph{font-size:18px;color:var(--ink-3);line-height:1}
+.msp-journey .lane-label .ph{font-size:18px;color:var(--ink-3);line-height:1}
+.msp-journey .lane-label .lm-logo{width:18px;height:18px;flex-shrink:0;border-radius:4px}
+.msp-journey .lane-label.lane-lm{background:#DAEBE5}
+
+/* Frosted-glass sticky left rail — translucent so cells scrolling underneath blur through. */
+.msp-journey .flow-gutter, .msp-journey .corner, .msp-journey .lane-label{
+  background: rgba(255,255,255,0.6);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+}
+.msp-journey .lane-label.lane-lm{ background: rgba(216,234,227,0.62); }
+.msp-journey .insight .ph{font-size:18px;line-height:1}
+.msp-journey .insight.green .ph{color:var(--green-fg)}
+.msp-journey .insight.amber .ph{color:var(--amber-fg)}
+.msp-journey .insight.dark .ph{color:#A7D3A7}
+.msp-journey .badge-row{display:inline-flex;align-items:center;gap:8px}
+.msp-journey .lab-row{display:inline-flex;align-items:center;gap:8px}
+
+/* ───── Footer line ───── */
+.msp-journey .footer{display:flex;justify-content:space-between;align-items:center;margin-top:28px;font-size:12px;color:var(--ink-3)}
+.msp-journey .divider{height:1px;background:var(--line);margin:24px 0 0}
+
+/* ───── Responsive ───── */
+@media (max-width: 1100px){
+  .msp-journey .insights{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 900px){
+  .msp-journey .header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}
+  .msp-journey .insights{grid-template-columns:1fr;gap:16px;margin-top:28px}
+}

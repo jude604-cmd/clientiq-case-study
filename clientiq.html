@@ -1,0 +1,2442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ClientIQ — Jude Shi · Case Study</title>
+<meta name="description" content="ClientIQ: designing AI-powered strategy workflows for an MSP SaaS platform — a case study by Jude Shi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="stylesheet" href="design-system.css">
+<link rel="stylesheet" href="msp-journey.css">
+<!-- Import map so Three.js addons (which import the bare specifier "three") resolve to one instance -->
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<style>
+  /* ── Page-specific: ClientIQ case study (everything else lives in design-system.css) ── */
+
+  /* Accent the phrase in blue text (not a highlight). */
+  .hl{color:var(--accent)}
+
+  /* Section eyebrow chip — colored bg on the numbered label; dash ::before stays outside.
+     Uses var(--accent) so dark/magenta sections (#why) automatically tint to their accent. */
+  :is(.sec,.sec-tight) .eyebrow span{
+    background:var(--accent);color:#fff;
+    padding:2px 10px 3px;border-radius:4px;
+  }
+  /* On the solid-blue #overview band the chip would vanish — use a white chip instead. */
+  #overview .eyebrow span{background:#fff;color:var(--accent)}
+
+  /* This section's accent is MAGENTA, not the site blue — it reads better on the near-black band.
+     Scoped token overrides flip every accent (eyebrow, chips, stat numbers, bars) at once.
+     --dark-accent = magenta TEXT on dark (≥4.5:1); --accent = magenta FILL for white bar labels (≥4.5:1). */
+  #why{--dark-accent:#e668cf; --accent:#c5277f; --accent-soft:rgba(230,104,207,.09)}
+
+  /* Per-section bottom-point variations on top of DS default mesh */
+  #v2{--accent:#00C248; --dark-accent:#39d978}
+  #v2.dark{background:
+    radial-gradient(ellipse 90% 55% at 50%  -8%,  rgba(0,194,72,.34)   0%, transparent 56%),
+    radial-gradient(ellipse 55% 42% at 105% 105%, rgba(0,194,72,.22)   0%, transparent 52%),
+    radial-gradient(ellipse 48% 38% at -5%  95%,  rgba(0,150,90,.16)   0%, transparent 50%),
+    var(--dark)}
+  /* #why overrides with magenta palette */
+  #why{background:
+    radial-gradient(ellipse 90% 55% at 50%  -8%,  rgba(197,39,127,.38) 0%, transparent 56%),
+    radial-gradient(ellipse 55% 42% at 105% 105%, rgba(130,30,190,.28) 0%, transparent 52%),
+    radial-gradient(ellipse 48% 38% at -5%  95%,  rgba(40,50,220,.20)  0%, transparent 50%),
+    #121319}
+
+  /* #why stat columns: three equal columns, identical stat size, with the sub-label
+     reserving 2 lines so every row (number → sub-label → body) aligns across columns. */
+  #why .grid-cards.c3{grid-template-columns:repeat(3,1fr)}
+  #why .grid-cards.c3 .stat-l{font-size:13.5px;text-transform:none;letter-spacing:.01em;line-height:1.55;min-height:3.2em;color:var(--dark-ink-2)}
+  @media (max-width:820px){
+    #why .grid-cards.c3{grid-template-columns:1fr;gap:0}
+    #why .grid-cards.c3 .stat-l{min-height:0}
+    /* stacked: separate each stat with a hairline divider + breathing room (no side-by-side columns to do it) */
+    #why .grid-cards.c3 > div + div{border-top:1px solid var(--dark-line);margin-top:44px;padding-top:44px}
+  }
+  /* ── Recreated charts (bubble + bar), grow on scroll (.chart.in added by JS) ── */
+  .grid-cards.charts{align-items:stretch}
+  .chart-card{background:transparent;border:0;box-shadow:none;overflow:visible;display:flex;flex-direction:column}
+  /* cancel the page-wide .figure{margin-top:80px} on chart cards — the charts grid already spaces them */
+  #why .grid-cards.charts .chart-card{margin-top:0!important}
+  .chart-card:hover{transform:none}
+  .chart{padding:0;flex:1;display:flex;flex-direction:column}
+  .chart-title{font-weight:700;font-size:17px;letter-spacing:-.01em;color:var(--dark-ink)}
+
+  /* bubble chart */
+  .bubbles{container-type:size;position:relative;width:100%;flex:1;min-height:320px;margin-top:14px}
+  /* Hard square (width === height) so it's ALWAYS a circle, never an oval. Fonts scale off
+     --d (resolved against the .bubbles container) so each bubble's text scales to its size —
+     NO per-bubble container-type (that broke cqmin font + dot sizing). */
+  .bubble{position:absolute;left:var(--x);top:var(--y);width:var(--d);height:var(--d);border-radius:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;
+    line-height:1.06;padding:2%;box-sizing:border-box;overflow:hidden;
+    transform:translate(-50%,-50%) scale(0);transition:transform .7s var(--ease);transition-delay:var(--delay,0s);
+    box-shadow:0 14px 30px -14px rgba(60,30,120,.5)}
+  .chart.in .bubble{transform:translate(-50%,-50%) scale(1)}
+  .bubble b{font-weight:700;font-size:calc(var(--d) * 0.142);letter-spacing:-.02em;line-height:1}
+  .bubble i{font-style:normal;font-weight:500;font-size:calc(var(--d) * 0.095);margin-top:.32em;opacity:.95;max-width:100%;line-height:1.12}
+  /* z-order: bigger (higher-value) bubbles sit above smaller ones so labels stay readable when they touch/overlap */
+  .bubble{z-index:1} .bubble.dot{z-index:0}
+  /* When the charts stack to 1 column (≤860px), the bubble box goes full-width but its flex
+     height stays short → the proportionally-large bubbles overlap and cover text. Give it a tall
+     aspect ratio so it grows with width and the layout keeps its breathing room. */
+  @media (max-width:860px){ #why .bubbles{flex:none;aspect-ratio:0.92/1;min-height:360px} }
+  /* Bubble color = percentage tier (light ends kept dark enough for AA on white labels):
+     purple = high %, violet = mid, magenta = low. */
+  .b-pp{background:linear-gradient(150deg,#7d4fe0,#5a28bf)}   /* high  (42–43%) */
+  .b-vl{background:linear-gradient(150deg,#a843c4,#7c1f93)}   /* mid   (33–34%) */
+  .b-mg{background:linear-gradient(150deg,#c03b86,#8e1f64)}   /* low   (29%)    */
+  .bubble.dot{background:rgba(150,100,235,.12);box-shadow:none}
+
+  /* bar chart */
+  .bar-chart{margin-top:16px}
+  .bar-axis{display:flex;justify-content:space-between;margin-left:41%;font-family:var(--mono);font-size:11px;color:var(--dark-ink-3);margin-bottom:11px}
+  .bars{display:flex;flex-direction:column;gap:10px}
+  .bar-row{display:flex;align-items:center;gap:12px;height:34px}
+  .bar-label{flex:0 0 39%;text-align:right;font-size:12.5px;line-height:1.2;color:var(--dark-ink-3,rgba(255,255,255,.66))}
+  /* --grid-step = 100/segments: 14.285% for a 0–35% axis (7 steps), 12.5% for 0–40% (8 steps) */
+  .bar-track{flex:1;position:relative;height:20px;
+    background:repeating-linear-gradient(90deg,rgba(255,255,255,.1) 0,rgba(255,255,255,.1) 1px,transparent 1px,transparent var(--grid-step,14.285%))}
+  /* fill grows via transform (compositor), not width (layout) — no per-frame reflow */
+  .bar{position:absolute;left:0;top:0;height:100%;width:var(--w);border-radius:0 3px 3px 0;
+    background:linear-gradient(90deg, color-mix(in srgb, var(--accent) 60%, transparent), var(--accent));
+    transform:scaleX(0);transform-origin:left;transition:transform .9s var(--ease);transition-delay:var(--delay,0s)}
+  .chart.in .bar{transform:scaleX(1)}
+  .bar-track > em{position:absolute;top:50%;left:var(--w);transform:translate(-100%,-50%);font-style:normal;font-size:11.5px;font-weight:600;color:#fff;white-space:nowrap;padding-right:9px;opacity:0;transition:opacity .5s var(--ease);transition-delay:calc(var(--delay,0s) + .45s)}
+  .chart.in .bar-track > em{opacity:1}
+  @media (prefers-reduced-motion:reduce){
+    .bubble{transform:translate(-50%,-50%) scale(1)!important;transition:none}
+    .bar{transform:scaleX(1)!important;transition:none}
+    .bar-track > em{opacity:1!important;transition:none}
+  }
+
+  /* More breathing room across the page (scoped to ClientIQ — overrides the DS spacing tokens here only). */
+  :root{--sec-y:152px; --sec-y-tight:108px;}
+  /* --gap-sub (vertical sub-section rhythm) + its rule now live in the master design-system.css */
+  .grid2{gap:52px}
+  .grid-cards{gap:28px}
+  .card{padding:38px 40px}
+  ol.steps{gap:24px;margin-top:36px}
+  ul.ticks{gap:17px}
+  .moscow{gap:24px;margin-top:36px}
+  #role .grid-cards{margin-top:var(--gap-sub)!important}
+  .figure{margin-top:80px!important}
+
+  /* ── MVP scoping (dark) — MoSCoW is the hero, the 6 criteria support it ── */
+  /* Purple accent for this section (like #why's magenta scope): cascades to eyebrow chip,
+     bullets, kicker and step-number circles. Heat bars keep their own MoSCoW colours. */
+  #scoping{--dark-accent:#b094ff;--accent:#7c3aed}
+  #scoping.dark{background:
+    radial-gradient(ellipse 90% 55% at 50%  -8%,  rgba(124,58,237,.36) 0%, transparent 56%),
+    radial-gradient(ellipse 55% 42% at 105% 105%, rgba(150,60,235,.26) 0%, transparent 52%),
+    radial-gradient(ellipse 48% 38% at -5%  95%,  rgba(110,40,220,.18) 0%, transparent 50%),
+    var(--dark)}
+  /* MoSCoW board: no panel, just 4 columns on the dark surface; the heat bar carries the colour */
+  #scoping .moscow{grid-template-columns:repeat(4,1fr);gap:48px;align-items:start;
+    border-top:1px solid var(--dark-line);padding-top:40px}
+  #scoping .moscow .col{background:none;border:0;padding:0;border-radius:0}
+  #scoping .moscow .col h4{font-family:var(--sans);font-size:clamp(18px,1.7vw,21px);font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--dark-ink);margin-bottom:0}
+  #scoping .moscow .col h4::after{content:"";display:block;width:38px;height:3px;border-radius:2px;margin:16px 0 20px}
+  #scoping .moscow .col:nth-child(1) h4::after{background:#ff5c35}
+  #scoping .moscow .col:nth-child(2) h4::after{background:#ff9f1c}
+  #scoping .moscow .col:nth-child(3) h4::after{background:#c2e812}
+  #scoping .moscow .col:nth-child(4) h4::after{background:rgba(255,255,255,.4)}
+  #scoping .moscow .col.wont h4{color:var(--dark-ink-3)}
+  #scoping .moscow .col ul{gap:13px}
+  #scoping .moscow .col li{color:var(--dark-ink-2);font-size:15.5px;line-height:1.45;padding-left:16px}
+  #scoping .moscow .col.wont li{color:var(--dark-ink-4)}
+  #scoping .moscow .col li::before{content:"\2022";color:var(--dark-accent)}
+  #scoping .moscow .col.wont li::before{color:var(--dark-ink-4)}
+  /* supporting criteria block — compact two-column, secondary weight */
+  #scoping .crit-kicker{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dark-accent);margin-bottom:28px}
+  #scoping .crit .steps{grid-template-columns:1fr 1fr;gap:22px 56px;max-width:920px;margin-top:0}
+  #scoping .crit .steps li{padding-left:50px;min-height:0}
+  #scoping .crit .steps li::before{width:34px;height:34px;font-size:12px;border-color:var(--dark-line);color:var(--dark-accent)}
+  #scoping .crit .steps li b{color:var(--dark-ink);font-size:15.5px}
+  #scoping .crit .steps li span{color:var(--dark-ink-3);font-size:14px}
+  @media (max-width:680px){ #scoping .moscow{grid-template-columns:1fr 1fr;gap:32px} #scoping .crit .steps{grid-template-columns:1fr} }
+
+  /* ── Top decisions (#goals) — 3 alternating decision blocks ── */
+  /* blocks aren't direct .wrap children inside (wrapped) so internal gaps escape the 128px rule;
+     the .decision-block siblings still get the 128px beat between them. */
+  #goals .grid2.dec{align-items:center;gap:56px}
+  #goals .grid2.dec.rev .dec-copy{order:2}
+  #goals .grid2.dec.rev .figure{order:1}
+  #goals .dec-kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+  #goals .dec-kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);flex:0 0 8px}
+  #goals .dec-h{font-size:clamp(24px,2.6vw,32px);font-weight:650;letter-spacing:-.02em;line-height:1.12;color:var(--ink);margin:0 0 20px;max-width:18ch}
+  #goals .dec-copy .body + .body{margin-top:16px}
+  #goals .dec-lead{margin-bottom:40px}
+  /* intro lead: tighter measure + balanced rag so the last line doesn't orphan a word */
+  #goals > .wrap > .lead{max-width:80ch;text-wrap:balance}
+  /* D1 magnifier: cropped Goals panel floated over the wireframe, scaled up with a drop shadow */
+  #goals .crm-fig{overflow:visible;background:none;border:0;box-shadow:none}
+  #goals .crm-stack{position:relative;border-radius:var(--r-lg);overflow:visible}
+  #goals .crm-base{display:block;width:100%;height:auto;border-radius:var(--r-lg);border:1px solid var(--line-soft);opacity:.55;
+    -webkit-mask-image:linear-gradient(#000 84%,transparent);mask-image:linear-gradient(#000 84%,transparent)}
+  /* magnified Goals panel sits over the base's goals area, contained within the figure bounds */
+  #goals .crm-zoom{position:absolute;left:50%;bottom:4%;width:78%;height:auto;border-radius:10px;
+    border:1px solid var(--line);background:var(--card);
+    box-shadow:0 0 14px -4px rgba(27,77,255,.26),0 0 50px -16px rgba(27,77,255,.42);
+    transform:translateX(-50%) rotate(-.3deg)}
+  /* hover zoom belongs to the FRONT panel, not the base; keep the panel's own transform */
+  #goals .crm-fig:hover .crm-base{transform:none}
+  #goals .crm-fig:hover .crm-zoom{transform:translateX(-50%) rotate(-.3deg) scale(1.045)}
+  /* Decision 02 — Goals flow (matches the Figma board: a saved goal fans out across 4 clusters) */
+  .flow{margin:0;display:flex;flex-direction:column;gap:0;--flow-line:#7a5be0}
+  /* big cluster boxes get a subtle glass treatment (translucent fill + backdrop blur);
+     the inner white step boxes stay solid and untouched */
+  .flow .fc{border-radius:var(--r-lg);padding:18px 20px;backdrop-filter:blur(12px) saturate(1.3);-webkit-backdrop-filter:blur(12px) saturate(1.3);box-shadow:0 1px 3px rgba(20,30,60,.05),0 14px 34px -16px rgba(20,30,60,.18)}
+  .flow .fc-head{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:14px}
+  .flow .fc-step{display:block;background:#fff;border:1px solid rgba(20,30,60,.06);border-radius:10px;padding:10px 13px;font-size:13px;line-height:1.35;color:var(--ink);box-shadow:0 1px 2px rgba(20,30,60,.06),0 5px 16px -6px rgba(20,30,60,.18)}
+  .flow .fc-step.on{font-weight:600;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  /* row 1: the goals-section sequence, arrows between steps */
+  .flow .fc-seq{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+  .flow .fc-seq .fc-step{flex:1;min-width:200px;display:flex;align-items:center}
+  .flow .fc-seq .fc-step + .fc-step{margin-left:38px;position:relative}
+  .flow .fc-seq .fc-step + .fc-step::before{content:"→";position:absolute;left:-28px;top:50%;transform:translateY(-50%);color:var(--flow-line);font-size:16px}
+  /* connector: the saved goal fans out — a trunk drops from row 1, a distributor
+     bar spans the three clusters, and a drop + chevron feeds each card */
+  .flow .fc-fan{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:0;padding-top:52px;position:relative}
+  .flow .fc-fan::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:1.5px;height:26px;background:var(--flow-line)}
+  /* bar ends land on the outer card centres: col centre = 16.667% − gap/3 (= 6px) */
+  .flow .fc-fan::after{content:"";position:absolute;top:26px;left:calc(16.667% - 6px);right:calc(16.667% - 6px);height:1.5px;background:var(--flow-line)}
+  .flow .fc-fan > .fc{position:relative}
+  .flow .fc-fan > .fc::before{content:"";position:absolute;top:-26px;left:50%;transform:translateX(-50%);width:1.5px;height:26px;background:var(--flow-line)}
+  .flow .fc-fan > .fc::after{content:"";position:absolute;top:-7px;left:50%;transform:translate(-50%,0) rotate(45deg);width:6px;height:6px;border-right:1.5px solid var(--flow-line);border-bottom:1.5px solid var(--flow-line)}
+  .flow .fc-list{display:flex;flex-direction:column;gap:9px}
+  .flow .fc-purple{background:rgba(239,234,255,.55)}      .flow .fc-purple .fc-head{color:#6d44e0}
+  .flow .fc-teal{background:rgba(227,247,242,.55)}        .flow .fc-teal   .fc-head{color:#067260}
+  .flow .fc-pink{background:rgba(253,230,242,.55)}        .flow .fc-pink   .fc-head{color:#b81d72}
+  .flow .fc-amber{background:rgba(224,235,255,.55);border:1.5px dashed #9db4ec} .flow .fc-amber .fc-head{color:#2347b8}
+  .flow .fc-amber .fc-step{background:rgba(255,255,255,.7);border-style:dashed}
+  @media (max-width:860px){
+    #goals .grid2.dec{gap:36px}
+    #goals .grid2.dec.rev .dec-copy{order:0} #goals .grid2.dec.rev .figure{order:0}
+    .flow .fc-seq .fc-step{flex:1 1 100%}
+    .flow .fc-seq .fc-step + .fc-step{margin-left:0;margin-top:30px}
+    .flow .fc-seq .fc-step + .fc-step::before{content:"↓";left:50%;top:-22px;transform:translateX(-50%)}
+    .flow .fc-fan{grid-template-columns:1fr;padding-top:0;gap:30px}
+    .flow .fc-fan::before,.flow .fc-fan::after,
+    .flow .fc-fan > .fc::before,.flow .fc-fan > .fc::after{display:none}
+  }
+
+  /* ── Pivot ─────────────────────────────────────────── */
+  /* The before/after table is the payload, so give it more width than the
+     intro copy; both columns still share the top baseline (grid2.top).
+     min-width guard so the DS mobile stack (1fr at ≤860px) still wins. */
+  @media (min-width:861px){ #pivot .grid2.top{grid-template-columns:0.82fr 1.18fr} }
+  /* core-shift lead: the AI-first reframe. dim = the old question, hl = the new one
+     (mirrors the compare table's faded→bright language). */
+  #pivot .pivot-kicker{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dark-accent);margin-bottom:20px}
+  #pivot .pivot-lead{font-size:clamp(20px,2.3vw,26px);font-weight:500;line-height:1.4;letter-spacing:-.012em;color:var(--dark-ink-2)}
+  #pivot .pivot-lead .dim{color:var(--dark-ink-3)}
+  #pivot .pivot-lead .hl{color:var(--dark-ink);font-weight:600}
+  /* design-shift = full-width emphasized closer below the chart */
+  #pivot .pivot-close{margin-top:40px!important;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+    padding-top:26px;border-top:1px solid var(--dark-line);
+    font-size:clamp(19px,2.2vw,25px);font-weight:600;letter-spacing:-.015em;line-height:1.34;color:var(--dark-ink)}
+  #pivot .pivot-close .k{flex:0 0 auto;font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--dark-accent);transform:translateY(-2px)}
+  /* QBR chart title matches the mono kicker labels for a consistent label system */
+  #pivot .chart-title{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--dark-accent)}
+  @media (max-width:860px){ #pivot .pivot-close{margin-top:40px!important;font-size:19px} }
+  /* swap: QBR chart now sits in the grid (cancel the page-wide .figure top margin);
+     the compare table is now the full-width element below */
+  #pivot .grid2.top .chart-card{margin-top:0!important}
+  #pivot .pivot-table{margin-top:var(--gap-sub)}
+
+  /* ── First AI direction (Meeting Notes copilot) ─────── */
+  /* big full-width mockup spanning the content column */
+  #first .fig-wide{margin-top:56px!important}
+  /* "What worked / What fell short" — nuanced assessment, not a hard rejection */
+  #first .assess{margin-top:80px!important}
+  #first .assess-h{font-size:clamp(22px,2.6vw,30px);font-weight:700;letter-spacing:-.02em;line-height:1.22;color:var(--ink);max-width:24ch;margin-bottom:26px}
+  #first .assess-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  #first .assess-card{border-radius:var(--r-lg);padding:30px 32px}
+  #first .assess-card.worked{background:rgba(34,160,90,.10)}
+  #first .assess-card.shortfall{background:rgba(224,90,54,.09)}
+  #first .assess-k{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+  #first .assess-card.worked .assess-k{color:#15803d}
+  #first .assess-card.shortfall .assess-k{color:#c2410c}
+  #first .assess-list{list-style:none;display:grid;gap:12px}
+  #first .assess-list li{position:relative;padding-left:22px;font-size:16px;line-height:1.5;color:var(--ink-2)}
+  #first .assess-list li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%}
+  #first .assess-card.worked .assess-list li::before{background:#22a060}
+  #first .assess-card.shortfall .assess-list li::before{background:#e05a36}
+  /* pushback = quiet, reflective closing line (not a verdict pill) */
+  #first .decision{margin-top:56px!important;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+    padding-top:26px;border-top:1px solid var(--line);
+    font-size:clamp(19px,2.3vw,26px);font-weight:600;letter-spacing:-.015em;line-height:1.32;color:var(--ink)}
+  #first .decision .k{flex:0 0 auto;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;
+    text-transform:uppercase;color:#fff;background:#dc2626;
+    padding:2px 10px 3px;border-radius:4px;transform:translateY(-2px)}
+  @media (max-width:860px){
+    #first .assess-grid{grid-template-columns:1fr}
+    #first .assess{margin-top:56px!important}
+    #first .decision{margin-top:40px!important;font-size:19px}
+  }
+
+  /* ── Hero ──────────────────────────────────────────── */
+  /* Section height is bounded: never shorter than --hero-min-h, never taller than --hero-max-h. */
+  #hero{--hero-min-h:520px;--hero-max-h:880px;--hero-img-min-w:760px;
+    height:100svh;min-height:var(--hero-min-h);max-height:var(--hero-max-h);
+    display:flex;align-items:stretch;position:relative;overflow:hidden}
+  /* Image fills + zooms with the window (cover). It will not render narrower than --hero-img-min-w:
+     past that floor the section just crops it (the overflow is clipped by #hero overflow:hidden). */
+  #hero .bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;min-width:var(--hero-img-min-w);
+    object-fit:cover;object-position:center;opacity:1;filter:saturate(1.05)}
+  /* Blue gradient rising from the bottom (above video, below the dots + text). */
+  #hero::before{content:"";position:absolute;left:0;right:0;bottom:0;height:60%;z-index:1;pointer-events:none;
+    background:linear-gradient(to top,rgba(27,77,255,1) 0%,68%,rgba(27,77,255,0) 100%)}
+  /* Dotted halftone-screen overlay over the video (sits above video+scrim, below the text). Tunable via the vars. */
+  #hero{--dot-color:rgba(27,77,255,.5);--dot-gap:2.5px;--dot-radius:0.7px}
+  #hero::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background-image:radial-gradient(circle,var(--dot-color) var(--dot-radius),transparent calc(var(--dot-radius) + 0.5px));
+    background-size:var(--dot-gap) var(--dot-gap)}
+  #hero .glow{position:absolute;top:-12%;right:-6%;width:46vw;height:46vw;z-index:0;background:radial-gradient(circle at 42% 40%,rgba(27,77,255,.16),rgba(27,77,255,0) 68%);filter:blur(20px);border-radius:42% 58% 63% 37%/45% 38% 62% 55%;animation:meshWarp 18s ease-in-out infinite}
+  @keyframes meshWarp{0%,100%{border-radius:42% 58% 63% 37%/45% 38% 62% 55%;transform:translate(0,0) rotate(0) scale(1)}25%{border-radius:58% 42% 38% 62%/55% 60% 40% 45%;transform:translate(-1.4%,1.1%) rotate(2deg) scale(1.05)}50%{border-radius:48% 52% 55% 45%/62% 45% 55% 38%;transform:translate(1.2%,-1.3%) rotate(-1.5deg) scale(.97)}75%{border-radius:55% 45% 42% 58%/40% 58% 42% 60%;transform:translate(-.8%,-.6%) rotate(1deg) scale(1.03)}}
+  #hero .inner{position:relative;z-index:3;width:100%;display:flex;align-items:stretch}
+  /* Column layout: title group stays centered up top, meta row drops to the bottom (with the scroll cue). */
+  #hero .inner .wrap{display:flex;flex-direction:column;padding-top:124px;padding-bottom:76px}
+  #hero .eyebrow{margin-top:auto}
+  #hero .metaRow{margin-top:auto}
+  #hero h1{font-weight:800;font-size:clamp(56px,10vw,150px);line-height:.9;letter-spacing:-.045em;margin:20px 0 0}
+  #hero h1 .accent{color:var(--accent)}
+  #hero .tag{margin-top:26px;font-size:clamp(19px,2.2vw,28px);font-weight:500;line-height:1.3;letter-spacing:-.015em;color:var(--ink-2);max-width:20ch}
+  .metaRow{display:flex;flex-wrap:wrap;gap:14px 40px;margin-top:46px;border-top:1px solid var(--line);padding-top:30px}
+  .metaRow .item{min-width:120px}
+  .metaRow .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4)}
+  .metaRow .v{font-size:16px;font-weight:500;margin-top:7px;color:var(--ink)}
+
+  /* Hero entrance — blur-up + rise, staggered (sedai-style). Animates only opacity/filter/transform. */
+  @keyframes heroRise{from{opacity:0;filter:blur(7px);transform:translateY(14px)}to{opacity:1;filter:blur(0);transform:none}}
+  #hero .eyebrow,#hero h1,#hero .tag,#hero .metaRow{opacity:0;animation:heroRise .9s var(--ease) both}
+  #hero h1{animation-delay:.08s}
+  #hero .tag{animation-delay:.18s}
+  #hero .metaRow{animation-delay:.28s}
+  #hero .scrollcue{opacity:0;animation:heroRise .9s var(--ease) both;animation-delay:.5s}
+
+  .scrollcue{position:absolute;left:44px;bottom:30px;z-index:3;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-5);display:flex;align-items:center;gap:11px}
+
+  /* Hero text → white for contrast over the video + blue gradient. The "IQ" accent stays brand blue. */
+  #hero .eyebrow{color:#fff}
+  #hero h1{color:#fff}
+  #hero .tag{color:rgba(255,255,255,.9)}
+  #hero .metaRow{border-top-color:rgba(255,255,255,.24)}
+  #hero .metaRow .k{color:rgba(255,255,255,.62)}
+  #hero .metaRow .v{color:#fff}
+  #hero .scrollcue{color:rgba(255,255,255,.72)}
+
+  /* Overview section → solid brand blue so it blends with the hero's blue gradient bottom. */
+  #overview{background:var(--accent)}
+  #overview .eyebrow{color:#fff}
+  #overview .eyebrow::before{background:#fff}
+  #overview .h{color:#fff}
+  #overview .lead{color:rgba(255,255,255,.92)}
+  #overview .body{color:rgba(255,255,255,.82)}
+  #overview .body em{color:#fff}
+
+  /* My Role — blue FROSTED-GLASS cards that tilt toward the cursor with a pointer-tracking glare (JS). */
+  .role-cards{perspective:1000px}
+  .role-cards .card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.22);
+    background:linear-gradient(140deg,rgba(27,77,255,.96),rgba(27,77,255,.82));
+    -webkit-backdrop-filter:blur(14px) saturate(1.9);backdrop-filter:blur(14px) saturate(1.9);
+    /* blue glow behind the card */
+    box-shadow:0 30px 66px -26px rgba(27,77,255,.6),inset 0 1px 0 rgba(255,255,255,.28);
+    transform-style:preserve-3d;will-change:transform;
+    transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+  .role-cards .card.tilt{box-shadow:0 48px 96px -28px rgba(27,77,255,.72),inset 0 1px 0 rgba(255,255,255,.34)}
+  /* big soft glare that follows the cursor (sits above the glass, below the text) */
+  .role-cards .card::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+    background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.09),rgba(255,255,255,0) 72%);
+    opacity:0;transition:opacity .35s var(--ease)}
+  .role-cards .card.tilt::before{opacity:1}
+  .role-cards .card>*{position:relative;z-index:1}
+  .role-cards{gap:48px}
+  .role-cards .card{display:flex;flex-direction:column;min-height:320px;padding:34px 36px}
+  .rc-head{display:flex;align-items:flex-start;gap:14px}
+  .rc-icon{flex:none;width:26px;height:26px;color:#fff;margin-top:2px}
+  .rc-icon svg{width:100%;height:100%;display:block}
+  .rc-head .sub{margin:0;align-self:center;font-size:clamp(19px,2vw,23px);line-height:1.15}
+  .role-cards .card .sub{color:#fff}
+  .role-cards .card .body{color:rgba(255,255,255,.86);margin-top:auto;padding-top:44px}
+  /* Error-color variant — same frosted-glass tilt as .role-cards, recolored red.
+     Used on the #challenges consequence cards. (No red token in the DS.) */
+  .role-cards.danger .card{
+    background:linear-gradient(140deg,rgba(220,38,38,.96),rgba(220,38,38,.82));
+    box-shadow:0 30px 66px -26px rgba(220,38,38,.6),inset 0 1px 0 rgba(255,255,255,.28)}
+  .role-cards.danger .card.tilt{box-shadow:0 48px 96px -28px rgba(220,38,38,.72),inset 0 1px 0 rgba(255,255,255,.34)}
+  @media (prefers-reduced-motion:reduce){.role-cards .card{transition:none}}
+
+  /* Glossary terms (MSP / vCIO / QBR) — underline + info icon. Tooltip = shared DS .ds-tip element (JS). */
+  .gloss{white-space:nowrap;cursor:help;border-bottom:1.5px dotted currentColor;outline:none;padding-block:4px}
+  .gloss .gloss-i{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;margin-left:3px;
+    border:1px solid currentColor;border-radius:50%;font-family:var(--mono);font-size:8px;font-style:normal;line-height:1;
+    vertical-align:super;opacity:.65}
+  .scrollcue::before{content:"";width:1px;height:26px;background:linear-gradient(var(--accent),transparent)}
+
+  /* pinned scene */
+  .pin{position:relative}
+  .pin .sticky{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .pin .sticky .fig{width:min(86%,980px);border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line-soft);box-shadow:0 40px 90px -50px rgba(20,30,60,.5);background:var(--card-2)}
+
+  @media (max-width:860px){
+    .scrollcue{left:22px}
+    #hero h1{font-size:clamp(46px,12vw,96px)}
+    #hero .tag{font-size:clamp(18px,3.4vw,24px);max-width:26ch}
+    .metaRow{gap:14px 26px;margin-top:34px;padding-top:24px}
+  }
+  @media (max-width:480px){
+    #hero h1{font-size:clamp(40px,14vw,64px)}
+    #hero .tag{margin-top:20px;max-width:100%}
+    .metaRow{gap:14px 22px;margin-top:28px}
+    .metaRow .item{min-width:calc(50% - 11px)}
+    .scrollcue{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #hero .glow{animation:none}
+    #hero .eyebrow,#hero h1,#hero .tag,#hero .metaRow,#hero .scrollcue{opacity:1;filter:none;transform:none;animation:none}
+  }
+  /* ── #hypothesis: System-level gap ── */
+  .hyp-list{margin-top:14px;display:flex;flex-direction:column;gap:9px;font-size:16px;color:var(--ink-2);line-height:1.45;list-style:none;padding-left:0}
+  .hyp-list li{padding-left:18px;position:relative}
+  .hyp-list li::before{content:'—';position:absolute;left:0;color:var(--ink-3)}
+  .ld-wrap{display:flex;flex-direction:column;align-items:stretch;max-width:540px;margin:0 auto}
+  .ld-block{padding:15px 24px;border-radius:10px;font-weight:600;font-size:15px;text-align:center;letter-spacing:-.01em}
+  .ld-output{background:#111;color:#fff}
+  .ld-ctx{border:2px dashed rgba(0,0,0,.22);color:var(--ink-3);background:transparent}
+  .ld-ops{background:#489D7E;color:#fff;border-radius:32px;padding:19px 24px}
+  .ld-connector{height:30px;display:flex;align-items:center;justify-content:center}
+  .ld-connector::after{content:'';display:block;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:13px solid #489D7E}
+  #hypothesis .hyp-crm{margin:0;position:relative;background:transparent}
+  #hypothesis .hyp-crm-scroll{max-height:620px;overflow-y:auto;border-radius:14px 14px 0 0;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 85%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 85%,transparent 100%);scrollbar-width:thin;scrollbar-color:rgba(15,23,42,.25) transparent}
+  #hypothesis .hyp-crm-scroll::-webkit-scrollbar{width:8px}
+  #hypothesis .hyp-crm-scroll::-webkit-scrollbar-thumb{background:rgba(15,23,42,.22);border-radius:8px}
+  #hypothesis .hyp-crm-scroll::-webkit-scrollbar-track{background:transparent}
+  #hypothesis .hyp-crm img{display:block;width:100%;height:auto;background:#fff;border-radius:14px 14px 0 0}
+  #hypothesis .hyp-crm figcaption{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);margin-top:14px}
+  #hypothesis .hyp-explore-kicker{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  /* ── #mvp: big before/after merged from old #tradeoffs ── */
+  #mvp .mvp-ba{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:32px;align-items:start}
+  #mvp .mvp-arrow{position:absolute;left:50%;top:315px;transform:translate(-50%,-50%);width:96px;height:96px;z-index:5;pointer-events:none}
+  #mvp .mvp-arrow svg{width:100%;height:100%;display:block}
+  #mvp .mvp-arrow .glow{filter:blur(6px);opacity:.5}
+  #mvp .mvp-ba figcaption{text-align:left;padding-left:0;margin-inline:auto}
+  /* MVP product flow — single horizontal 5-step row, thin connectors */
+  #mvp .mvp-flow{margin-top:80px}
+  #mvp .flow-kicker{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  #mvp .flow-row{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:34px;align-items:start}
+  #mvp .flow-step{position:relative;margin:0}
+  #mvp .flow-thumb{position:relative;border-radius:12px;overflow:hidden;background:#fff;border:1px solid var(--line);box-shadow:0 10px 24px -16px rgba(15,23,42,.4)}
+  #mvp .flow-thumb img{display:block;width:100%;height:auto;background:#fff}
+  #mvp .flow-thumb.pending{display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(135deg,#eef0f4 0 10px,#e7e9ef 10px 20px);border-style:dashed}
+  #mvp .flow-thumb.pending span{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-4);text-align:center;padding:0 10px}
+  #mvp .flow-n{position:absolute;top:8px;left:8px;z-index:2;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--mono);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center}
+  #mvp .flow-cap{margin:12px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-2)}
+  /* thin connector + arrowhead, centered on the thumbnail row, sitting in the gap */
+  #mvp .flow-step:not(:first-child)::before{content:'';position:absolute;top:85px;left:-29px;width:18px;height:1.5px;background:var(--accent);transform:translateY(-50%)}
+  #mvp .flow-step:not(:first-child)::after{content:'';position:absolute;top:85px;left:-16px;width:6px;height:6px;border-top:1.5px solid var(--accent);border-right:1.5px solid var(--accent);transform:translateY(-50%) rotate(45deg)}
+  /* step 4 — output badges instead of a screenshot */
+  #mvp .flow-badges{display:flex;flex-direction:column;justify-content:center;gap:12px;padding:26px 22px}
+  #mvp .flow-badge{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;font-size:14px;font-weight:600;color:var(--accent);background:rgba(27,77,255,.10);border:1px solid rgba(27,77,255,.22);border-radius:999px;padding:8px 14px;line-height:1}
+  #mvp .flow-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  #mvp .outcome-eyebrow{margin-top:96px}
+  #mvp .outcome-title{margin-top:16px!important;max-width:24ch}
+  #mvp .outcome-lead{margin-top:20px!important;max-width:60ch;color:var(--ink-2)}
+  #mvp .outcome-stats .stat-l{margin-top:36px}
+  /* MVP-user quote card */
+  #mvp .quote-card{position:relative;margin:0;max-width:none;background:var(--card);border-radius:var(--r-lg);padding:64px 40px 36px;font-size:clamp(20px,1.9vw,26px);line-height:1.32;letter-spacing:-.01em;font-weight:600;color:var(--ink)}
+  #mvp .quote-card::before{content:'\201C';position:absolute;top:18px;left:34px;font-family:Georgia,'Times New Roman',serif;font-size:96px;line-height:1;color:var(--accent);opacity:1;pointer-events:none}
+  #mvp .quote-card cite{display:flex;align-items:center;gap:10px;margin-top:24px;font-style:normal;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.04em;color:var(--ink-4)}
+  #mvp .quote-card cite::before{content:'';width:22px;height:1.5px;background:var(--accent)}
+  /* frosted-glass cards (outcome stats + quote) */
+  #mvp .outcome-stats .card,
+  #mvp .quote-card{
+    background:rgba(255,255,255,.42);
+    -webkit-backdrop-filter:blur(22px) saturate(1.4);
+    backdrop-filter:blur(22px) saturate(1.4);
+    border:1px solid rgba(255,255,255,.6);
+    box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 20px 44px -26px rgba(15,23,42,.28);
+  }
+  @media (max-width:860px){
+    #mvp .flow-row{grid-template-columns:1fr 1fr;gap:20px 18px}
+    #mvp .flow-step::before,#mvp .flow-step::after{display:none}
+  }
+  /* MVP scoping conclusion — glance-friendly decision cards (dark section) */
+  #scoping .scope-concl{margin-top:72px;border-top:1px solid var(--dark-line);padding-top:40px}
+  #scoping .scope-head{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dark-accent)}
+  #scoping .scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px}
+  #scoping .scope-card{position:relative;background:linear-gradient(155deg,#8b5cf6 0%,#7c3aed 46%,#5b21b6 100%);border-radius:var(--r-lg);padding:30px 32px 32px;
+    box-shadow:0 1px 0 rgba(255,255,255,.28) inset,0 -10px 26px rgba(76,29,149,.35) inset,0 18px 30px -12px rgba(91,33,182,.55),0 40px 60px -28px rgba(124,58,237,.6);
+    transform:translateY(0);transition:transform .25s ease,box-shadow .25s ease}
+  #scoping .scope-card::after{content:'';position:absolute;inset:0;border-radius:inherit;border:1px solid rgba(255,255,255,.22);pointer-events:none;mask:linear-gradient(#000,transparent 60%)}
+  #scoping .scope-card:hover{transform:translateY(-4px);box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 -10px 26px rgba(76,29,149,.35) inset,0 26px 40px -12px rgba(91,33,182,.6),0 56px 80px -30px rgba(124,58,237,.7)}
+  #scoping .scope-card .scope-num{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#e9deff}
+  #scoping .scope-card .scope-num::before{content:'';width:7px;height:7px;border-radius:50%;background:#e9deff;box-shadow:0 0 0 4px rgba(233,222,255,.18)}
+  #scoping .scope-card h4{font-family:var(--sans);font-size:clamp(28px,3.2vw,40px);font-weight:700;line-height:1.1;letter-spacing:-.02em;color:#fff;margin:16px 0 0}
+  #scoping .scope-card p{font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.82);margin:12px 0 0}
+  @media (max-width:860px){ #scoping .scope-grid{grid-template-columns:1fr;gap:16px} }
+  /* ── #v2 (ClientIQ 2.0, dark/green) build-out ── */
+  #v2 .wrap > * + *{margin-top:96px!important}
+  #v2 .wrap > h2{margin-top:18px!important}
+  #v2 .v2-lead{margin-top:20px!important;max-width:62ch}
+  /* hero — full prototype screenshot, bottom-fade scrollable */
+  #v2 .v2-hero{margin:0}
+  #v2 .v2-hero-scroll{max-height:860px;overflow-y:auto;border-radius:18px;background:#fff;
+    -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%);
+    scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.35) transparent}
+  #v2 .v2-hero-scroll::-webkit-scrollbar{width:9px}
+  #v2 .v2-hero-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:9px}
+  #v2 .v2-hero-scroll::-webkit-scrollbar-track{background:transparent}
+  #v2 .v2-hero-scroll img{display:block;width:100%;height:auto}
+  #v2 .v2-hero figcaption{margin-top:16px;font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--dark-ink-3)}
+  /* MVP → 2.0 shift */
+  #v2 .v2-kicker{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--dark-accent);margin-bottom:22px}
+  #v2 .v2-shift{border-top:1px solid var(--dark-line)}
+  #v2 .shift-row{display:grid;grid-template-columns:1fr 28px 1.1fr;align-items:center;gap:18px;padding:17px 2px;border-bottom:1px solid var(--dark-line)}
+  #v2 .shift-row .mvp{color:var(--dark-ink-3);font-size:15.5px;line-height:1.4}
+  #v2 .shift-row .ar{color:var(--accent);font-family:var(--mono);font-size:15px;text-align:center}
+  #v2 .shift-row .now{color:var(--dark-ink);font-weight:600;font-size:15.5px;line-height:1.4}
+  /* feature grid */
+  #v2 .v2-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  #v2 .feat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:24px 24px 26px;transition:transform .25s ease,border-color .25s ease,background .25s ease}
+  #v2 .feat:hover{transform:translateY(-3px);background:rgba(255,255,255,.06);border-color:rgba(0,194,72,.4)}
+  #v2 .feat h4{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--dark-ink);margin:0}
+  #v2 .feat h4::before{content:'';flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.16)}
+  #v2 .feat p{margin:12px 0 0;font-size:14px;line-height:1.5;color:var(--dark-ink-3)}
+  /* contextual AI chat — headline addition callout */
+  #v2 .v2-chat{position:relative;isolation:isolate;border-radius:22px;padding:40px;display:grid;grid-template-columns:1fr 250px;gap:46px;align-items:center;
+    background:linear-gradient(150deg,rgba(0,194,72,.14),rgba(17,166,184,.08) 52%,rgba(28,112,207,.10));
+    border:1px solid rgba(0,194,72,.30);
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset,
+      0 2px 6px -2px rgba(0,0,0,.28),
+      -30px 26px 50px -24px rgba(0,194,72,.26),
+      30px 30px 54px -24px rgba(28,112,207,.26)}
+  /* animated gradient-mesh glow — two blurred blob layers drifting on offset cycles */
+  #v2 .v2-chat::before,#v2 .v2-chat::after{content:'';position:absolute;inset:-52px;z-index:-1;border-radius:34px;pointer-events:none;filter:blur(48px);background-repeat:no-repeat;will-change:transform}
+  #v2 .v2-chat::before{
+    background:
+      radial-gradient(38% 50% at 16% 32%, rgba(0,194,72,.18), transparent 72%),
+      radial-gradient(40% 52% at 84% 60%, rgba(28,112,207,.17), transparent 72%);
+    animation:v2mesh1 17s ease-in-out infinite alternate}
+  #v2 .v2-chat::after{
+    background:
+      radial-gradient(42% 50% at 62% 86%, rgba(17,166,184,.16), transparent 72%),
+      radial-gradient(34% 44% at 40% 10%, rgba(0,194,72,.12), transparent 72%);
+    animation:v2mesh2 23s ease-in-out infinite alternate}
+  /* de-sync the second card so the two meshes never march in lockstep */
+  #v2 .v2-chat.rev::before{animation-duration:21s;animation-delay:-6.5s}
+  #v2 .v2-chat.rev::after{animation-duration:19s;animation-delay:-11s;animation-direction:alternate-reverse}
+  @keyframes v2mesh1{
+    0%{transform:translate(0,0) scale(1)}
+    30%{transform:translate(6%,-4%) scale(1.09)}
+    62%{transform:translate(-5%,5%) scale(1.03)}
+    100%{transform:translate(4%,3%) scale(1.11)}}
+  @keyframes v2mesh2{
+    0%{transform:translate(0,0) scale(1.05) rotate(0deg)}
+    34%{transform:translate(-6%,4%) scale(1.13) rotate(4deg)}
+    70%{transform:translate(5%,-5%) scale(1) rotate(-3deg)}
+    100%{transform:translate(-3%,-4%) scale(1.08) rotate(2deg)}}
+  @media (prefers-reduced-motion:reduce){#v2 .v2-chat::before,#v2 .v2-chat::after{animation:none}}
+  #v2 .v2-chat .chat-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--dark-accent)}
+  #v2 .v2-chat .chat-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.2)}
+  #v2 .v2-chat h3{font-family:var(--sans);font-size:clamp(22px,2.2vw,28px);font-weight:600;letter-spacing:-.015em;color:var(--dark-ink);margin:16px 0 0;max-width:24ch}
+  #v2 .v2-chat p{margin:14px 0 0;font-size:15.5px;line-height:1.55;color:var(--dark-ink-2)}
+  #v2 .chat-vid{margin:0;line-height:0;border-radius:22px;overflow:hidden;background:#05140c;border:1px solid rgba(0,194,72,.35);box-shadow:0 30px 64px -30px rgba(0,0,0,.65);justify-self:center}
+  #v2 .chat-vid video{display:block;width:100%;height:auto}
+  #v2 .v2-chat.rev{grid-template-columns:1.25fr 1fr}
+  #v2 .v2-chat + .v2-chat{margin-top:30px}
+  #v2 .v2-chat.rev .chat-vid{justify-self:stretch;width:100%}
+  @media (max-width:860px){
+    #v2 .v2-chat{grid-template-columns:1fr;gap:30px}
+    #v2 .chat-vid{max-width:260px;justify-self:start}
+    #v2 .v2-chat.rev{grid-template-columns:1fr}
+    #v2 .v2-chat.rev .chat-copy{order:-1}
+  }
+  /* prototype CTA */
+  #v2 .v2-cta{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  #v2 .v2-cta .btn.go{background:var(--accent);color:#04150b;font-weight:600;box-shadow:0 12px 30px -12px rgba(0,194,72,.55)}
+  #v2 .v2-cta .btn.go:hover{transform:translateY(-2px);box-shadow:0 18px 38px -14px rgba(0,194,72,.65)}
+  #v2 .v2-cta .cta-note{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;color:var(--dark-ink-4)}
+  /* folded-in sub-sections (refined workflow + outcome) on the dark surface */
+  #v2 .v2-subh{font-family:var(--sans);font-size:clamp(24px,2.6vw,32px);font-weight:600;letter-spacing:-.02em;line-height:1.16;color:var(--dark-ink);margin:0;max-width:24ch}
+  #v2 blockquote{color:var(--dark-ink)}
+  #v2 blockquote cite{color:var(--dark-ink-4)}
+  #v2 .quote-card{position:relative;margin:0;max-width:none;font-size:clamp(20px,1.9vw,26px);line-height:1.32;letter-spacing:-.01em;font-weight:600;color:var(--dark-ink);
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:64px 40px 36px;
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 54px -34px rgba(0,0,0,.6)}
+  #v2 .quote-card::before{content:'\201C';position:absolute;top:18px;left:34px;font-family:Georgia,'Times New Roman',serif;font-size:96px;line-height:1;color:var(--accent);pointer-events:none}
+  #v2 .quote-card cite{display:flex;align-items:center;gap:10px;margin-top:24px;font-style:normal;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.04em;color:var(--dark-ink-4)}
+  #v2 .quote-card cite::before{content:'';width:22px;height:1.5px;background:var(--accent)}
+  /* video-background variant (MSP-user quote card) */
+  #v2 .quote-card.quote-vid{overflow:hidden}
+  #v2 .quote-card.quote-vid .qc-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  #v2 .quote-card.quote-vid::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(150deg,rgba(7,16,11,.88),rgba(7,16,11,.64) 55%,rgba(7,16,11,.82))}
+  #v2 .quote-card.quote-vid::before{z-index:2}
+  #v2 .quote-card.quote-vid .qc-content{position:relative;z-index:2}
+  #v2 .v2-fig{margin:0;background:transparent;border:0}
+  #v2 .v2-fig img{display:block;width:100%;height:auto;border-radius:14px}
+  #v2 .v2-fig figcaption{margin-top:14px;font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--dark-ink-3);padding:0}
+  #v2 .v2-cta .btn.ghost{border:1px solid rgba(255,255,255,.25);color:var(--dark-ink)}
+  #v2 .v2-cta .btn.ghost:hover{border-color:var(--dark-ink);transform:translateY(-2px)}
+  /* green 3D cards — same raised treatment as #scoping's scope-cards, recolored green */
+  #v2 .card{position:relative;background:linear-gradient(155deg,#18c96a 0%,#00c248 46%,#06773e 100%);border:0;border-radius:var(--r-lg);
+    box-shadow:0 1px 0 rgba(255,255,255,.30) inset,0 -10px 26px rgba(4,70,30,.4) inset,0 18px 30px -12px rgba(0,150,60,.22),0 40px 60px -28px rgba(0,194,72,.22);
+    transform:translateY(0);transition:transform .25s ease,box-shadow .25s ease}
+  #v2 .card::after{content:'';position:absolute;inset:0;border-radius:inherit;border:1px solid rgba(255,255,255,.24);pointer-events:none;mask:linear-gradient(#000,transparent 60%);-webkit-mask:linear-gradient(#000,transparent 60%)}
+  #v2 .card:hover{transform:translateY(-4px);box-shadow:0 1px 0 rgba(255,255,255,.34) inset,0 -10px 26px rgba(4,70,30,.4) inset,0 26px 40px -12px rgba(0,150,60,.28),0 56px 80px -30px rgba(0,194,72,.34)}
+  #v2 .card .sub{color:#fff}
+  #v2 .card .body{color:rgba(255,255,255,.86)}
+  @media (max-width:860px){
+    #v2 .v2-feats{grid-template-columns:1fr;gap:14px}
+    #v2 .shift-row{grid-template-columns:1fr;gap:6px;text-align:left}
+    #v2 .shift-row .ar{display:none}
+  }
+  @media (max-width:860px){
+    #mvp .mvp-arrow{display:none}
+  }
+  #mvp .mvp-ba .ba-card{margin:0;display:flex;flex-direction:column;gap:18px;position:relative}
+  #mvp .mvp-ba .ba-img{position:relative;background:#fff;border-radius:18px;overflow:hidden;height:630px;box-shadow:0 1px 0 rgba(15,23,42,.04),0 40px 80px -40px rgba(15,23,42,.4)}
+  #mvp .mvp-ba .ba-img img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+  #mvp .mvp-ba .ba-img.scroll{overflow-y:auto;-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 88%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 88%,transparent 100%);scrollbar-width:thin;scrollbar-color:rgba(15,23,42,.28) transparent}
+  #mvp .mvp-ba .ba-img.scroll::-webkit-scrollbar{width:8px}
+  #mvp .mvp-ba .ba-img.scroll::-webkit-scrollbar-thumb{background:rgba(15,23,42,.25);border-radius:8px}
+  #mvp .mvp-ba .ba-img.scroll::-webkit-scrollbar-track{background:transparent}
+  #mvp .mvp-ba .ba-img.scroll img{width:100%;height:auto;object-fit:initial;object-position:initial}
+  #mvp .mvp-ba .ba-img.fit img{width:100%;height:auto;object-fit:initial;object-position:initial}
+  #mvp .mvp-ba .ba-tag{position:absolute;top:18px;left:18px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(15,23,42,.82);color:#fff;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2}
+  #mvp .mvp-ba .ba-tag.after{background:var(--accent);color:#fff}
+  #mvp .mvp-ba figcaption{font-family:var(--sans);font-size:15px;line-height:1.45;color:var(--ink-2);max-width:46ch}
+  #mvp .mvp-ba figcaption b{color:var(--ink);font-weight:600}
+  #mvp .mvp-lead{margin-top:22px!important;color:var(--ink-2);max-width:62ch}
+  @media (max-width:860px){
+    #mvp .mvp-ba{grid-template-columns:1fr;gap:36px}
+  }
+
+  /* ── Design-process chart (responsive rebuild of the FigJam board) ───────── */
+  .proc-chart{--p-out:#f6f2ff;--p-card:#ece5fd;--p-bd:#dccdfb;--p-dash:#c3aef4;--p-title:#7c4dff;--p-body:#6a4ec4;--p-pill:#cdbef7;--p-pink:#4a3a8f;
+    --t-bg:#eafaf6;--t-bd:#a9ddd0;--t-title:#17806f;--t-body:#3f7468;--t-pill:#c5faf6;--t-pink:#0c6b5e;
+    --a-bg:#fdf6e6;--a-bd:#e7c982;--a-title:#c4710a;--a-body:#9a6410;--a-pill:#ffecbd;--a-pink:#9a6410;
+    --pc-line:#b4b8c4;
+    margin:0;background:transparent;border:none;border-radius:var(--r-lg);box-shadow:none;overflow:hidden;position:relative;padding:clamp(16px,2.6vw,34px);padding-left:clamp(34px,3.6vw,52px)}
+  .proc-chart .ps{position:relative;border-radius:18px;padding:clamp(20px,2.4vw,30px) clamp(16px,2.4vw,28px) clamp(22px,2.6vw,30px)}
+  .proc-chart .ps-tag,.proc-chart .pcard-tag{position:absolute;top:12px;left:12px;font-size:12px;font-weight:600;line-height:1;padding:5px 10px;border-radius:7px;letter-spacing:.01em}
+  .proc-chart h4{margin:0;text-align:center;font-weight:700;letter-spacing:-.01em;font-size:clamp(19px,2.1vw,26px);line-height:1.15}
+  .proc-chart .pc-lead{margin:12px auto 0;text-align:center;max-width:62ch;font-weight:500;font-size:clamp(13px,1.15vw,15px);line-height:1.45}
+  /* AI-helped row */
+  .proc-chart .pc-ai{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:16px 0 0;font-size:clamp(12px,1vw,13.5px);font-weight:500;line-height:1.4}
+  .proc-chart .pc-ai.center{justify-content:center;text-align:center}
+  .proc-chart .pc-ai img{width:20px;height:20px;object-fit:contain;flex:0 0 auto}
+  .proc-chart .pc-ai .ai-ic{display:inline-flex;gap:7px;align-items:center}
+
+  /* FRAME stage (purple) */
+  .proc-chart .ps-frame{background:var(--p-out);border:1.5px dashed var(--p-dash)}
+  .proc-chart .ps-frame .ps-tag{background:var(--p-pill);color:var(--p-pink)}
+  .proc-chart .ps-row{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,1.6vw,20px);margin-top:30px}
+  /* Learn → Define arrow (sits in the gap between the two cards) */
+  .proc-chart .ps-row::after{content:"→";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--p-title);font-size:24px;line-height:1;font-weight:500;z-index:2}
+  .proc-chart .pcard{position:relative;display:flex;flex-direction:column;justify-content:center;background:var(--p-card);border:1px solid var(--p-bd);border-radius:14px;padding:30px clamp(16px,1.8vw,22px) 22px}
+  .proc-chart .pcard-tag{background:var(--p-pill);color:var(--p-pink)}
+  .proc-chart .pcard h4{color:var(--p-title);font-size:clamp(17px,1.8vw,21px)}
+  .proc-chart .pcard .pc-lead{color:var(--p-body)}
+  .proc-chart .pcard .pc-ai{color:var(--p-body);justify-content:center;text-align:center}
+  .proc-chart .pcard-wide{position:relative;margin-top:clamp(22px,2.2vw,30px)}
+  /* Define → Plan down arrow (in the gap above the Plan card) */
+  .proc-chart .pcard-wide::before{content:"";position:absolute;left:50%;top:calc(-1*clamp(22px,2.2vw,30px));height:clamp(22px,2.2vw,30px);width:1.5px;transform:translateX(-50%);background:var(--p-dash)}
+  .proc-chart .pcard-wide::after{content:"";position:absolute;left:50%;top:-7px;width:7px;height:7px;border-right:1.5px solid var(--p-dash);border-bottom:1.5px solid var(--p-dash);transform:translate(-50%,0) rotate(45deg)}
+
+  /* EXPLORE (teal) + DEVELOP (amber) */
+  .proc-chart .ps-explore,.proc-chart .ps-develop{padding-top:clamp(42px,4vw,48px)}
+  .proc-chart .ps-explore{background:var(--t-bg);border:1px solid var(--t-bd)}
+  .proc-chart .ps-explore .ps-tag{background:var(--t-pill);color:var(--t-pink)}
+  .proc-chart .ps-explore h4{color:var(--t-title)}
+  .proc-chart .ps-explore .pc-lead{color:var(--t-body)}  .proc-chart .ps-explore .pc-ai{color:var(--t-body)}
+  .proc-chart .ps-develop{background:var(--a-bg);border:1px solid var(--a-bd)}
+  .proc-chart .ps-develop .ps-tag{background:var(--a-pill);color:var(--a-pink)}
+  .proc-chart .ps-develop h4{color:var(--a-title)}
+  .proc-chart .ps-develop .pc-lead{color:var(--a-body)}  .proc-chart .ps-develop .pc-ai{color:var(--a-body)}
+
+  /* sub-flow: Create → Review → … */
+  .proc-chart .pflow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 4px;margin:22px 0 4px;font-size:clamp(13px,1.15vw,15px);font-weight:600}
+  .proc-chart .pflow span{position:relative;padding:0 4px}
+  .proc-chart .pflow span + span{margin-left:30px}
+  .proc-chart .pflow span + span::before{content:"→";position:absolute;left:-24px;top:50%;transform:translateY(-50%);font-weight:500;color:var(--fl)}
+  .proc-chart .ps-explore .pflow{--fl:var(--t-title);color:#243b39}
+  .proc-chart .ps-develop .pflow{--fl:var(--a-title);color:#4a3a26}
+  .proc-chart .pflow-wrap{position:relative;margin-top:22px}
+  /* the cycle bracket arcs over the four steps and loops Iterate → Create */
+  .proc-chart .pflow-bracket{position:relative;width:min(80%,360px);height:15px;margin:0 auto;border:1.5px solid var(--t-title);border-bottom:none;border-radius:10px 10px 0 0}
+  .proc-chart .pflow-bracket .pflow-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--t-bg);padding:0 9px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--t-body);white-space:nowrap}
+  /* loop-back arrowhead on the left leg, pointing down into Create */
+  .proc-chart .pflow-bracket::after{content:"";position:absolute;left:-4px;bottom:-6px;width:7px;height:7px;border-right:1.5px solid var(--t-title);border-bottom:1.5px solid var(--t-title);transform:rotate(45deg)}
+  .proc-chart .pflow.cyc{margin-top:9px}
+
+  /* connectors between stages */
+  .proc-chart .ps-conn{height:34px;position:relative}
+  .proc-chart .ps-conn::before{content:"";position:absolute;left:50%;top:4px;bottom:9px;width:1.5px;transform:translateX(-50%);background:var(--pc-line)}
+  .proc-chart .ps-conn::after{content:"";position:absolute;left:50%;bottom:6px;width:8px;height:8px;border-right:1.5px solid var(--pc-line);border-bottom:1.5px solid var(--pc-line);transform:translate(-50%,0) rotate(45deg)}
+  .proc-chart .proc-outcome{display:block;width:max-content;max-width:100%;margin:0 auto;text-align:center;font-size:clamp(18px,1.9vw,23px);font-weight:700;letter-spacing:-.01em;color:#1a1d26;padding:14px 30px;background:#f5f6fa;border:1px solid var(--pc-line);border-radius:14px}
+  /* feedback loop: Product outcome routes back up to Research (left gutter) */
+  .proc-chart .proc-feedback{position:absolute;left:11px;top:92px;bottom:58px;width:17px;border:1.5px solid var(--pc-line);border-right:none;border-radius:9px 0 0 9px;pointer-events:none}
+  .proc-chart .proc-feedback::after{content:"";position:absolute;right:-4px;top:-1px;width:7px;height:7px;border-top:1.5px solid var(--pc-line);border-right:1.5px solid var(--pc-line);transform:rotate(45deg)}
+  .proc-chart .proc-feedback .pf-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(180deg);writing-mode:vertical-rl;font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:#8a8f9c;white-space:nowrap;background:var(--bg);padding:6px 0}
+
+  @media (max-width:720px){
+    .proc-chart{padding-left:clamp(16px,4vw,20px)}
+    .proc-chart .proc-feedback{display:none}
+    .proc-chart .ps-row{grid-template-columns:1fr}
+    .proc-chart .ps-row::after{display:none}
+    .proc-chart .pflow span + span{margin-left:24px}
+    .proc-chart .pflow span + span::before{left:-20px}
+  }
+
+  /* ── #14 Design-process: narrative blocks (intro · change summary · phase detail · what-worked-well) ── */
+  #process{--accent:#7c4dff}
+  #process .hl{font-weight:600}
+  #process h2 .hl{font-weight:inherit}  /* heading highlight keeps the heading weight, color only */
+  /* "How AI changed" at-a-glance bullets */
+  #process .proc-changes{list-style:none;padding-left:0;margin-top:40px!important;display:flex;flex-direction:column;gap:13px;max-width:58ch}
+  #process .proc-changes li{position:relative;padding-left:24px;font-size:17px;line-height:1.5;color:var(--ink-2)}
+  #process .proc-changes li::before{content:"";position:absolute;left:3px;top:.75em;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  /* phase-by-phase detail */
+  #process .proc-phases{max-width:74ch;display:flex;flex-direction:column;gap:32px}
+  #process .pphase h3{font-family:var(--sans);font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin:0}
+  #process .pphase p{margin:8px 0 0;font-size:16.5px;line-height:1.6;color:var(--ink-2)}
+  /* what worked well */
+  #process .proc-worked{max-width:80ch;margin-left:auto;margin-right:auto}
+  #process .pw-title{font-family:var(--sans);text-align:center;font-size:clamp(25px,3vw,33px);font-weight:600;letter-spacing:-.02em;color:var(--ink);margin:0}
+  #process .pw-list{list-style:none;padding-left:0;margin:34px 0 0;display:flex;flex-direction:column;gap:21px}
+  #process .pw-list li{position:relative;padding-left:30px;font-size:18px;line-height:1.6;color:var(--ink-2)}
+  #process .pw-list li::before{content:"";position:absolute;left:6px;top:.8em;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:var(--accent)}
+</style>
+</head>
+<body data-cursor-glow>
+<div id="progress"></div>
+
+<nav class="ds-nav" data-nav>
+  <a class="brand" href="index.html">Jude Shi<span>.</span></a>
+  <span class="ds-nav__proj" aria-hidden="true">ClientIQ</span>
+  <div class="links">
+    <a href="work.html">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#visual">Visual</a>
+    <a class="pill" href="index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- dot index -->
+<div id="sideToc"></div>
+
+<!-- ══ HERO ══ -->
+<header id="hero" data-hero>
+  <video class="bg" autoplay muted loop playsinline preload="auto" poster="uploads/clientiq/hero-bg.jpg">
+    <source src="uploads/clientiq/hero.mp4?v=202606202200" type="video/mp4">
+  </video>
+  <div class="glow"></div>
+  <div class="inner">
+    <div class="wrap">
+      <div class="eyebrow">Work — UX — Case Study</div>
+      <h1>Client<span class="accent">IQ</span>.</h1>
+      <p class="tag">How I designed AI-powered strategy workflows for an MSP SaaS platform.</p>
+      <div class="metaRow">
+        <div class="item"><div class="k">Role</div><div class="v">Senior UX Designer</div></div>
+        <div class="item"><div class="k">Company</div><div class="v">ScalePad · Lifecycle Manager</div></div>
+        <div class="item"><div class="k">Timeline</div><div class="v">2024 – 2026</div></div>
+        <div class="item"><div class="k">Focus</div><div class="v">AI experience, product strategy, systems design</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ OVERVIEW ══ -->
+<section class="sec" id="overview" data-toc="Overview">
+  <div class="wrap">
+    <div class="grid2 top">
+      <div>
+        <div class="eyebrow reveal"><span>(01) — Overview</span></div>
+        <h2 class="h reveal d1">Turning Client Data Into AI-Guided Strategy</h2>
+      </div>
+      <div>
+        <p class="lead reveal">ClientIQ explores how I designed an AI-powered strategy layer for MSPs, helping account teams move from reactive reporting to more confident client planning. The case study shows how I shaped the product direction, balanced speed with trust and explainability, and made key tradeoffs around AI output quality, user control, and workflow integration. It highlights my process for turning fragmented client data into clear, actionable recommendations, and the outcome: a more scalable way for MSPs to prepare for strategic conversations, uncover risks, and identify growth opportunities.</p>
+        <p class="body reveal d1" style="margin-top:20px">The core question shifted from <em>“where should AI appear?”</em> to <em>“what product model reduces work and scales across workflows?”</em> ClientIQ delivered source-grounded recommendations integrated into real planning workflows — helping teams prepare faster QBRs and act as more strategic advisors.</p>
+        <nav class="jump-links reveal d2" aria-label="Jump to a section of the case study">
+          <span class="jump-lead">Jump to</span>
+          <div class="jump-pills">
+            <a href="#first">First attempt</a>
+            <a href="#goals">MVP</a>
+            <a href="#v2">ClientIQ 2.0</a>
+            <a href="#process">My Design Process with AI</a>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <figure class="figure reveal promo-video" style="margin-top:56px;background:transparent;border:0;box-shadow:none;overflow:visible;border-radius:0">
+      <video src="uploads/clientiq/clientiq-promo.mp4?v=202606230155" autoplay muted loop playsinline preload="auto"
+        style="width:100%;height:auto;display:block;border-radius:var(--r-md)"></video>
+    </figure>
+    <style>.promo-video:hover{transform:none;box-shadow:none}.promo-video:hover video{transform:none}</style>
+    <style>
+      .jump-links{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-top:26px}
+      .jump-links .jump-lead{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+      .jump-links .jump-pills{display:flex;flex-wrap:wrap;gap:12px}
+      /* frosted "loading pill" style to echo the promo video */
+      .jump-links a{font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:rgba(255,255,255,.95);text-decoration:none;padding:10px 20px;border:1px solid rgba(255,255,255,.28);border-radius:var(--pill);background:rgba(255,255,255,.13);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 4px 16px -8px rgba(10,30,90,.4);transition:color .2s,border-color .2s,background .2s,transform .2s}
+      .jump-links a:hover,.jump-links a:focus-visible{background:rgba(255,255,255,.24);border-color:rgba(255,255,255,.55);color:#fff;transform:translateY(-1px)}
+      #first,#goals,#v2,#process{scroll-margin-top:90px}
+    </style>
+  </div>
+</section>
+
+<!-- ══ MY ROLE ══ -->
+<section class="sec-tight" id="role" data-toc="My role">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(02) — My role</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">Leading <span class="hl">end-to-end UX</span> for an AI planning layer.</h2>
+    <div class="grid-cards c2 role-cards" style="margin-top:40px">
+      <div class="card reveal">
+        <div class="rc-head">
+          <span class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/><circle cx="12" cy="12" r="2.1"/></svg></span>
+          <h3 class="sub">Product Strategy</h3>
+        </div>
+        <p class="body">Helped shape ClientIQ from a QBR support concept into an AI strategy layer for MSP client planning.</p>
+      </div>
+      <div class="card reveal d1">
+        <div class="rc-head">
+          <span class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="13" height="13" rx="3"/><rect x="8" y="8" width="13" height="13" rx="3" opacity=".55"/></svg></span>
+          <h3 class="sub">End-to-End UX Design</h3>
+        </div>
+        <p class="body">Led the experience from problem framing and workflow mapping to prototypes, interaction patterns, and delivery alignment.</p>
+      </div>
+      <div class="card reveal d2">
+        <div class="rc-head">
+          <span class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5c.5 5 1.9 6.4 7 6.9-5.1.5-6.5 1.9-7 6.9-.5-5-1.9-6.4-7-6.9 5.1-.5 6.5-1.9 7-6.9Z"/><path d="M18.4 14c.24 2.4.94 3.1 3.45 3.35-2.5.25-3.2.95-3.45 3.35-.25-2.4-.95-3.1-3.45-3.35 2.5-.25 3.2-.95 3.45-3.35Z" opacity=".7"/></svg></span>
+          <h3 class="sub">AI Trust &amp; Interaction Design</h3>
+        </div>
+        <p class="body">Defined how AI recommendations should be surfaced, explained, edited, and acted on with source visibility and user control.</p>
+      </div>
+      <div class="card reveal d3">
+        <div class="rc-head">
+          <span class="rc-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 3.4a2.6 2.6 0 0 0-1 5v7.2a2.6 2.6 0 1 0 2 0v-1.8h4.5A4.5 4.5 0 0 0 16 9.5v-.6a2.6 2.6 0 1 0-2 0v.6a2.5 2.5 0 0 1-2.5 2.5H7v-3.6a2.6 2.6 0 0 0-1-5Z"/></svg></span>
+          <h3 class="sub">Workflow &amp; Delivery Alignment</h3>
+        </div>
+        <p class="body">Designed how insights connect into meetings, roadmaps, initiatives, and goals while partnering with PM, engineering, and leadership on scope, feasibility, and dependencies.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHY THIS MATTERED ══ -->
+<section class="sec dark" id="why" data-toc="Why this mattered">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(03) — Why this mattered</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Retention, trust and client experience became the revenue drivers.</h2>
+    <div class="grid-cards c3" style="margin-top:var(--gap-sub)">
+      <div class="reveal">
+        <div class="chip">Market context</div>
+        <div class="stat accent" style="margin-top:20px">49%</div>
+        <div class="stat-l">of MSPs cite growing existing accounts as their primary growth lever (2026)</div>
+        <p class="body" style="margin-top:18px;color:var(--dark-ink-2)">Word-of-mouth remained the top acquisition channel, and referral-driven MSPs showed lower churn.</p>
+      </div>
+      <div class="reveal d1">
+        <div class="chip">Operational pain</div>
+        <div class="stat accent" style="margin-top:20px">3–5<span style="font-size:.42em;font-weight:500"> hrs</span></div>
+        <div class="stat-l">spent per QBR preparation</div>
+        <p class="body" style="margin-top:18px;color:var(--dark-ink-2)">Top challenges: creating reports and visuals, ensuring data accuracy, and consolidating scattered data, all hard to do proactively at scale.</p>
+      </div>
+      <div class="reveal d2">
+        <div class="chip">Market readiness</div>
+        <div class="stat accent" style="margin-top:20px">62%</div>
+        <div class="stat-l">say AI assists with only 25% or less of client-service delivery</div>
+        <p class="body" style="margin-top:18px;color:var(--dark-ink-2)">43% believe AI has or will replace roles. MSPs are hungry for AI, but workflow integration is still immature.</p>
+      </div>
+    </div>
+    <p class="reveal" style="max-width:32ch;font-size:clamp(22px,2.7vw,31px);line-height:1.34;letter-spacing:-.01em;font-weight:500;color:var(--dark-ink)">Growth now comes from keeping and deepening accounts, and the trust that earns renewals is built in the moments teams are most stretched.</p>
+    <div class="grid-cards c2 charts" style="margin-top:var(--gap-sub)">
+      <figure class="figure reveal chart-card">
+        <div class="chart" data-chart>
+          <h3 class="chart-title">Top Tech Stack Challenge</h3>
+          <div class="bubbles" role="img" aria-label="Top tech-stack challenges reported by MSPs: keeping up with new tools 43%, high solution prices 42%, keeping up with changing regulations 42%, too many applications to manage 34%, solutions not well integrated 33%, not enough skilled labor 29%, internal security and compliance 29%.">
+            <span class="bubble dot" style="--x:57%;--y:12%;--d:13cqw;--delay:.5s"></span>
+            <span class="bubble dot" style="--x:30%;--y:58%;--d:9cqw;--delay:.54s"></span>
+            <span class="bubble dot" style="--x:83%;--y:84%;--d:11cqw;--delay:.57s"></span>
+            <span class="bubble dot" style="--x:91%;--y:30%;--d:8cqw;--delay:.6s"></span>
+            <span class="bubble b-pp" style="--x:21%;--y:29%;--d:34cqw;--delay:.05s"><b>43%</b><i>Keeping up with new tools</i></span>
+            <span class="bubble b-pp" style="--x:45%;--y:52%;--d:33cqw;--delay:.12s"><b>42%</b><i>High solution prices eat into profits</i></span>
+            <span class="bubble b-pp" style="--x:69%;--y:28%;--d:33cqw;--delay:.19s"><b>42%</b><i>Keeping up with changing regulations / compliance</i></span>
+            <span class="bubble b-vl" style="--x:21%;--y:76%;--d:28cqw;--delay:.26s"><b>34%</b><i>Too many different applications to manage</i></span>
+            <span class="bubble b-vl" style="--x:46%;--y:81%;--d:27cqw;--delay:.33s"><b>33%</b><i>Solutions are not well integrated</i></span>
+            <span class="bubble b-mg" style="--x:68%;--y:80%;--d:24cqw;--delay:.4s"><b>29%</b><i>Not enough skilled labor</i></span>
+            <span class="bubble b-mg" style="--x:86%;--y:55%;--d:24cqw;--delay:.47s"><b>29%</b><i>Internal security and compliance</i></span>
+          </div>
+        </div>
+        <figcaption style="padding:14px 0 0;color:var(--dark-ink-3)">Top tech-stack challenges reported by MSPs.</figcaption>
+      </figure>
+      <figure class="figure reveal d1 chart-card">
+        <div class="chart" data-chart>
+          <h3 class="chart-title">CSAT Score Improvement Challenges</h3>
+          <div class="bar-chart" style="--grid-step:12.5%" role="img" aria-label="CSAT score-improvement challenges, percent of MSPs: clients feel prices are too high 37%, increasingly complex technical requests 37%, inconsistent client communication 31%, slow response times 29%, lack of knowledge of tech stack 25%, unable to show value of work 23%, security incidents 22%, don't know 7%.">
+            <div class="bar-axis" aria-hidden="true"><span>0%</span><span>5%</span><span>10%</span><span>15%</span><span>20%</span><span>25%</span><span>30%</span><span>35%</span><span>40%</span></div>
+            <div class="bars">
+              <div class="bar-row"><span class="bar-label">Clients feel prices are too high</span><span class="bar-track" style="--w:92.5%;--delay:.04s"><span class="bar"></span><em>37%</em></span></div>
+              <div class="bar-row"><span class="bar-label">Increasingly complex technical requests</span><span class="bar-track" style="--w:92.5%;--delay:.1s"><span class="bar"></span><em>37%</em></span></div>
+              <div class="bar-row"><span class="bar-label">Inconsistent client communication</span><span class="bar-track" style="--w:77.5%;--delay:.16s"><span class="bar"></span><em>31%</em></span></div>
+              <div class="bar-row"><span class="bar-label">Slow response times</span><span class="bar-track" style="--w:72.5%;--delay:.22s"><span class="bar"></span><em>29%</em></span></div>
+              <div class="bar-row"><span class="bar-label">Lack of knowledge of tech stack</span><span class="bar-track" style="--w:62.5%;--delay:.28s"><span class="bar"></span><em>25%</em></span></div>
+              <div class="bar-row"><span class="bar-label">Unable to show value of work</span><span class="bar-track" style="--w:57.5%;--delay:.34s"><span class="bar"></span><em>23%</em></span></div>
+              <div class="bar-row"><span class="bar-label">Security incidents</span><span class="bar-track" style="--w:55%;--delay:.4s"><span class="bar"></span><em>22%</em></span></div>
+              <div class="bar-row"><span class="bar-label">I don’t know / Not sure</span><span class="bar-track" style="--w:17.5%;--delay:.46s"><span class="bar"></span><em>7%</em></span></div>
+            </div>
+          </div>
+        </div>
+        <figcaption style="padding:14px 0 0;color:var(--dark-ink-3)">The market signal: MSPs struggle with communication, complexity and proving value — not just technical delivery.</figcaption>
+      </figure>
+    </div>
+    <p class="mono-note reveal" style="margin-top:var(--gap-sub);color:var(--dark-ink-3)">Source: anonymous 2025 survey of 1,100+ MSPs across North America.</p>
+  </div>
+</section>
+
+<!-- ══ MSP CHALLENGES ══ -->
+<section class="sec" id="challenges" data-toc="MSP challenges">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(04) — MSP challenges</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Why the planning workflow kept breaking down.</h2>
+    <p class="lead reveal d1" style="margin-top:22px">QBR prep meant pulling signals from disconnected tools, manually interpreting technical activity, then translating it into recommendations — slow, inconsistent, and overly dependent on individual effort.</p>
+    <!-- MSP Journey Map — inlined as page DOM (was an iframe) so the cursor glow can pass
+         behind it and the map inherits the page font. Styles in msp-journey.css; drag-pan +
+         right-edge-fade script lives in this page's script block. -->
+    <div class="msp-journey" data-no-gloss style="margin-top:48px">
+      <main class="page">
+        <!-- Header -->
+        <header class="header">
+          <div>
+            <div class="eyebrow">ClientIQ Case Study — MSP Journey Map</div>
+            <h1>How MSPs used Lifecycle Manager</h1>
+            <p class="subtitle">MSPs managed daily service work across tickets, assets, risks, reports, and QBRs. Lifecycle Manager helped centralize visibility and prepare client-facing planning materials, but strategic interpretation still depended on manual work.</p>
+          </div>
+          <aside class="meta">
+            <div class="meta-title">Legend</div>
+            <div class="legend">
+              <span class="pill gray"><span class="dot"></span>Daily MSP workflow</span>
+              <span class="pill green"><span class="dot"></span>Lifecycle Manager involved</span>
+              <span class="pill green-strong"><span class="dot"></span>Strong LM involvement</span>
+              <span class="pill amber"><span class="dot"></span>Manual synthesis / follow-up</span>
+            </div>
+          </aside>
+        </header>
+
+        <!-- Journey grid (with summary flow on top, both scroll together) -->
+        <section class="journey-scroll" aria-label="Journey map">
+        <!-- Top summary flow — aligned to stage columns of the grid below -->
+        <div class="flow-row">
+          <div class="flow-gutter">
+            <span class="lab-eyebrow">Journey</span>
+            <span class="lab-title"><i class="ph ph-path" aria-hidden="true"></i> Phases</span>
+            <span class="lab-sub">The high-level arc — daily work to QBR.</span>
+          </div>
+          <div class="flow" aria-label="Top summary flow">
+            <div class="flow-step span-2">
+              <span class="step-num">01</span>
+              <span class="step-name"><i class="ph ph-headset" aria-hidden="true"></i> Daily service work</span>
+              <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+            </div>
+            <div class="flow-step span-2 h-green">
+              <span class="step-num">02</span>
+              <span class="step-name"><i class="ph ph-shield-warning" aria-hidden="true"></i> Risk &amp; asset visibility</span>
+              <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+            </div>
+            <div class="flow-step h-green-strong">
+              <span class="step-num">03</span>
+              <span class="step-name"><i class="ph ph-chart-bar" aria-hidden="true"></i> Reporting prep</span>
+              <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+            </div>
+            <div class="flow-step h-green">
+              <span class="step-num">04</span>
+              <span class="step-name"><i class="ph ph-chats-circle" aria-hidden="true"></i> QBR conversation</span>
+              <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+            </div>
+            <div class="flow-step h-amber">
+              <span class="step-num">05</span>
+              <span class="step-name"><i class="ph ph-list-checks" aria-hidden="true"></i> Post-QBR execution</span>
+            </div>
+          </div>
+        </div>
+        <div class="journey">
+          <!-- Row 1: stage headers -->
+          <div class="corner">
+            <span class="lab-eyebrow">Workflow</span>
+            <span class="lab-title"><i class="ph ph-list-numbers" aria-hidden="true"></i> Stages</span>
+            <span class="lab-sub">The detailed steps within each phase.</span>
+          </div>
+
+          <div class="stage-head">
+            <span class="num">Stage 01</span>
+            <span class="name">Daily monitoring</span>
+            <span class="pill gray tag"><span class="dot"></span>Daily MSP workflow</span>
+          </div>
+          <div class="stage-head">
+            <span class="num">Stage 02</span>
+            <span class="name">Ticket triage</span>
+            <span class="pill gray tag"><span class="dot"></span>Daily MSP workflow</span>
+          </div>
+          <div class="stage-head h-green">
+            <span class="num">Stage 03</span>
+            <span class="name">Asset &amp; lifecycle management</span>
+            <span class="pill green-strong tag"><svg class="dot-lm" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg>Strong LM involvement</span>
+          </div>
+          <div class="stage-head h-green">
+            <span class="num">Stage 04</span>
+            <span class="name">Risk &amp; budget planning</span>
+            <span class="pill green-strong tag"><svg class="dot-lm" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg>Strong LM involvement</span>
+          </div>
+          <div class="stage-head h-green-strong">
+            <span class="num">Stage 05</span>
+            <span class="name">Reporting &amp; QBR prep</span>
+            <span class="pill green-strong tag"><svg class="dot-lm" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg>Strong LM + heavy synthesis</span>
+          </div>
+          <div class="stage-head h-green">
+            <span class="num">Stage 06</span>
+            <span class="name">QBR meeting</span>
+            <span class="pill green tag"><span class="dot"></span>Strategic client touchpoint</span>
+          </div>
+          <div class="stage-head h-amber">
+            <span class="num">Stage 07</span>
+            <span class="name">Post-QBR execution</span>
+            <span class="pill amber tag"><span class="dot"></span>Follow-up becomes fragmented</span>
+          </div>
+
+          <!-- Row 2: MSP activity -->
+          <div class="lane-label">
+            <span class="lab-eyebrow">Swimlane 01</span>
+            <span class="lab-title"><i class="ph ph-briefcase" aria-hidden="true"></i> MSP activity</span>
+            <span class="lab-sub">What service teams do day to day.</span>
+          </div>
+
+          <div class="cell lane-2">
+            <ul>
+              <li>Monitor client environments</li>
+              <li>Review alerts, device health, backups, service issues</li>
+            </ul>
+          </div>
+          <div class="cell lane-2">
+            <ul>
+              <li>Review incoming issues</li>
+              <li>Prioritize urgency</li>
+              <li>Assign technicians</li>
+            </ul>
+          </div>
+          <div class="cell lane-2 col-green">
+            <ul>
+              <li>Track devices, warranties, aging assets</li>
+              <li>Plan renewals and replacements</li>
+            </ul>
+          </div>
+          <div class="cell lane-2 col-green">
+            <ul>
+              <li>Identify lifecycle risks</li>
+              <li>Prepare replacement recommendations</li>
+              <li>Estimate future budget needs</li>
+            </ul>
+          </div>
+          <div class="cell lane-2 col-green-strong">
+            <ul>
+              <li>Gather reports across systems</li>
+              <li>Review risks, assets, roadmap, client status</li>
+            </ul>
+          </div>
+          <div class="cell lane-2 col-green">
+            <ul>
+              <li>Present reports and completed work</li>
+              <li>Discuss risks, budget, and roadmap initiatives</li>
+            </ul>
+          </div>
+          <div class="cell lane-2 col-amber">
+            <ul>
+              <li>Create or update initiatives</li>
+              <li>Assign follow-up actions</li>
+              <li>Track commitments and roadmap work</li>
+            </ul>
+          </div>
+
+          <!-- Row 3: Lifecycle Manager role -->
+          <div class="lane-label lane-lm">
+            <span class="lab-eyebrow">Swimlane 02</span>
+            <span class="lab-title"><svg class="lm-logo" width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg> Lifecycle Manager role</span>
+            <span class="lab-sub">Where the system carried weight.</span>
+          </div>
+
+          <div class="cell lane-3">
+            <div class="card">
+              <span class="ct">Supportive</span>
+              Provided visibility into lifecycle and risk signals.
+            </div>
+          </div>
+          <div class="cell lane-3">
+            <div class="card">
+              <span class="ct">Supportive</span>
+              Supplied account context when connected to broader client data.
+            </div>
+          </div>
+          <div class="cell lane-3 col-green">
+            <div class="card green-strong">
+              <span class="ct">Strong involvement</span>
+              Centralized asset and lifecycle visibility across clients.
+            </div>
+          </div>
+          <div class="cell lane-3 col-green">
+            <div class="card green-strong">
+              <span class="ct">Strong involvement</span>
+              Surfaced lifecycle risks and structured planning inputs.
+            </div>
+          </div>
+          <div class="cell lane-3 col-green-strong">
+            <div class="card green-strong">
+              <span class="ct">Strong involvement</span>
+              Helped prepare client-facing materials for QBR.
+            </div>
+          </div>
+          <div class="cell lane-3 col-green">
+            <div class="card green">
+              <span class="ct">Supports the moment</span>
+              Powered reports, roadmap, and planning conversations.
+            </div>
+          </div>
+          <div class="cell lane-3 col-amber">
+            <div class="card green">
+              <span class="ct">Partial support</span>
+              Supported roadmap and initiative tracking after the meeting.
+            </div>
+          </div>
+
+          <!-- Row 4: Manual work / friction -->
+          <div class="lane-label row-last">
+            <span class="lab-eyebrow">Swimlane 03</span>
+            <span class="lab-title"><i class="ph ph-hand-grabbing" aria-hidden="true"></i> Manual work &amp; friction</span>
+            <span class="lab-sub">Where humans had to fill the gap.</span>
+          </div>
+
+          <div class="cell lane-2 row-last">
+            <div class="card">Teams still interpreted which signals mattered most.</div>
+          </div>
+          <div class="cell lane-2 row-last">
+            <div class="card">Ticket patterns were often interpreted outside the system.</div>
+          </div>
+          <div class="cell lane-2 col-green row-last">
+            <div class="card amber">
+              <span class="ct">Manual</span>
+              MSPs still needed to explain business impact to clients.
+            </div>
+          </div>
+          <div class="cell lane-2 col-green row-last">
+            <div class="card amber">
+              <span class="ct">Manual</span>
+              Strategic framing still required human judgment.
+            </div>
+          </div>
+          <div class="cell lane-2 col-green-strong row-last">
+            <div class="card amber">
+              <span class="ct">Heavy synthesis</span>
+              “What matters, why now, and how do we explain it?”
+            </div>
+          </div>
+          <div class="cell lane-2 col-green row-last">
+            <div class="card amber">
+              <span class="ct">Manual</span>
+              Translating technical findings into a strategic client narrative.
+            </div>
+          </div>
+          <div class="cell lane-2 col-amber row-last">
+            <div class="card amber">
+              <span class="ct">Fragmented</span>
+              Follow-ups split across notes, email, PSA, and roadmap tools.
+            </div>
+          </div>
+        </div>
+        </section>
+
+        <!-- Insight cards -->
+        <section class="insights" aria-label="Insights">
+          <article class="insight green">
+            <span class="badge badge-row"><i class="ph ph-check-circle" aria-hidden="true"></i> Insight 01</span>
+            <h3>Why the system worked</h3>
+            <p>Lifecycle Manager gave MSPs a clearer view of client assets, risks, reports, and roadmap planning.</p>
+          </article>
+          <article class="insight amber">
+            <span class="badge badge-row"><i class="ph ph-warning-circle" aria-hidden="true"></i> Insight 02</span>
+            <h3>Where the workflow became manual</h3>
+            <p>The hardest work was translating operational signals into a strategic client story.</p>
+          </article>
+          <article class="insight dark">
+            <span class="badge badge-row"><i class="ph ph-target" aria-hidden="true"></i> Insight 03</span>
+            <h3>Why QBR mattered</h3>
+            <p>QBRs were the key moment where MSPs had to prove value, align priorities, and move clients toward future initiatives.</p>
+          </article>
+        </section>
+
+        <div class="divider"></div>
+        <div class="footer">
+          <span>Pre-AI MSP workflow · context map</span>
+          <span>1 / 1</span>
+        </div>
+      </main>
+      <!-- Caption nested inside .msp-journey (not a direct .wrap child) so the DS
+           vertical-rhythm rule doesn't force a 128px --gap-sub margin onto it. -->
+      <p class="figure-cap" style="margin-top:18px;font-size:14px;line-height:1.5;color:#9a9ca6">The QBR prep workflow: scattered signals interpreted by hand into a client narrative.</p>
+    </div>
+    <!-- Wrapper keeps cards + consequence note together — consequence <p> is no longer a direct
+         .wrap child so the DS 128px gap-sub doesn't override its margin-top. -->
+    <div>
+      <h3 class="sub reveal" style="margin-bottom:28px">Three friction points</h3>
+      <div class="grid-cards c3 role-cards danger">
+        <div class="card reveal">
+          <i class="ph-fill ph-arrows-split" style="font-size:26px;color:rgba(255,255,255,.85);margin-bottom:14px" aria-hidden="true"></i>
+          <h3 class="sub">Disconnected context</h3>
+          <p class="body">Client signals scattered across multiple disconnected places.</p>
+        </div>
+        <div class="card reveal d1">
+          <i class="ph-fill ph-hand" style="font-size:26px;color:rgba(255,255,255,.85);margin-bottom:14px" aria-hidden="true"></i>
+          <h3 class="sub">Manual interpretation</h3>
+          <p class="body">Teams manually connected technical issues to business priorities.</p>
+        </div>
+        <div class="card reveal d2">
+          <i class="ph-fill ph-chats-circle" style="font-size:26px;color:rgba(255,255,255,.85);margin-bottom:14px" aria-hidden="true"></i>
+          <h3 class="sub">Inconsistent conversations</h3>
+          <p class="body">QBRs depended on individual effort and defaulted to reactive summaries.</p>
+        </div>
+      </div>
+      <p class="reveal" style="margin-top:22px;font-size:15px;line-height:1.6;color:var(--ink-2)"><b style="color:var(--ink);font-weight:600">Consequences —</b> time-intensive prep, an uneven client experience, and missed growth opportunities.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FIRST ATTEMPT: COPILOT ══ -->
+<section class="sec" id="first" data-toc="First attempt">
+  <div class="wrap">
+    <div class="grid2 top">
+      <div>
+        <div class="eyebrow reveal"><span>(05) — The first AI direction</span></div>
+        <h2 class="h reveal d1">A lightweight copilot inside Meeting Notes.</h2>
+      </div>
+      <div>
+        <p class="body reveal d1">My first instinct was a Meeting Notes copilot, partly inspired by a previous hackathon project. It felt like the obvious AI entry point: meeting notes was the only feature that captured client knowledge in a meaningful way, early testing was positive, and the team was on board.</p>
+        <p class="body reveal d2" style="margin-top:18px"><b>But something felt off.</b> Instead of reducing work, it was starting to create another task for MSPs to manage — it improved one moment in the workflow while leaving the larger planning problem unchanged.</p>
+      </div>
+    </div>
+
+    <figure class="figure fig-wide reveal d1">
+      <img src="uploads/clientiq/copilot-concept.png" alt="Meeting Notes copilot concept" loading="lazy" width="3840" height="2160">
+      <figcaption style="padding:0 18px 16px">The Meeting Notes copilot — the first AI direction, built inside an existing feature.</figcaption>
+    </figure>
+
+    <div class="assess reveal">
+      <h3 class="assess-h">The first direction had value — but limited strategic impact.</h3>
+      <div class="assess-grid">
+        <div class="assess-card worked">
+          <div class="assess-k">What worked</div>
+          <ul class="assess-list">
+            <li>Organized meeting notes and follow-up</li>
+            <li>Reduced some admin work after QBRs</li>
+            <li>Made action items easier to capture</li>
+          </ul>
+        </div>
+        <div class="assess-card shortfall">
+          <div class="assess-k">What fell short</div>
+          <ul class="assess-list">
+            <li>Didn’t deepen the MSP’s involvement in the client’s business</li>
+            <li>Still relied on individual experience to decide what mattered</li>
+            <li>Left the core planning workflow unchanged</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="decision reveal d2"><span class="k">My pushback</span><span>Useful for follow-up — but too narrow to shift MSPs from service delivery into strategic client engagement.</span></p>
+  </div>
+</section>
+
+<!-- ══ PIVOT ══ -->
+<section class="sec dark" id="pivot" data-toc="The pivot">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(06) — The pivot</span></div>
+    <h2 class="h reveal d1" data-no-gloss style="max-width:22ch">MSPs needed help across the entire planning workflow — not inside a single artifact.</h2>
+    <div class="grid2 top" style="margin-top:48px">
+      <div>
+        <h3 class="pivot-kicker reveal">An AI-first approach</h3>
+        <p class="pivot-lead reveal">The core shift: I stopped asking <span class="dim">where AI should appear</span> and started asking <span class="hl">which parts of the workflow were too slow, too complex, or too data-heavy for humans alone</span> — and how the workflow itself should change once AI became part of the system.</p>
+        <p class="body reveal d1" style="margin-top:24px">So I went back to the drawing board and looked for those opportunities in our market research. MSPs didn’t need better summaries — they needed <b style="color:var(--dark-ink)">workflow-level support</b> that turns fragmented signals into strategic planning inputs.</p>
+      </div>
+      <div>
+        <figure class="figure reveal chart-card">
+          <div class="chart" data-chart>
+            <h3 class="chart-title" data-no-gloss>Top QBR Challenges</h3>
+            <div class="bar-chart" role="img" aria-label="Top QBR challenges, percent of MSPs: creating reports and visuals 34%, ensuring data accuracy 32%, collecting and consolidating data 31%, lack of automation 28%, limited internal resources 28%, difficulty aligning with client goals 26%, inconsistent scheduling 25%, low client engagement 25%, unclear ROI 19%.">
+              <div class="bar-axis" aria-hidden="true"><span>0%</span><span>5%</span><span>10%</span><span>15%</span><span>20%</span><span>25%</span><span>30%</span><span>35%</span></div>
+              <div class="bars">
+                <div class="bar-row"><span class="bar-label">Creating reports and visuals</span><span class="bar-track" style="--w:97%;--delay:.04s"><span class="bar"></span><em>34%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Ensuring data accuracy</span><span class="bar-track" style="--w:91%;--delay:.1s"><span class="bar"></span><em>32%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Collecting and consolidating correct data</span><span class="bar-track" style="--w:89%;--delay:.16s"><span class="bar"></span><em>31%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Lack of automation / Too much manual work</span><span class="bar-track" style="--w:80%;--delay:.22s"><span class="bar"></span><em>28%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Limited internal resources</span><span class="bar-track" style="--w:80%;--delay:.28s"><span class="bar"></span><em>28%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Difficulty aligning with client business goals</span><span class="bar-track" style="--w:74%;--delay:.34s"><span class="bar"></span><em>26%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Inconsistent scheduling or execution</span><span class="bar-track" style="--w:71%;--delay:.4s"><span class="bar"></span><em>25%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Low client engagement or attendance</span><span class="bar-track" style="--w:71%;--delay:.46s"><span class="bar"></span><em>25%</em></span></div>
+                <div class="bar-row"><span class="bar-label">Unclear ROI or value from reviews</span><span class="bar-track" style="--w:54%;--delay:.52s"><span class="bar"></span><em>19%</em></span></div>
+              </div>
+            </div>
+          </div>
+          <figcaption style="padding:14px 0 0;color:var(--dark-ink-3)">From our market research: the QBR tasks MSPs struggle with most — reporting, data accuracy and consolidation lead.</figcaption>
+        </figure>
+      </div>
+    </div>
+    <p class="pivot-kicker reveal">Structural gaps</p>
+    <div class="grid-cards c3 role-cards" style="margin-top:20px!important">
+      <div class="card reveal">
+        <div class="mono-note" style="color:rgba(255,255,255,.5)">GAP 01</div>
+        <h3 class="sub" style="margin-top:12px">Business context</h3>
+        <p class="body">Weak at capturing a client's business, priorities and direction.</p>
+      </div>
+      <div class="card reveal d1">
+        <div class="mono-note" style="color:rgba(255,255,255,.5)">GAP 02</div>
+        <h3 class="sub" style="margin-top:12px">Personalization</h3>
+        <p class="body">Generic outputs risked shallow, irrelevant recommendations.</p>
+      </div>
+      <div class="card reveal d2">
+        <div class="mono-note" style="color:rgba(255,255,255,.5)">GAP 03</div>
+        <h3 class="sub" style="margin-top:12px">Workflow activation</h3>
+        <p class="body">Outputs needed to fit naturally into existing MSP workflows.</p>
+      </div>
+    </div>
+    <div>
+      <p class="pivot-kicker reveal">The framing question</p>
+      <blockquote class="full reveal" style="color:var(--dark-ink)">How might we build strategic intelligence into a product not originally designed for business context?</blockquote>
+    </div>
+    <p class="pivot-close reveal"><span class="k">The design shift</span><span>AI became part of the product model, not just a feature inside one surface — reducing manual synthesis and helping MSPs create better client conversations, while keeping the user in control.</span></p>
+    <table class="tbl tbl--compare pivot-table" style="margin-top:56px!important">
+      <thead><tr><th>Aspect</th><th>Copilot model</th><th>New approach</th></tr></thead>
+      <tbody>
+        <tr class="reveal d1"><td>Input sources</td><td>Depended on one source</td><td class="em">Multiple signals over time</td></tr>
+        <tr class="reveal d2"><td>Output type</td><td>Reactive, conversational</td><td class="em">Structured outputs</td></tr>
+        <tr class="reveal d3"><td>Scalability</td><td>Limited</td><td class="em">Scales beyond one feature</td></tr>
+        <tr class="reveal d4"><td>Workflow support</td><td>Solved a narrow task</td><td class="em">Planning across workflows</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ WHY AI MATTERED (hypothesis) ══ -->
+<section class="sec" id="hypothesis" data-toc="Why AI mattered">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(07) — Why AI mattered</span></div>
+    <h2 class="h reveal" style="margin-top:32px;max-width:16ch">The System-level Gap</h2>
+    <div class="grid2 top" style="margin-top:40px;align-items:center">
+      <!-- LEFT: Big pullout -->
+      <blockquote class="reveal" style="max-width:none">Once the direction got clearer, I realized the biggest issue was that the product lacked durable business context. Without that, the AI could generate language, but not strategically grounded recommendations.</blockquote>
+      <!-- RIGHT: Three.js 3-D layer diagram -->
+      <div class="ld-wrap reveal d2">
+        <canvas id="ld-three" style="width:100%;height:460px;display:block;border-radius:12px"></canvas>
+      </div>
+    </div>
+    <div class="grid2 top" style="margin-top:64px;align-items:start">
+      <div class="hyp-detail">
+        <p class="reveal d1" style="font-size:17px;font-weight:600;color:var(--ink-2);line-height:1.35">Useful AI outputs required business context</p>
+        <p class="body reveal d1" style="margin-top:20px">Lifecycle Manager understood client environments, but not enough about the client’s business.</p>
+        <p class="body reveal d2" style="margin-top:18px">To generate useful suggestions, we needed to understand:</p>
+        <ul class="hyp-list reveal d2">
+          <li>what the client’s business does</li>
+          <li>what outcomes the client cares about</li>
+          <li>what risks or opportunities matter to them</li>
+          <li>what changed since the last review</li>
+          <li>what goals and priorities should shape planning</li>
+          <li>what recurring service patterns might signal future needs</li>
+        </ul>
+        <p class="body reveal d3" style="margin-top:26px"><b style="color:var(--accent)">Design implication:</b> We needed a lightweight CRM business-context layer</p>
+        <p class="hyp-explore-kicker reveal" style="margin-top:48px">Early exploration</p>
+        <p class="body reveal d1">I prototyped a broader CRM context layer — stakeholders, meeting memory, opportunities, business changes — to explore everything the product could durably know about a client.</p>
+      </div>
+      <figure class="hyp-crm reveal d1">
+        <div class="hyp-crm-scroll">
+          <img src="uploads/clientiq/crm-experiment-full.png" alt="Full-length experimental MSP CRM client profile: hero, stakeholders, business goals, meeting memory, opportunities, recent changes and account-health rail" loading="lazy" width="1440" height="3067">
+        </div>
+        <figcaption>Experimental CRM context layer — scroll to see the full page</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MVP SCOPING + MoSCoW ══ -->
+<section class="sec dark" id="scoping" data-toc="MVP scoping">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(09) — MVP scoping</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">Scoping the minimum credible strategic layer.</h2>
+    <p class="lead reveal d1">A deliberate choice of foundational context over broader intelligence.</p>
+
+    <div class="moscow reveal">
+      <div class="col"><h4>Must have</h4><ul><li>Business context</li><li>Goals capture</li><li>Editable outputs</li><li>Meeting topics</li></ul></div>
+      <div class="col"><h4>Should have</h4><ul><li>Limited extra signals</li><li>Lightweight workflow integration</li><li>Regeneration / update controls</li></ul></div>
+      <div class="col"><h4>Could have</h4><ul><li>Broader multi-source ingestion</li><li>Richer orchestration</li><li>Translation into initiatives</li></ul></div>
+      <div class="col wont"><h4>Won’t have</h4><ul><li>Heavy prompt configuration</li><li>Broad multi-source ingestion</li></ul></div>
+    </div>
+
+    <div class="crit reveal">
+      <p class="crit-kicker">The six decision criteria</p>
+      <ol class="steps">
+        <li><b>Reduce cognitive load</b><span>Less for account managers to hold in their heads.</span></li>
+        <li><b>Reduce human orchestration</b><span>Fewer manual hand-offs between tools and people.</span></li>
+        <li><b>Produce structured, reusable outputs</b><span>Outputs that drop straight into planning.</span></li>
+        <li><b>Fit naturally into existing workflows</b><span>No new workflow to learn or manage.</span></li>
+        <li><b>Work with imperfect, low-effort inputs</b><span>Tolerant of fragmented, inconsistent notes.</span></li>
+        <li><b>Build trust quickly</b><span>Credible enough to act on without re-checking everything.</span></li>
+      </ol>
+    </div>
+
+    <div class="scope-concl reveal">
+      <p class="scope-head">In summary — two scoping decisions</p>
+      <div class="scope-grid">
+        <div class="scope-card">
+          <span class="scope-num">Decision 01</span>
+          <h4>Add Goals to MVP</h4>
+        </div>
+        <div class="scope-card">
+          <span class="scope-num">Decision 02</span>
+          <h4>Ship AI summaries</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GOALS DESIGN ══ -->
+<section class="sec" id="goals" data-toc="Top decisions">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(10) — Top decisions I drove</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">Three decisions that made <span class="hl">Goals</span> the anchor.</h2>
+    <p class="lead reveal d1">The strategic layer only worked once the product had a durable place to hold business context, and once AI outputs lived inside the workflows MSPs already used.</p>
+
+    <!-- DECISION 01 — add client context (Goals capture mockup) -->
+    <div class="decision-block">
+      <div class="grid2 top dec">
+        <div class="dec-copy">
+          <p class="dec-kicker reveal">Decision 01</p>
+          <h3 class="dec-h reveal" data-no-gloss>Give MSPs a place to capture client context.</h3>
+          <p class="body reveal d1">For the MVP I scoped the broader CRM exploration down to <b>Goals</b>: the single piece stable enough to anchor AI outputs, and the one MSPs would actually maintain.</p>
+        </div>
+        <figure class="figure crm-fig reveal d1">
+          <div class="crm-stack">
+            <img class="crm-base" src="uploads/clientiq/crm-experiment.png" alt="Experimental MSP CRM client profile: hero, stakeholders, business goals, meeting memory, opportunities and an account-health rail" loading="lazy" width="1440" height="1560">
+            <img class="crm-zoom" src="uploads/clientiq/goals-crop.png" alt="Magnified view of the Business Goals and Initiatives panel" loading="lazy" width="1736" height="884">
+          </div>
+          <figcaption style="padding:0 18px 16px">An experiment in CRM context — I scoped down to Goals, the durable anchor, for the MVP.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- DECISION 02 — Goals as business anchor (flow diagram) -->
+    <div class="decision-block">
+      <div class="dec-copy dec-lead reveal">
+        <p class="dec-kicker">Decision 02</p>
+        <h3 class="dec-h" style="max-width:24ch">Treat Goals as the system's business anchor.</h3>
+        <p class="body" style="max-width:64ch">Without Goals, AI could only generate isolated suggestions. Once a goal was saved it became a durable anchor that fanned out across reporting, the surfaces MSPs already work in, and a future loop that feeds the AI itself.</p>
+      </div>
+      <figure class="flow reveal d1" aria-label="Goals flow: a saved goal connects to Report and QBR, to touchpoints across Lifecycle Manager, and to a future AI reinforcement loop">
+        <div class="fc fc-purple">
+          <span class="fc-head">Goals section</span>
+          <div class="fc-seq">
+            <span class="fc-step">Goals section in Lifecycle Manager</span>
+            <span class="fc-step">Create goal — title, description, target period</span>
+            <span class="fc-step on">Goal saved · “On track”</span>
+          </div>
+        </div>
+        <div class="fc-fan">
+          <div class="fc fc-teal">
+            <span class="fc-head">Report &amp; QBR</span>
+            <div class="fc-list">
+              <span class="fc-step">Generate goals report — progress &amp; business value over time</span>
+              <span class="fc-step">Roadmap initiatives → alignment on roadmap</span>
+              <span class="fc-step">Use in QBRs with clients</span>
+            </div>
+          </div>
+          <div class="fc fc-pink">
+            <span class="fc-head">Touchpoints in LM</span>
+            <div class="fc-list">
+              <span class="fc-step">Add to Meetings</span>
+              <span class="fc-step">Add to Action items</span>
+              <span class="fc-step">Easy access in client dashboard</span>
+              <span class="fc-step">Feed to ClientIQ</span>
+            </div>
+          </div>
+          <div class="fc fc-amber">
+            <span class="fc-head">Reinforce AI output · future</span>
+            <div class="fc-list">
+              <span class="fc-step">Human approve</span>
+              <span class="fc-step">Feed linked goal data into ClientIQ AI</span>
+              <span class="fc-step">AI generates smarter goals ↺</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <!-- DECISION 03 — embed outputs into workflows -->
+    <div class="decision-block">
+      <div class="grid2 top dec">
+        <div class="dec-copy">
+          <p class="dec-kicker reveal">Decision 03</p>
+          <h3 class="dec-h reveal">Embed outputs into the workflows MSPs already use.</h3>
+          <p class="body reveal d1">I pushed for workflow integration over isolated AI surfaces. Instead of a separate place to read AI output, results were delivered straight into Meetings, Roadmap and Goals.</p>
+          <p class="body reveal d2">Embedding outputs where the work already happened cut the manual translation step, so a recommendation could become a roadmap initiative or a QBR talking point without being rewritten.</p>
+        </div>
+        <figure class="figure reveal d1">
+          <img src="uploads/clientiq/goals-roadmap.png" alt="A Q4 Business Review roadmap with goals embedded into roadmap initiatives for the QBR" loading="lazy" width="1456" height="1404">
+          <figcaption style="padding:0 18px 16px">Goals surface inside the QBR roadmap — embedded in the workflow, not a separate AI screen.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MVP + VALIDATION (merged trade-offs + launched) ══ -->
+<section class="sec" id="mvp" data-toc="ClientIQ MVP">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(11) — ClientIQ MVP</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">A streamlined <span style="color:var(--accent)">AI MVP</span> experience.</h2>
+    <p class="body reveal d1 mvp-lead">I traded breadth for lower friction and stronger signal — narrowing the initial design to the smallest set of inputs and outputs that could test whether a simple strategic layer would help MSPs prepare better and plan more.</p>
+    <div class="mvp-ba reveal d1">
+      <div class="mvp-arrow" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g class="glow"><path d="M14 50h54M52 30l24 20-24 20" stroke="#1b4dff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></g>
+        </svg>
+      </div>
+      <figure class="ba-card">
+        <span class="ba-tag">Initial design</span>
+        <div class="ba-img scroll">
+          <img src="uploads/clientiq/clientiq-initial-design.png" alt="The initial ClientIQ design — broader client briefing with Why It Matters and Where To Lead callouts, Recommended Conversations, Client Goals progress bars, and an Account Profile section" loading="lazy" width="4200" height="7860">
+        </div>
+        <figcaption><b>Initial design.</b> A broader briefing with multiple framing callouts, recommended conversations, goal-progress bars, and a full account profile — scroll to see the full page.</figcaption>
+      </figure>
+      <figure class="ba-card after">
+        <span class="ba-tag after">MVP</span>
+        <div class="ba-img fit">
+          <img src="uploads/clientiq/clientiq-mvp-new.png" alt="The launched MVP version of ClientIQ — a focused, lightweight client briefing embedded inside Lifecycle Manager" loading="lazy" width="2896" height="3428">
+        </div>
+        <figcaption><b>Launched MVP.</b> A focused, lightweight briefing — Goals as the strategic anchor, structured outputs, embedded in Lifecycle Manager.</figcaption>
+      </figure>
+    </div>
+    <div class="mvp-flow reveal">
+      <p class="flow-kicker">ClientIQ Concept</p>
+      <ol class="flow-row">
+        <li class="flow-step">
+          <div class="flow-thumb"><img src="uploads/clientiq/flow-full-input.png" alt="Empty state — enter the client website to generate a summary" loading="lazy"><span class="flow-n">1</span></div>
+          <p class="flow-cap">User enters client website / context</p>
+        </li>
+        <li class="flow-step">
+          <div class="flow-thumb"><img src="uploads/clientiq/clientiq-mvp-new.png" alt="Client &amp; industry summary generated by ClientIQ" loading="lazy"><span class="flow-n">2</span></div>
+          <p class="flow-cap">System generates client &amp; industry summary</p>
+        </li>
+        <li class="flow-step">
+          <div class="flow-thumb"><img src="uploads/clientiq/clientiq-concept.png" alt="Suggested meeting topics and questions" loading="lazy"><span class="flow-n">3</span></div>
+          <p class="flow-cap">User reviews suggested meeting topics</p>
+        </li>
+        <li class="flow-step">
+          <div class="flow-thumb flow-badges"><span class="flow-badge">Roadmap initiatives</span><span class="flow-badge">Meeting agendas</span><span class="flow-badge">Action items</span><span class="flow-n">4</span></div>
+          <p class="flow-cap">User turns suggestions into planning outputs</p>
+        </li>
+      </ol>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="eyebrow reveal outcome-eyebrow"><span>MVP outcome</span></div>
+    <h2 class="h reveal outcome-title">A measurable lift in strategic planning.</h2>
+    <p class="body reveal outcome-lead">After launch, MSPs created strategic initiatives far more often — and kept doing it. The lightweight layer turned one-off meeting prep into a repeatable planning habit, validating that durable context plus structured outputs changes behavior.</p>
+    <div class="grid-cards c3 outcome-stats">
+      <div class="card reveal"><div class="stat accent">+119%</div><div class="stat-l">average lift in initiative creation post-launch</div></div>
+      <div class="card reveal d1"><div class="stat accent">+216%</div><div class="stat-l">peak lift in initiative creation</div></div>
+      <div class="card reveal d2"><div class="stat accent">Repeatable</div><div class="stat-l">strategic planning became regular, not one-off</div></div>
+    </div>
+    <div class="grid2 top" style="margin-top:48px">
+      <blockquote class="reveal quote-card">This is a really simple feature, but the suggestions are pretty good — and I can actually get a precise summary of this client before QBRs.<cite>MSP user</cite></blockquote>
+      <div>
+        <p class="body reveal">Post-launch, initiative creation rose 119% on average and reached 216% at peak — and happened more regularly, suggesting ClientIQ made strategic planning repeatable. Public reactions showed MSPs recognized it as a meaningful step toward strategic account management.</p>
+        <p class="body reveal d1" style="margin-top:18px"><b class="muted">Why direct conversion wasn’t tracked —</b> attribution was messy (users edited and reused outputs), instrumentation wasn’t ready for connected analytics, and the MVP’s priority was proving output quality and feasibility first.</p>
+      </div>
+    </div>
+    <figure class="figure reveal" style="margin-top:48px">
+      <img src="uploads/clientiq/validation-metrics.jpg" alt="Line chart of initiative_created events from January to October 2024" loading="lazy" width="2343" height="1267">
+      <figcaption style="padding:0 18px 16px"><b style="color:var(--ink)">Behavioral signal —</b> <code style="font-family:var(--mono);font-size:.92em">initiative_created</code> events climbed from ~1,000 to 3,161/month over 2024, and recurred more regularly.</figcaption>
+    </figure>
+    <div class="grid2 top" style="margin-top:48px;align-items:center">
+      <figure class="figure reveal" style="max-width:420px">
+        <img src="uploads/clientiq/initiative-chart.png" alt="LinkedIn post from an MSP leader praising ClientIQ" loading="lazy" width="557" height="787">
+      </figure>
+      <div>
+        <div class="chip reveal">Market signal</div>
+        <p class="body reveal d1" style="margin-top:18px">Beyond the metrics, ClientIQ drew unprompted public praise from MSP leaders — recognition that a SaaS platform could credibly support customer-success strategy, not just operations.</p>
+        <p class="mono-note reveal d1" style="margin-top:14px">Public reaction · LinkedIn</p>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+/* Pin the process arrow to the true vertical center of the MVP image box
+   (robust to image height / width changes — never drifts onto the captions). */
+(function(){
+  var ba=document.querySelector('#mvp .mvp-ba');
+  if(!ba) return;
+  var arrow=ba.querySelector('.mvp-arrow');
+  var cap=ba.querySelector('figcaption');
+  if(!arrow||!cap) return;
+  function place(){
+    if(getComputedStyle(arrow).display==='none') return;
+    var b=ba.getBoundingClientRect(), c=cap.getBoundingClientRect();
+    arrow.style.top=Math.round((c.top-b.top)+c.height/2)+'px';
+  }
+  place();
+  window.addEventListener('resize',place);
+  window.addEventListener('load',place);
+})();
+</script>
+
+<!-- ══ CLIENTIQ 2.0 ══ -->
+<section class="sec dark" id="v2" data-toc="ClientIQ 2.0">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(13) — ClientIQ 2.0</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">From embedded layer to standalone product.</h2>
+    <p class="lead reveal d1 v2-lead">The MVP earned its keep as a lightweight layer riding inside the workflows MSPs already used — a few inputs, a clean summary, enough context to walk into a review prepared. 2.0 answered the next constraint: that judgment shouldn’t live as a sidecar bolted onto another product. ClientIQ became a <b style="color:var(--dark-ink)">standalone product</b> with its own client workspace — many more data points feeding deeper, openable analytics, and a contextual AI chat for digging into a single account.</p>
+
+    <figure class="v2-hero reveal d1">
+      <div class="v2-hero-scroll">
+        <img src="uploads/clientiq/v2-prototype-full.png" alt="Full ClientIQ 2.0 client dashboard for Meridian Tax &amp; Accounting — AI Executive Summary, service metrics, where-to-focus recommendations, industry insights, client goals, and a right rail with sentiment, meetings and service" loading="lazy" width="2880" height="5440">
+      </div>
+      <figcaption>ClientIQ 2.0 — the real standalone client workspace (scroll to explore the full account view).</figcaption>
+    </figure>
+
+    <div class="reveal">
+      <p class="v2-kicker">What changed, MVP → 2.0</p>
+      <div class="v2-shift">
+        <div class="shift-row"><span class="mvp">A lightweight layer embedded inside Lifecycle Manager</span><span class="ar">→</span><span class="now">A standalone product with its own client workspace</span></div>
+        <div class="shift-row"><span class="mvp">A few inputs — website context and saved Goals</span><span class="ar">→</span><span class="now">Many data points — summary, sentiment, metrics, recommendations, goals, meetings</span></div>
+        <div class="shift-row"><span class="mvp">Static AI summaries you read and moved on from</span><span class="ar">→</span><span class="now">Deeper analytics you open up — evidence drawers, recovery-tracking metrics</span></div>
+        <div class="shift-row"><span class="mvp">One-way outputs, no way to ask follow-ups</span><span class="ar">→</span><span class="now">A contextual AI chat for digging deep into a single client</span></div>
+        <div class="shift-row"><span class="mvp">Useful prep support, limited grounding</span><span class="ar">→</span><span class="now">Every score and insight backed by openable, citable evidence</span></div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <p class="v2-kicker">Deeper analytics, more data points</p>
+      <div class="v2-feats">
+        <div class="feat"><h4>AI Executive Summary</h4><p>Reads the whole account first, then streams a grounded summary with a confidence badge.</p></div>
+        <div class="feat"><h4>Client Sentiment</h4><p>A single score you can open up — trend, radar and heatmap evidence behind the number.</p></div>
+        <div class="feat"><h4>Service Metrics</h4><p>SLA, response time, patch compliance and ticket volume that recolor as health recovers.</p></div>
+        <div class="feat"><h4>Recommendations</h4><p>AI-generated plays, prep questions and a meeting agenda — each one explainable.</p></div>
+        <div class="feat"><h4>Suggested Goals</h4><p>Scattered wins distilled into one measurable, AI-explained target to track.</p></div>
+        <div class="feat"><h4>Meeting Analytics</h4><p>Every meeting in one timeline — calendar, upcoming and past, in a single view.</p></div>
+      </div>
+    </div>
+
+    <div class="v2-chat rev reveal">
+      <figure class="chat-vid">
+        <video src="uploads/clientiq/explainable-ai.mp4" autoplay loop muted playsinline preload="auto" aria-label="Screen recording showing a ClientIQ 2.0 AI output opening into the underlying evidence behind it"></video>
+      </figure>
+      <div class="chat-copy">
+        <span class="chat-badge">New in 2.0 · Source-grounded</span>
+        <h3>Every AI output is explainable, traceable and actionable.</h3>
+        <p>Nothing is a black box. Every summary, score and recommendation opens into the exact signals behind it — the tickets, meetings and metrics it drew from — so you can trace any claim back to its evidence, judge it for yourself, and turn it straight into a next step.</p>
+      </div>
+    </div>
+
+    <div class="v2-chat reveal">
+      <div class="chat-copy">
+        <span class="chat-badge">New in 2.0 · Contextual AI chat</span>
+        <h3>Stop reading the account. Start interrogating it.</h3>
+        <p>The headline addition is a chat scoped to one client. Instead of a fixed summary you read once, you can ask why sentiment is sliding, what’s driving the SLA miss, or how the last three meetings went — and get answers grounded in that account’s own signals, every claim tied to evidence you can open and verify.</p>
+      </div>
+      <figure class="chat-vid">
+        <video src="uploads/clientiq/clientiq-chat.mp4" autoplay loop muted playsinline preload="auto" aria-label="Screen recording of the ClientIQ 2.0 contextual AI chat answering questions about a single client"></video>
+      </figure>
+    </div>
+
+    <!-- CTA — directly under the New-in-2.0 chat card -->
+    <div class="v2-cta reveal">
+      <a class="btn go" href="https://clientiq-app.vercel.app/clients" target="_blank" rel="noopener">Open the 2.0 prototype →</a>
+      <span class="cta-note">Live React prototype · clientiq-app.vercel.app</span>
+    </div>
+
+    <!-- folded in: Refined MSP workflow (was §14) -->
+    <div class="reveal">
+      <p class="v2-kicker">Refined MSP workflow</p>
+      <figure class="v2-fig" style="margin-top:36px">
+        <img src="uploads/clientiq/refined-workflow-v2.png?v=3" alt="ClientIQ 2.0 system flow: connected client signals → AI engine → modular recommendations → human review → MSP daily workflows (Goals, Roadmap, Meetings) → QBR meetings looping back to client signals" loading="lazy" width="7172" height="3056">
+        <figcaption>Context from multiple sources → judgment packaged into modular outputs → action inside existing planning surfaces.</figcaption>
+      </figure>
+      <h3 class="v2-subh" style="margin-top:56px">Three planning surfaces clients actually pay attention to.</h3>
+      <blockquote class="quote-card quote-vid" style="margin-top:26px"><video class="qc-vid" src="uploads/clientiq/closing-loop.mp4" autoplay loop muted playsinline preload="auto" aria-hidden="true"></video><div class="qc-content">Honestly, the things we use most are Meetings, Roadmaps and Goals — that’s the stuff clients actually pay attention to.<cite>MSP user</cite></div></blockquote>
+      <div style="margin-top:36px">
+        <table class="tbl">
+          <thead><tr><th>Feature</th><th>QBR stage</th><th>Why it matters</th><th>ClientIQ support</th></tr></thead>
+          <tbody>
+            <tr><td>Meetings</td><td>Prep</td><td>Clearer, focused conversation</td><td class="em">Suggested agenda items, strategic questions, talking points</td></tr>
+            <tr><td>Roadmap</td><td>In-session</td><td>Easy-to-understand priorities</td><td class="em">Recommended initiatives, priorities, executive summaries</td></tr>
+            <tr><td>Goals</td><td>After QBR</td><td>Connects to long-term outcomes</td><td class="em">Goal capture, alignment to initiatives, continuity</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- folded in: ClientIQ 2.0 outcome (was §17) -->
+    <div class="reveal">
+      <p class="v2-kicker">The 2.0 outcome</p>
+      <h3 class="v2-subh">From prep support to embedded strategic capability.</h3>
+      <div style="margin-top:26px">
+        <table class="tbl">
+          <thead><tr><th>Aspect</th><th>MVP</th><th>ClientIQ 2.0</th></tr></thead>
+          <tbody>
+            <tr><td>Input</td><td>Public website context &amp; Goals</td><td class="em">Multi-source: business, meetings, delivery, sentiment</td></tr>
+            <tr><td>Output</td><td>Lightweight summaries &amp; suggestions</td><td class="em">Modular outputs: summaries, questions, initiatives, goals</td></tr>
+            <tr><td>Trust</td><td>Useful but limited grounding</td><td class="em">Stronger source-grounded evidence</td></tr>
+            <tr><td>Activation</td><td>Mostly prep support</td><td class="em">Embedded into the broader workflow</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="v2-kicker reveal" style="margin-top:36px;margin-bottom:0">2.0 directional validation</p>
+      <div class="grid-cards c3" style="margin-top:20px">
+        <div class="card reveal"><h3 class="sub">Validated demand</h3><p class="body" style="margin-top:30px">For strategic planning — not generic AI.</p></div>
+        <div class="card reveal d1"><h3 class="sub">Aligned to growth</h3><p class="body" style="margin-top:30px">Matched ScalePad’s model: impact → trust → expansion.</p></div>
+        <div class="card reveal d2"><h3 class="sub">A CS capability</h3><p class="body" style="margin-top:30px">Positioned as Customer Success, not a standalone AI.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+/* Keep the contextual-AI-chat loop alive. Muted autoplay videos freeze in several ways
+   the `loop` attribute alone doesn't recover from: the browser pauses on resize /
+   scroll-out / tab-switch, a buffer underrun fires `waiting`/`stalled` (not `pause`),
+   and a flaky loop can fire `ended` without seeking back. Recover from all of them, and
+   keep a low-frequency watchdog as a final safety net. All guarded by inView() so an
+   off-screen video stays paused. */
+(function(){
+  var vids = [].slice.call(document.querySelectorAll('#v2 .chat-vid video, .qc-vid'));
+  if (!vids.length) return;
+  function inView(v){ var r = v.getBoundingClientRect(); var vh = innerHeight || document.documentElement.clientHeight; return r.bottom > 0 && r.top < vh; }
+  function kick(v){
+    if (!inView(v)) return;
+    v.muted = true;
+    if (v.ended || v.currentTime >= (v.duration || 1e9) - 0.05){ try { v.currentTime = 0; } catch(e){} }
+    if (v.paused){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+  }
+  function kickAll(){ vids.forEach(kick); }
+  vids.forEach(function(v){
+    ['pause','ended','stalled','waiting','suspend','error'].forEach(function(ev){
+      v.addEventListener(ev, function(){ setTimeout(function(){ kick(v); }, 60); });
+    });
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) kick(v); }); }, { threshold: 0.15 }).observe(v);
+    }
+  });
+  addEventListener('resize', kickAll, { passive: true });
+  addEventListener('orientationchange', kickAll);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) kickAll(); });
+  /* watchdog: if it's on-screen but the frame hasn't advanced, nudge it */
+  var last = {}, stuck = {};
+  setInterval(function(){
+    vids.forEach(function(v, i){
+      if (!inView(v)){ last[i] = -1; stuck[i] = 0; return; }
+      if (v.paused || v.ended){ kick(v); return; }
+      if (Math.abs(v.currentTime - (last[i] || -1)) < 0.01){ if ((stuck[i] = (stuck[i]||0) + 1) >= 2){ kick(v); stuck[i] = 0; } }
+      else stuck[i] = 0;
+      last[i] = v.currentTime;
+    });
+  }, 1500);
+})();
+</script>
+
+<!-- ══ DESIGN PROCESS WITH AI ══ -->
+<section class="sec" id="process" data-toc="Design process">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(14) — Design process with AI</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">How AI changed the <span class="hl">design process</span></h2>
+    <p class="lead reveal d1">This project followed <span class="hl">a strategy-led design process, with AI used to speed up the work, not drive the decisions.</span> From the first MVP through ClientIQ 2.0 I used AI to move faster through synthesis, concept exploration, prototyping, and documentation, while keeping the core decisions grounded in product judgment. As the product evolved, that process helped me move from validating a focused MVP to shaping a more capable 2.0 direction with broader context, stronger workflow integration, and more actionable outputs.</p>
+    <ul class="proc-changes reveal d1">
+      <li>Faster synthesis</li>
+      <li>Faster concept exploration</li>
+      <li>Clearer shared understanding across PM, design, and engineering</li>
+      <li>Faster prototype validation</li>
+      <li>Human judgment remained on trust, scope, and product direction</li>
+    </ul>
+    <figure class="proc-chart reveal" style="margin-top:46px" aria-label="The strategy-led, AI-accelerated design process: Frame, Explore, Develop, to product outcome">
+      <!-- FRAME -->
+      <div class="ps ps-frame">
+        <span class="ps-tag">Frame</span>
+        <div class="ps-row">
+          <div class="pcard">
+            <span class="pcard-tag">Learn</span>
+            <h4>Research and Distill</h4>
+            <p class="pc-lead">Clear evidence of what was broken and why it mattered</p>
+            <p class="pc-ai"><span class="ai-ic"><img src="uploads/clientiq/proc-icons/chatgpt.png" alt="ChatGPT"><img src="uploads/clientiq/proc-icons/dovetail.png" alt="Dovetail"><img src="uploads/clientiq/proc-icons/notebooklm.png" alt="NotebookLM"></span><span>How AI helped: Theme clustering, note synthesis, early pattern finding</span></p>
+          </div>
+          <div class="pcard">
+            <span class="pcard-tag">Define</span>
+            <h4>Define the opportunity</h4>
+            <p class="pc-lead">Challenged the direction against user needs, business value, workflow fit, trust requirements, and technical realism</p>
+          </div>
+        </div>
+        <div class="pcard pcard-wide">
+          <span class="pcard-tag">Plan</span>
+          <h4>Shape the product strategy</h4>
+          <p class="pc-lead">Co-define the strategy, product hypothesis, and MVP scope &amp; translate the strategy into PRD</p>
+          <p class="pc-ai"><span class="ai-ic"><img src="uploads/clientiq/proc-icons/chatgpt.png" alt="ChatGPT"></span><span>How AI helped: Structured thinking, draft articulation, alternative framing</span></p>
+        </div>
+      </div>
+      <div class="ps-conn" aria-hidden="true"></div>
+      <!-- EXPLORE -->
+      <div class="ps ps-explore">
+        <span class="ps-tag">Explore</span>
+        <h4>Prototype, review, and validate</h4>
+        <p class="pc-lead">System-design, validated interaction model and refined solution direction. Tested with critique, user feedback, and workflow scenarios to evaluate trust, clarity, and actionability</p>
+        <div class="pflow-wrap">
+          <div class="pflow-bracket"><span class="pflow-label">Rapid Prototyping ↺</span></div>
+          <div class="pflow cyc"><span>Create</span><span>Review</span><span>Validate</span><span>Iterate</span></div>
+        </div>
+        <p class="pc-ai center"><span class="ai-ic"><img src="uploads/clientiq/proc-icons/chatgpt.png" alt="ChatGPT"><img src="uploads/clientiq/proc-icons/claude.png" alt="Claude"><img src="uploads/clientiq/proc-icons/replit.png" alt="Replit"><img src="uploads/clientiq/proc-icons/gemini.png" alt="Gemini"></span><span>How AI helped: tech spec, prompt engineering, vibe coding, edge-case exploration, documentation</span></p>
+      </div>
+      <div class="ps-conn" aria-hidden="true"></div>
+      <!-- DEVELOP -->
+      <div class="ps ps-develop">
+        <span class="ps-tag">Develop</span>
+        <h4>Operationalize and refine</h4>
+        <p class="pc-lead">Turned the concept into flows, states, dependencies, and build-ready specs, then refined it with product, engineering, and post-launch signals.</p>
+        <div class="pflow"><span>Concept</span><span>Logic</span><span>Spec</span><span>Build</span><span>Refine</span></div>
+        <p class="pc-ai center"><span class="ai-ic"><img src="uploads/clientiq/proc-icons/figma.png" alt="Figma"><img src="uploads/clientiq/proc-icons/claude.png" alt="Claude"><img src="uploads/clientiq/proc-icons/replit.png" alt="Replit"></span><span>How AI helped: Draft specs, organize states, summarize feedback patterns</span></p>
+      </div>
+      <div class="ps-conn" aria-hidden="true"></div>
+      <div class="proc-outcome">Product outcome</div>
+      <div class="proc-feedback" aria-hidden="true"><span class="pf-label">Outcome feeds back into research</span></div>
+      <figcaption class="mono-note" style="text-align:center;margin-top:18px;color:var(--ink-4)">The strategy-led, AI-accelerated process.
+        <a href="https://www.figma.com/board/N6PQN5l80ewN7pjAfQN0kf/MY-DESIGN-PROCESS?node-id=0-1" target="_blank" rel="noopener" style="color:var(--dark-accent);text-decoration:none"> View the FigJam board →</a></figcaption>
+    </figure>
+    <!-- Phase-by-phase detail — hidden per request (remove these comment markers to restore)
+    <div class="proc-phases reveal">
+      <div class="pphase">
+        <h3>Research and distill:</h3>
+        <p>AI helped me synthesize feedback, cluster patterns, and compare signals from MVP learning, user interviews, and workflow pain points. That helped clarify what was working in the MVP and where the product still felt too narrow.</p>
+      </div>
+      <div class="pphase">
+        <h3>Define the opportunity:</h3>
+        <p>I used those insights to define what 2.0 needed to do better — bring in richer context, support better prioritization, and connect outputs more clearly to real planning workflows.</p>
+      </div>
+      <div class="pphase">
+        <h3>Shape the strategy:</h3>
+        <p>AI sped up exploration, while I defined the 2.0 model: broader inputs, modular outputs, source grounding, and tighter integration across Meetings, Roadmap, and Goals.</p>
+      </div>
+      <div class="pphase">
+        <h3>Prototype and validate:</h3>
+        <p>Rapid prototyping helped test whether the expanded model felt useful, credible, and actionable.</p>
+      </div>
+      <div class="pphase">
+        <h3>Operationalize and refine:</h3>
+        <p>AI helped speed up specs and documentation, while I focused on making the solution buildable and aligned with product and engineering.</p>
+      </div>
+    </div>
+    -->
+    <div class="proc-worked reveal">
+      <h3 class="pw-title">What worked well</h3>
+      <ul class="pw-list">
+        <li>AI was useful for <span class="hl">speeding up synthesis, exploration, and prototyping,</span> while human direction kept the work relevant and on track</li>
+        <li><span class="hl">Treating AI as a working partner, not a decision-maker,</span> helped me move faster without losing product judgment</li>
+        <li><span class="hl">Reviewing, editing, and pressure-testing</span> AI outputs against user needs, workflow reality, and product constraints improved the quality of the work</li>
+        <li><span class="hl">Human effort was especially valuable</span> when shaping scope, trust, and workflow fit, where stronger judgment mattered more than fast generation</li>
+        <li>The best results came from <span class="hl">combining AI for speed with human review for quality, accuracy, and strategic decisions.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══ CLOSING IMAGE BAND ══ -->
+<section aria-hidden="true" style="position:relative;height:62vh;min-height:420px;overflow:hidden;background:#0d0e13">
+  <img src="uploads/clientiq/closing-apex.png" alt="ClientIQ open on a desktop in a working office" loading="lazy" style="width:100%;height:100%;object-fit:cover;opacity:.9" width="1775" height="886">
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,14,19,.1),rgba(18,19,25,.85))"></div>
+  <div class="wrap" style="position:absolute;left:0;right:0;bottom:46px">
+    <p class="reveal" style="font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-accent)">ClientIQ · in the wild</p>
+    <p class="reveal d1" style="font-weight:700;font-size:clamp(24px,3.4vw,46px);letter-spacing:-.03em;line-height:1.05;color:#f6f5f1;margin-top:12px;max-width:20ch">Strategic intelligence, embedded where MSPs already work.</p>
+  </div>
+</section>
+
+<!-- ══ FOOTER / CONTACT ══ -->
+<footer class="ds-footer" id="contact">
+  <div class="wrap">
+    <div class="mono-note" style="color:var(--dark-accent)">(15) — Next</div>
+    <a class="big" href="work.html" style="margin-top:18px">More<br>work<span>.</span></a>
+    <div class="row">
+      <a href="mailto:jude.shi.ux@gmail.com">jude.shi.ux@gmail.com</a>
+      <div class="social">
+        <a href="work.html">All work</a>
+        <a href="https://clientiq-app.vercel.app/clients" target="_blank" rel="noopener">Live prototype</a>
+        <a href="index.html">Home</a>
+      </div>
+    </div>
+    <div class="copy"><span>© 2026 Jude Shi</span><span>ClientIQ · ScalePad Lifecycle Manager</span></div>
+  </div>
+</footer>
+
+<script src="design-system.js" defer></script>
+<script>
+  (function(){
+    var v = document.querySelector('#hero video.bg');
+    if (!v) return;
+    /* Reduced-motion: hold on the poster frame instead of looping. */
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches){
+      v.removeAttribute('autoplay');
+      v.addEventListener('loadeddata', function(){ v.pause(); });
+      v.pause();
+      return;
+    }
+    /* Autoplay can be deferred (background tab, autoplay policy). Nudge play() on load,
+       when the tab becomes visible, and on first user interaction as a last resort. */
+    var play = function(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); };
+    play();
+    v.addEventListener('canplay', play, { once:true });
+    document.addEventListener('visibilitychange', function(){ if (!document.hidden) play(); });
+    ['pointerdown','touchstart','keydown','scroll'].forEach(function(e){
+      window.addEventListener(e, play, { once:true, passive:true });
+    });
+  })();
+
+  /* Promo video (#overview): bare autoplay is unreliable (background tab / autoplay policy),
+     so nudge play() like the hero — on load, on visibility, and when it scrolls into view. */
+  (function(){
+    var v = document.querySelector('.promo-video video');
+    if (!v) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches){ v.removeAttribute('autoplay'); v.pause(); return; }
+    var play = function(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); };
+    play();
+    v.addEventListener('canplay', play, { once:true });
+    document.addEventListener('visibilitychange', function(){ if (!document.hidden) play(); });
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting) play(); }); }, { threshold:0.15 }).observe(v);
+    }
+    ['pointerdown','touchstart','keydown','scroll'].forEach(function(e){ window.addEventListener(e, play, { once:true, passive:true }); });
+  })();
+
+  /* MSP Journey Map: click-and-hold drag panning + right-edge fade for the inlined grid.
+     Pointer Events unify mouse + touch + pen and give us free pointer-capture. */
+  (function(){
+    var scroller = document.querySelector('.msp-journey .journey-scroll');
+    if(!scroller) return;
+    var down=false, startX=0, startScroll=0, moved=false;
+    var DRAG_THRESHOLD=4;
+
+    scroller.addEventListener('pointerdown', function(e){
+      // Don't hijack drags that start on the sticky left column — it stays put.
+      if(e.target.closest('.lane-label,.corner')) return;
+      // Let the native scrollbar handle its own drags.
+      if(e.offsetY > scroller.clientHeight) return;
+      down=true; moved=false;
+      startX=e.clientX;
+      startScroll=scroller.scrollLeft;
+      scroller.setPointerCapture(e.pointerId);
+    });
+
+    scroller.addEventListener('pointermove', function(e){
+      if(!down) return;
+      var dx = e.clientX - startX;
+      if(!moved && Math.abs(dx) > DRAG_THRESHOLD){
+        moved=true;
+        scroller.classList.add('is-dragging');
+      }
+      if(moved){
+        e.preventDefault();
+        scroller.scrollLeft = startScroll - dx;
+      }
+    });
+
+    var end = function(e){
+      if(!down) return;
+      down=false;
+      scroller.classList.remove('is-dragging');
+      try{ scroller.releasePointerCapture(e.pointerId); }catch(err){}
+      // Suppress the click that fires after a real drag.
+      if(moved){
+        var swallow = function(ev){ ev.stopPropagation(); ev.preventDefault(); };
+        scroller.addEventListener('click', swallow, {capture:true, once:true});
+      }
+    };
+    scroller.addEventListener('pointerup', end);
+    scroller.addEventListener('pointercancel', end);
+
+    // Fade the right edge only while more content remains to the right.
+    var FADE = 64;
+    var updateFade = function(){
+      var more = scroller.scrollWidth - scroller.clientWidth - scroller.scrollLeft;
+      scroller.style.setProperty('--fade-right', Math.min(FADE, Math.max(0, more)) + 'px');
+    };
+    scroller.addEventListener('scroll', updateFade, { passive:true });
+    addEventListener('resize', updateFade, { passive:true });
+    updateFade();
+  })();
+
+  /* Glossary auto-tooltips: wrap every MSP / vCIO / QBR with an underline + info icon + hover definition. */
+  (function(){
+    var GLOSSARY = {
+      MSP:  "A Managed Service Provider — a company that manages another business's IT systems.",
+      vCIO: "A Virtual Chief Information Officer responsible for strategic technology planning.",
+      QBR:  "The Quarterly Business Review where MSPs present strategy to clients."
+    };
+    var RE = /\b(MSPs?|QBRs?|vCIOs?)\b/g;
+    var roots = [document.querySelector('#hero .inner'), document.querySelector('main')].filter(Boolean);
+    function skip(el){
+      // don't wrap inside links, scripts, existing tooltips, the KEY CONTEXT card (terms are
+      // defined there), or anything explicitly opted out with [data-no-gloss]
+      return !el || el.closest('script,style,a,.gloss,.mono-note,.eyebrow,[data-no-gloss]') || el.closest('#overview .card');
+    }
+    roots.forEach(function(root){
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: function(n){
+          RE.lastIndex = 0;
+          if (!n.nodeValue || !RE.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+          if (skip(n.parentElement)) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      var nodes = [], n;
+      while ((n = walker.nextNode())) nodes.push(n);
+      nodes.forEach(function(node){
+        var text = node.nodeValue, frag = document.createDocumentFragment(), last = 0, m;
+        RE.lastIndex = 0;
+        while ((m = RE.exec(text))){
+          var term = m[1], key = term.replace(/s$/, '');
+          var def = GLOSSARY[key];
+          if (!def){ continue; }
+          if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+          var span = document.createElement('span');
+          span.className = 'gloss';
+          span.tabIndex = 0;
+          span.setAttribute('data-def', def);
+          span.setAttribute('role', 'note');
+          span.setAttribute('aria-label', term + ': ' + def);
+          span.textContent = term;
+          var ic = document.createElement('span');
+          ic.className = 'gloss-i';
+          ic.setAttribute('aria-hidden', 'true');
+          ic.textContent = 'i';
+          span.appendChild(ic);
+          frag.appendChild(span);
+          last = m.index + term.length;
+        }
+        if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+        if (frag.childNodes.length) node.parentNode.replaceChild(frag, node);
+      });
+    });
+
+    /* Shared tooltip element (the DS .ds-tip), attached to <body> so backdrop-filter actually
+       blurs the page — a pseudo-element tooltip can't, because transformed/filtered ancestors
+       (the hero/reveal entrance animations) disable backdrop-filter on descendants. */
+    var MARGIN = 12, current = null;
+    var tip = document.createElement('div');
+    tip.className = 'ds-tip';
+    tip.setAttribute('role', 'tooltip');
+    document.body.appendChild(tip);
+    function show(g){
+      current = g;
+      tip.textContent = g.getAttribute('data-def');
+      var t = tip.getBoundingClientRect(), r = g.getBoundingClientRect();
+      var left = r.left + r.width / 2 - t.width / 2;
+      left = Math.max(MARGIN, Math.min(left, window.innerWidth - MARGIN - t.width));
+      var top = r.top - t.height - 10;
+      if (top < MARGIN) top = r.bottom + 10;            // flip below if no room above
+      tip.style.left = Math.round(left) + 'px';
+      tip.style.top = Math.round(top) + 'px';
+      tip.classList.add('show');
+    }
+    function hide(){ current = null; tip.classList.remove('show'); }
+    document.addEventListener('pointerover', function(e){
+      var g = e.target.closest && e.target.closest('.gloss'); if (g) show(g);
+    });
+    document.addEventListener('pointerout', function(e){
+      var g = e.target.closest && e.target.closest('.gloss');
+      if (g && (!e.relatedTarget || !g.contains(e.relatedTarget))) hide();
+    });
+    document.addEventListener('focusin', function(e){
+      var g = e.target.closest && e.target.closest('.gloss'); if (g) show(g);
+    });
+    document.addEventListener('focusout', function(e){
+      var g = e.target.closest && e.target.closest('.gloss'); if (g) hide();
+    });
+    window.addEventListener('scroll', function(){ if (current) show(current); }, { passive:true });
+  })();
+
+  /* Role cards — tilt toward the cursor + pointer-tracking glare (the "frosted glass" interaction). */
+  (function(){
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.role-cards .card').forEach(function(card){
+      card.addEventListener('pointermove', function(e){
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width;     // 0..1
+        var py = (e.clientY - r.top) / r.height;
+        var rx = (0.5 - py) * 4;                      // tilt up/down (subtle)
+        var ry = (px - 0.5) * 5;                      // tilt left/right (subtle)
+        card.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateZ(4px)';
+        card.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+        card.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+        card.classList.add('tilt');
+      });
+      card.addEventListener('pointerleave', function(){
+        card.style.transform = '';
+        card.classList.remove('tilt');
+      });
+    });
+  })();
+
+  /* Charts grow when scrolled into view. */
+  (function(){
+    var charts = document.querySelectorAll('[data-chart]');
+    if (!charts.length) return;
+    if (!('IntersectionObserver' in window)){ charts.forEach(function(c){ c.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.2 });
+    charts.forEach(function(c){ io.observe(c); });
+  })();
+
+  /* Reveal the project title in the nav once the hero title scrolls out of view. */
+  (function(){
+    var nav = document.querySelector('.ds-nav'), h1 = document.querySelector('#hero h1');
+    if (!nav || !h1 || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function(entries){
+      nav.classList.toggle('show-proj', !entries[0].isIntersecting);
+    }, { rootMargin: '-72px 0px 0px 0px' }).observe(h1);
+  })();
+</script>
+<script type="module">
+/* ── Three.js 3-D layer diagram for #hypothesis ── */
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { HorizontalBlurShader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/HorizontalBlurShader.js';
+import { VerticalBlurShader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/VerticalBlurShader.js';
+
+const canvas = document.getElementById('ld-three');
+if (!canvas) throw new Error('ld-three canvas not found');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+/* Near-frontal view (centred on X, slight elevation to reveal the cube tops) with a
+   long lens (low FOV) so perspective stays flat/even. Closer dolly = bigger on page.
+   lookAt is nudged down so the high-floating model + its detached shadow both fit. */
+const camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100);
+camera.position.set(2, 1.4, 12);
+camera.lookAt(0, -0.34, 0);
+
+/* All visual meshes live in one group so the viewer can spin the whole model. */
+const model = new THREE.Group();
+scene.add(model);
+
+/* Pyramid / stacked-platform dimensions.
+   Each layer is a flat slab; width + depth shrink toward the top so the
+   stack reads as a ziggurat — System of Record widest, Meaningful Output smallest. */
+const BW = 3.5, BH = 0.55, BD = 1.3, RADIUS = 0.045;
+const Y_TOP = 0.92, Y_MID = 0, Y_BOT = -0.92;
+const SC_TOP = 0.50, SC_MID = 0.74, SC_BOT = 1.0;
+/* Solid casters opt into this layer; the contact-shadow capture camera renders
+   ONLY this layer, so transparent text labels / wireframe never cast solid blocks. */
+const SHADOW_LAYER = 1;
+/* px-per-world-unit kept constant so every label texture has the same
+   aspect as its plane (no horizontal squish on the narrow top slab). */
+const TEX_PPU = 164 * 0.92 / (BH * 0.85);
+
+/* Transparent canvas texture with an auto-fitted label (sits on the slab front face) */
+function makeTex(lines, fg, worldW) {
+  const ch = 164, cw = Math.max(180, Math.round(TEX_PPU * worldW));
+  const c = document.createElement('canvas');
+  c.width = cw; c.height = ch;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = fg;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const maxW = cw * 0.88;
+  let size = lines.length === 1 ? 70 : 60;
+  const fits = s => { ctx.font = `600 ${s}px system-ui,sans-serif`; return lines.every(l => ctx.measureText(l).width <= maxW); };
+  while (size > 22 && !fits(size)) size -= 2;
+  ctx.font = `600 ${size}px system-ui,sans-serif`;
+  if (lines.length === 1) {
+    ctx.fillText(lines[0], cw / 2, ch / 2);
+  } else {
+    ctx.fillText(lines[0], cw / 2, ch / 2 - size * 0.62);
+    ctx.fillText(lines[1], cw / 2, ch / 2 + size * 0.62);
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+/* Solid rounded slab + a transparent text plane on its front face */
+function slab(yPos, sc, color, lines, fg) {
+  const w = BW * sc, d = BD * sc;
+  const mesh = new THREE.Mesh(
+    new RoundedBoxGeometry(w, BH, d, 4, RADIUS),
+    new THREE.MeshLambertMaterial({ color })
+  );
+  mesh.position.y = yPos;
+  mesh.layers.enable(SHADOW_LAYER);   // cast into the contact shadow
+  model.add(mesh);
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(w * 0.92, BH * 0.85),
+    new THREE.MeshBasicMaterial({ map: makeTex(lines, fg, w), transparent: true, depthWrite: false })
+  );
+  plane.position.set(0, yPos, d / 2 + 0.012);
+  model.add(plane);
+}
+
+/* Meaningful Output — black (smallest, top) */
+slab(Y_TOP, SC_TOP, '#111111', ['Meaningful Output'], '#ffffff');
+
+/* Business Context — wireframe ghost (middle) */
+const wMid = BW * SC_MID, dMid = BD * SC_MID;
+const edges = new THREE.LineSegments(
+  new THREE.EdgesGeometry(new RoundedBoxGeometry(wMid, BH, dMid, 2, RADIUS)),
+  new THREE.LineBasicMaterial({ color: '#b0b0b0' })
+);
+edges.position.y = Y_MID;
+model.add(edges);
+const ctxPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(wMid * 0.92, BH * 0.85),
+  new THREE.MeshBasicMaterial({ map: makeTex(['Business Context'], '#999999', wMid), transparent: true, depthWrite: false })
+);
+ctxPlane.position.set(0, Y_MID, dMid / 2 + 0.012);
+model.add(ctxPlane);
+
+/* Operational System of Record — a grid of small cubes (widest, base) */
+const CUBE_COLS = 8, CUBE_ROWS = 3, CUBE_GAP = 0.02;
+const CUBE = (BW - (CUBE_COLS - 1) * CUBE_GAP) / CUBE_COLS;   // edge sized to fill the width
+const BASE_BOTTOM = Y_BOT - CUBE / 2;                          // floor level for the drop shadow
+(function buildBase() {
+  const usedD = CUBE_ROWS * CUBE + (CUBE_ROWS - 1) * CUBE_GAP;
+  const geo = new RoundedBoxGeometry(CUBE, CUBE, CUBE, 3, 0.03);
+  const shades = ['#2f5dff', '#5179ff', '#2348f0', '#5f87ff', '#2f52ff'];  // brighter, vibrant electric blue
+  for (let c = 0; c < CUBE_COLS; c++) {
+    for (let r = 0; r < CUBE_ROWS; r++) {
+      const col = new THREE.Color(shades[(c * 3 + r) % shades.length]);
+      // self-emissive at ~45% so shaded faces stay a vivid blue instead of going dark
+      const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: col, emissive: col.clone().multiplyScalar(0.45) }));
+      m.layers.enable(SHADOW_LAYER);   // cast into the contact shadow
+      m.position.set(
+        -BW / 2 + CUBE / 2 + c * (CUBE + CUBE_GAP),
+        Y_BOT,
+        -usedD / 2 + CUBE / 2 + r * (CUBE + CUBE_GAP)
+      );
+      model.add(m);
+    }
+  }
+  /* label floats just in front of the cube cluster */
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(BW * 0.92, BH * 0.85),
+    new THREE.MeshBasicMaterial({ map: makeTex(['Operational System of Record'], '#ffffff', BW), transparent: true, depthWrite: false })
+  );
+  plane.position.set(0, Y_BOT, BD / 2 + 0.02);
+  model.add(plane);
+})();
+
+/* Upward-pointing arrows (page-accent blue), centred in the gaps between slabs.
+   Each keeps its base Y so the render loop can gently float it up and down. */
+const arrows = [];
+function addArrow(y) {
+  const mesh = new THREE.Mesh(
+    new THREE.ConeGeometry(0.09, 0.26, 16),
+    new THREE.MeshBasicMaterial({ color: '#1b4dff' })
+  );
+  mesh.position.set(0, y, (BD * SC_TOP) / 2 + 0.06);
+  model.add(mesh);
+  arrows.push({ mesh, baseY: y });
+}
+addArrow((Y_MID + Y_TOP) / 2);
+addArrow((Y_BOT + Y_MID) / 2);
+
+/* Lighting — universal hemisphere fill (lights every face from all sides) plus
+   a soft front-top key light for gentle shading on the cube tops/faces. */
+scene.add(new THREE.HemisphereLight(0xffffff, 0xdfe3ea, 1.05));
+const key = new THREE.DirectionalLight(0xffffff, 0.6);
+key.position.set(3, 7, 5);
+scene.add(key);
+
+/* REAL soft contact shadow (drei-style ContactShadows technique):
+   1. an ortho camera at floor level looks straight UP and renders ONLY the solid
+      casters (SHADOW_LAYER) through a tweaked MeshDepthMaterial — closer-to-floor
+      geometry writes darker alpha, so the base cubes dominate and the floating
+      slabs fade out, all derived from the true silhouette (gaps and all);
+   2. that render target is softened with two separable blur passes;
+   3. the blurred texture is shown on a flat plane below the model.
+   The model floats FLOAT_GAP above this plane → a detached, genuinely soft pool
+   that updates live as the model spins. */
+const FLOAT_GAP = 0.7;
+const SHADOW_Y = BASE_BOTTOM - FLOAT_GAP;          // floor / shadow plane height
+const PLANE_W = BW * 1.8, PLANE_D = BD * 2.9;      // capture + display footprint (margin for soft edges)
+const CAM_FAR = (Y_TOP + BH) - SHADOW_Y;           // floor up to just above the top slab
+const SHADOW_RES = 1024, DARKNESS = 0.1, BLUR = 11; // low darkness = soft, light gray; big blur = feathered
+
+const rt = new THREE.WebGLRenderTarget(SHADOW_RES, SHADOW_RES);
+rt.texture.generateMipmaps = false;
+const rtBlur = new THREE.WebGLRenderTarget(SHADOW_RES, SHADOW_RES);
+rtBlur.texture.generateMipmaps = false;
+
+/* Flat plane that displays the finished (blurred) shadow */
+const shadowMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(PLANE_W, PLANE_D),
+  new THREE.MeshBasicMaterial({ map: rt.texture, transparent: true, depthWrite: false, opacity: 1 })
+);
+shadowMesh.rotation.x = -Math.PI / 2;
+shadowMesh.scale.y = -1;                            // flip V so the silhouette isn't front-to-back mirrored
+shadowMesh.position.set(0, SHADOW_Y, 0);
+shadowMesh.renderOrder = 2;
+scene.add(shadowMesh);
+
+/* Camera that captures the silhouette from the floor, looking up; sees casters only */
+const shadowCam = new THREE.OrthographicCamera(-PLANE_W / 2, PLANE_W / 2, PLANE_D / 2, -PLANE_D / 2, 0, CAM_FAR);
+shadowCam.position.set(0, SHADOW_Y, 0);
+shadowCam.rotation.x = Math.PI / 2;                 // look straight up (+Y)
+shadowCam.layers.set(SHADOW_LAYER);
+
+/* Depth material → black ink whose alpha is strongest for geometry nearest the floor */
+const depthMat = new THREE.MeshDepthMaterial();
+depthMat.depthPacking = THREE.BasicDepthPacking;
+depthMat.depthTest = false;
+depthMat.depthWrite = false;
+depthMat.userData.darkness = { value: DARKNESS };
+depthMat.onBeforeCompile = (shader) => {
+  shader.uniforms.darkness = depthMat.userData.darkness;
+  shader.fragmentShader = 'uniform float darkness;\n' + shader.fragmentShader.replace(
+    'gl_FragColor = vec4( vec3( 1.0 - fragCoordZ ), opacity );',
+    'gl_FragColor = vec4( vec3( 0.0 ), ( 1.0 - fragCoordZ ) * darkness );'
+  );
+};
+
+/* Two-pass separable blur, rendered as a full-screen quad off-scene */
+const blurPlane = new THREE.Mesh(new THREE.PlaneGeometry(PLANE_W, PLANE_D));
+const blurCam = new THREE.OrthographicCamera(-PLANE_W / 2, PLANE_W / 2, PLANE_D / 2, -PLANE_D / 2, 0.01, 10);
+blurCam.position.set(0, 0, 1);
+const hBlur = new THREE.ShaderMaterial(HorizontalBlurShader); hBlur.depthTest = false;
+const vBlur = new THREE.ShaderMaterial(VerticalBlurShader);   vBlur.depthTest = false;
+function blurShadow(amount) {
+  blurPlane.material = hBlur;
+  hBlur.uniforms.tDiffuse.value = rt.texture;
+  hBlur.uniforms.h.value = amount / SHADOW_RES;
+  renderer.setRenderTarget(rtBlur);
+  renderer.render(blurPlane, blurCam);
+
+  blurPlane.material = vBlur;
+  vBlur.uniforms.tDiffuse.value = rtBlur.texture;
+  vBlur.uniforms.v.value = amount / SHADOW_RES;
+  renderer.setRenderTarget(rt);
+  renderer.render(blurPlane, blurCam);
+}
+function renderShadow() {
+  const prevBg = scene.background, prevAlpha = renderer.getClearAlpha();
+  scene.background = null;
+  shadowMesh.visible = false;                        // don't capture the shadow plane itself
+  scene.overrideMaterial = depthMat;
+  renderer.setRenderTarget(rt);
+  renderer.setClearColor(0x000000, 0);
+  renderer.clear();
+  renderer.render(scene, shadowCam);
+  scene.overrideMaterial = null;
+  blurShadow(BLUR);                                  // wide then narrow = smooth falloff
+  blurShadow(BLUR * 0.4);
+  renderer.setRenderTarget(null);
+  renderer.setClearAlpha(prevAlpha);
+  scene.background = prevBg;
+  shadowMesh.visible = true;
+}
+
+/* Resize — driven by ResizeObserver so it re-sizes when the (virtualized,
+   display:none-until-scrolled) section first becomes visible and gains layout size. */
+function resize() {
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(canvas);
+window.addEventListener('resize', resize);
+resize();
+
+/* Interaction — drag to spin the model a little; it springs back to default on release. */
+canvas.style.touchAction = 'none';
+canvas.style.cursor = 'grab';
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+let dragging = false, lastX = 0, lastY = 0, rotY = 0, rotX = 0, velY = 0, velX = 0;
+let hoverX = 0, hoverY = 0, targetHX = 0, targetHY = 0;   // subtle hover tilt (eased toward the cursor)
+canvas.addEventListener('pointerdown', (e) => {
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  velY = velX = 0;                       // drop any leftover spring momentum on a fresh grab
+  targetHX = targetHY = 0;               // release the hover tilt while actively dragging
+  canvas.style.cursor = 'grabbing';
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (dragging) {
+    rotY = clamp(rotY + (e.clientX - lastX) * 0.006, -0.45, 0.45);  // spin only "a little"
+    rotX = clamp(rotX + (e.clientY - lastY) * 0.005, -0.22, 0.22);
+    lastX = e.clientX; lastY = e.clientY;
+    return;
+  }
+  /* Hovering (no button) → subtle tilt toward the cursor (parallax-style). */
+  const r = canvas.getBoundingClientRect();
+  const nx = clamp(((e.clientX - r.left) / r.width) * 2 - 1, -1, 1);
+  const ny = clamp(((e.clientY - r.top) / r.height) * 2 - 1, -1, 1);
+  targetHY = nx * 0.07;                  // horizontal cursor → gentle yaw
+  targetHX = ny * 0.05;                  // vertical cursor → gentle pitch
+});
+canvas.addEventListener('pointerleave', () => { targetHX = targetHY = 0; });   // settle back when the cursor leaves
+const release = () => { dragging = false; canvas.style.cursor = 'grab'; };
+canvas.addEventListener('pointerup', release);
+canvas.addEventListener('pointercancel', release);
+canvas.addEventListener('lostpointercapture', release);
+
+/* Spring back to the default orientation (0,0) on release — under-damped so it
+   gives a subtle bounce/overshoot, then settles exactly to default. */
+const K = 0.14, D = 0.70;                // stiffness, damping → ~15% overshoot, settles in ~0.6s
+function spring(pos, vel) {
+  vel = (vel - pos * K) * D;
+  pos += vel;
+  if (Math.abs(pos) < 4e-4 && Math.abs(vel) < 4e-4) { pos = 0; vel = 0; }
+  return [pos, vel];
+}
+
+/* Render */
+(function tick(t) {
+  requestAnimationFrame(tick);
+  const ms = t || 0;
+  /* Up/down float on the arrows with a pronounced ease-in-out (smootherstep on a
+     triangle phase): they slow / hang at the top & bottom and accelerate through
+     the middle. Short travel (±0.035), ~2.6s period, both in sync. */
+  const AMP = 0.035, PERIOD = 2600;
+  const phase = (ms % PERIOD) / PERIOD;                          // 0..1 over a cycle
+  const tri = 1 - Math.abs(2 * phase - 1);                       // 0→1→0 (bottom→top→bottom)
+  const eased = tri * tri * tri * (tri * (tri * 6 - 15) + 10);   // smootherstep
+  const arrowFloat = (eased * 2 - 1) * AMP;
+  for (let i = 0; i < arrows.length; i++) {
+    arrows[i].mesh.position.y = arrows[i].baseY + arrowFloat;
+  }
+  if (!dragging) {
+    [rotY, velY] = spring(rotY, velY);
+    [rotX, velX] = spring(rotX, velX);
+  }
+  hoverY += (targetHY - hoverY) * 0.1;   // ease the subtle hover tilt in/out
+  hoverX += (targetHX - hoverX) * 0.1;
+  model.rotation.y = rotY + hoverY;
+  model.rotation.x = rotX + hoverX;
+  renderShadow();                        // re-derive the soft shadow from the (possibly spun) model
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>

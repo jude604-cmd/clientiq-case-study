@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How MSPs used Lifecycle Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --canvas:#FAFAF8;
+    --ink:#111111;
+    --ink-2:#3D3D3A;
+    --ink-3:#6E6E69;
+    --line:#E6E5E0;
+    --line-2:#EFEEEA;
+    --neutral-bg:#F4F3EF;
+    --neutral-pill-bg:#EFEEEA;
+    --neutral-pill-fg:#3D3D3A;
+    --green-bg:#EAF3E9;
+    --green-fg:#3F6F3F;
+    --green-line:#C6DEC4;
+    --green-strong-bg:#2E6B43;
+    --green-strong-fg:#FFFFFF;
+    --green-strong-tint:#DDEBDF;
+    --amber-bg:#FAEAD0;
+    --amber-fg:#8A5A1F;
+    --amber-line:#EBD3A6;
+    --amber-tint:#FDF4E2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:transparent;color:var(--ink);font-family:"Poppins",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{padding:0}
+  /* Transparent + zero-padding: the map is embedded in clientiq.html and inherits that
+     page's background and grid alignment — no white card, no redundant inset. The journey
+     grid's own min-width handles horizontal overflow when the column is narrower. */
+  .page{margin:0;background:transparent;padding:0}
+
+  /* ───── Header ───── */
+  /* Title block flexes with the viewport (1fr); legend keeps a fixed width so its
+     pills stay in a 2x2 wrap instead of stretching to one long row.
+     The 48px gap is in absolute pixels, so it stays fixed at every viewport size. */
+  .header{display:grid;grid-template-columns:1fr 500px;gap:48px;align-items:start;margin-bottom:40px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:14px}
+  h1{font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.01em;margin:0 0 14px}
+  .subtitle{font-size:16px;line-height:1.5;color:var(--ink-2);margin:0}
+  .meta{background:var(--neutral-bg);border-radius:14px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+  .meta-title{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 10px}
+
+  /* ───── Pills ───── */
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;line-height:1;white-space:nowrap}
+  .pill .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  /* Stage-head pills can wrap to two lines so they never get clipped */
+  .stage-head .pill{white-space:normal;line-height:1.25;border-radius:14px;align-items:center;max-width:100%}
+  /* LM logo used in place of the dot for stages with strong LM involvement */
+  .pill .dot-lm{width:14px;height:14px;flex-shrink:0;border-radius:3px;display:block}
+  .pill.gray   {background:var(--neutral-pill-bg);color:var(--neutral-pill-fg)}
+  .pill.gray   .dot{background:#9A9A93}
+  .pill.green  {background:var(--green-bg);color:var(--green-fg)}
+  .pill.green  .dot{background:#5C9D5C}
+  .pill.green-strong{background:var(--green-strong-bg);color:#fff}
+  .pill.green-strong .dot{background:#A7D3A7}
+  .pill.amber  {background:var(--amber-bg);color:var(--amber-fg)}
+  .pill.amber  .dot{background:#C68A2E}
+
+  /* ───── Top summary flow ───── */
+  /* The flow lives inside .journey-scroll so it scrolls with the grid below.
+     Its 7-track grid mirrors the stage columns; spans group adjacent stages. */
+  .flow-row{display:grid;grid-template-columns:168px 1fr;min-width:1408px;margin-bottom:28px}
+  /* 168px placeholder aligning with the corner/.lane-label column. Must be sticky + opaque
+     like the corner below it, or the phase steps bleed through the left rail on horizontal scroll. */
+  .flow-gutter{
+    position:sticky;left:0;z-index:4;
+    background:#fff;
+    padding:18px 16px;
+    display:flex;flex-direction:column;gap:6px;justify-content:center;
+    box-shadow:6px 0 12px -10px rgba(20,20,15,.18);
+  }
+  .flow{display:grid;grid-template-columns:repeat(7, minmax(175px, 1fr));gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+  .flow-step{padding:18px 22px;display:flex;flex-direction:column;gap:6px;position:relative;border-right:1px solid var(--line)}
+  .flow-step.span-2{grid-column:span 2}
+  .flow-step:last-child{border-right:0}
+  /* Tints mirror the stage-head colors of the columns each step covers */
+  .flow-step.h-green{background:#F3F8F2}
+  .flow-step.h-green-strong{background:var(--green-strong-tint)}
+  .flow-step.h-amber{background:var(--amber-tint)}
+  .flow-step .step-num{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+  /* inline-flex + align-items:center vertically centers the icon with the title text. */
+  .flow-step .step-name{font-size:15px;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:8px;align-self:flex-start}
+  .flow-step .arrow{position:absolute;right:-9px;top:50%;transform:translateY(-50%);width:18px;height:18px;background:#fff;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;z-index:2}
+  .flow-step:last-child .arrow{display:none}
+  .flow-step .arrow svg{width:8px;height:8px;color:var(--ink-3)}
+
+  /* ───── Journey grid ───── */
+  .journey-scroll{
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-color:#C9C8C2 transparent;
+    cursor:grab;
+    /* Soft fade on the right edge when there's more to scroll (--fade-right set by JS). */
+    -webkit-mask-image:linear-gradient(to right, #000 calc(100% - var(--fade-right,0px)), transparent 100%);
+    mask-image:linear-gradient(to right, #000 calc(100% - var(--fade-right,0px)), transparent 100%);
+  }
+  .journey-scroll.is-dragging{cursor:grabbing;user-select:none}
+  .journey-scroll.is-dragging *{cursor:grabbing !important}
+  /* Sticky lane labels stay anchored — no drag affordance there */
+  .lane-label,.corner{cursor:default}
+  .journey-scroll::-webkit-scrollbar{height:10px}
+  .journey-scroll::-webkit-scrollbar-thumb{background:#D4D3CD;border-radius:999px}
+  .journey-scroll::-webkit-scrollbar-track{background:transparent}
+  .journey{
+    display:grid;
+    /* swimlane label + 7 stage columns */
+    grid-template-columns: 168px repeat(7, minmax(175px, 1fr));
+    min-width:1408px;
+    border-radius:18px;
+    background:#fff;
+  }
+  .journey > * { border-right:1px solid #fff; border-bottom:1px solid #fff; }
+  .journey > *:nth-child(8n){ border-right:0 }
+  /* last row borders bottom removed via container border-radius; we add explicit bottom-border:0 to last row cells */
+  .row-last{border-bottom:0 !important}
+
+  /* Header (stages) row */
+  .corner{
+    background:#fff;
+    position:sticky;left:0;z-index:3;
+    padding:18px 16px;
+    display:flex;flex-direction:column;gap:6px;
+    border-right:1px solid #fff !important;
+    box-shadow:6px 0 12px -10px rgba(20,20,15,.18);
+  }
+  .stage-head{padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px;background:#FCFCFB;position:relative}
+  .stage-head .num{font-family:"Poppins";font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .stage-head .name{font-size:16px;font-weight:700;line-height:1.2;color:var(--ink);min-height:38px}
+  .stage-head .tag{align-self:flex-start}
+  /* Highlighted stages */
+  .stage-head.h-green{background:#F3F8F2}
+  .stage-head.h-green-strong{background:var(--green-strong-tint)}
+  .stage-head.h-amber{background:var(--amber-tint)}
+  .stage-head .annotation{font-size:11px;color:var(--ink-3);font-style:italic;line-height:1.35}
+
+  /* Swimlane label column */
+  .lane-label{
+    padding:18px 16px;
+    background:#fff;
+    display:flex;flex-direction:column;gap:6px;
+    position:sticky;left:0;z-index:2;
+    border-right:1px solid #fff !important;
+    box-shadow:6px 0 12px -10px rgba(20,20,15,.18);
+  }
+  .lab-eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+  .lab-title{font-size:15px;font-weight:700;color:var(--ink);line-height:1.25;display:inline-flex;align-items:center;gap:8px}
+  .lab-sub{font-size:12px;color:var(--ink-3);line-height:1.4;margin-top:4px}
+
+  /* Cells */
+  .cell{padding:16px 16px 18px;display:flex;flex-direction:column;gap:10px;min-height:170px;background:#fff}
+  .cell .pill{align-self:flex-start}
+  .cell ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+  .cell li{font-size:13px;line-height:1.4;color:var(--ink-2);padding-left:12px;position:relative}
+  .cell li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:#B6B6B0}
+  .cell .note{font-size:13px;line-height:1.45;color:var(--ink-2)}
+  .cell.lane-2{background:#FCFCFB}
+  .cell.lane-3{background:#FBFAF7}
+
+  /* Highlighted column tints — match the corresponding stage-head background.
+     The col-* class lives on the cell itself, so use compound selectors with !important
+     to override the lane-2 / lane-3 row backgrounds. */
+  .cell.col-green{background:#F3F8F2 !important}                       /* matches .stage-head.h-green */
+  .cell.col-green-strong{background:var(--green-strong-tint) !important} /* matches .stage-head.h-green-strong */
+  .cell.col-amber{background:var(--amber-tint) !important}             /* matches .stage-head.h-amber */
+  /* But row-2 / row-3 keep slight differentiation */
+
+  /* Cell variant: outline card */
+  .card{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    background:#fff;
+    font-size:13px;
+    line-height:1.4;
+    color:var(--ink-2);
+  }
+  .card.green{border-color:var(--green-line);background:#fff}
+  .card.green-strong{border-color:#9CC79C;background:#F4F9F3}
+  .card.amber{border-color:var(--amber-line);background:#FFFBEF}
+  .card .ct{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px;color:var(--ink-3)}
+  .card.green .ct{color:var(--green-fg)}
+  .card.green-strong .ct{color:var(--green-strong-bg)}
+  .card.amber .ct{color:var(--amber-fg)}
+
+  /* ───── Insight cards ───── */
+  .insights{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px}
+  .insight{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:24px 26px 26px;
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .insight .badge{align-self:flex-start;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-3)}
+  .insight h3{margin:0;font-size:18px;font-weight:700;line-height:1.25;letter-spacing:-.005em}
+  .insight p{margin:0;font-size:14px;line-height:1.55;color:var(--ink-2)}
+  .insight.green{background:#F4F9F3;border-color:var(--green-line)}
+  .insight.green .badge{color:var(--green-fg)}
+  .insight.amber{background:#FFFAEC;border-color:var(--amber-line)}
+  .insight.amber .badge{color:var(--amber-fg)}
+  .insight.dark{background:var(--green-strong-bg);border-color:var(--green-strong-bg);color:#fff}
+  .insight.dark .badge{color:#A7D3A7}
+  .insight.dark p{color:#D9E7DC}
+
+  /* ───── Phosphor icon sizing ───── */
+  .flow-step .ph{font-size:18px;color:var(--ink-3);line-height:1}
+  .lane-label .ph{font-size:18px;color:var(--ink-3);line-height:1}
+  .lane-label .lm-logo{width:18px;height:18px;flex-shrink:0;border-radius:4px}
+  /* Lifecycle Manager swimlane uses the brand green from its logo (logo green @20% composited
+     onto the #fff grid → OPAQUE, so the sticky label doesn't let scrolling cells bleed through). */
+  .lane-label.lane-lm{background:#DAEBE5}
+
+  /* Frosted-glass sticky left rail — translucent so the cells scrolling underneath blur through. */
+  .flow-gutter, .corner, .lane-label{
+    background: rgba(255,255,255,0.6);
+    -webkit-backdrop-filter: blur(12px) saturate(1.5);
+    backdrop-filter: blur(12px) saturate(1.5);
+  }
+  .lane-label.lane-lm{ background: rgba(216,234,227,0.62); }
+  .insight .ph{font-size:18px;line-height:1}
+  .insight.green .ph{color:var(--green-fg)}
+  .insight.amber .ph{color:var(--amber-fg)}
+  .insight.dark .ph{color:#A7D3A7}
+  .badge-row{display:inline-flex;align-items:center;gap:8px}
+  .lab-row{display:inline-flex;align-items:center;gap:8px}
+
+  /* ───── Footer line ───── */
+  .footer{display:flex;justify-content:space-between;align-items:center;margin-top:28px;font-size:12px;color:var(--ink-3)}
+  .divider{height:1px;background:var(--line);margin:24px 0 0}
+
+  /* ───── Responsive breakpoints ─────
+     The journey grid handles narrow viewports via its own min-width + horizontal scroll.
+     These rules adapt the surrounding layout (header, insights, page padding) so the
+     page stays usable at any width without forcing a body-level horizontal scroll. */
+  @media (max-width: 1100px){
+    .insights{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width: 900px){
+    .header{grid-template-columns:1fr;gap:24px;margin-bottom:32px}
+    .insights{grid-template-columns:1fr;gap:16px;margin-top:28px}
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <!-- Header -->
+  <header class="header">
+    <div>
+      <div class="eyebrow">ClientIQ Case Study - MSP Journey Map</div>
+      <h1>How MSPs used Lifecycle Manager</h1>
+      <p class="subtitle">MSPs managed daily service work across tickets, assets, risks, reports, and QBRs. Lifecycle Manager helped centralize visibility and prepare client-facing planning materials, but strategic interpretation still depended on manual work.</p>
+    </div>
+    <aside class="meta">
+      <div class="meta-title">Legend</div>
+      <div class="legend">
+        <span class="pill gray"><span class="dot"></span>Daily MSP workflow</span>
+        <span class="pill green"><span class="dot"></span>Lifecycle Manager involved</span>
+        <span class="pill green-strong"><span class="dot"></span>Strong LM involvement</span>
+        <span class="pill amber"><span class="dot"></span>Manual synthesis / follow-up</span>
+      </div>
+    </aside>
+  </header>
+
+  <!-- Journey grid (with summary flow on top, both scroll together) -->
+  <section class="journey-scroll" aria-label="Journey map">
+  <!-- Top summary flow — aligned to stage columns of the grid below -->
+  <div class="flow-row">
+    <div class="flow-gutter">
+      <span class="lab-eyebrow">Journey</span>
+      <span class="lab-title"><i class="ph ph-path" aria-hidden="true"></i> Phases</span>
+      <span class="lab-sub">The high-level arc — daily work to QBR.</span>
+    </div>
+    <div class="flow" aria-label="Top summary flow">
+      <div class="flow-step span-2">
+        <span class="step-num">01</span>
+        <span class="step-name"><i class="ph ph-headset" aria-hidden="true"></i> Daily service work</span>
+        <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+      </div>
+      <div class="flow-step span-2 h-green">
+        <span class="step-num">02</span>
+        <span class="step-name"><i class="ph ph-shield-warning" aria-hidden="true"></i> Risk &amp; asset visibility</span>
+        <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+      </div>
+      <div class="flow-step h-green-strong">
+        <span class="step-num">03</span>
+        <span class="step-name"><i class="ph ph-chart-bar" aria-hidden="true"></i> Reporting prep</span>
+        <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+      </div>
+      <div class="flow-step h-green">
+        <span class="step-num">04</span>
+        <span class="step-name"><i class="ph ph-chats-circle" aria-hidden="true"></i> QBR conversation</span>
+        <span class="arrow"><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1.5L5 4 2 6.5"/></svg></span>
+      </div>
+      <div class="flow-step h-amber">
+        <span class="step-num">05</span>
+        <span class="step-name"><i class="ph ph-list-checks" aria-hidden="true"></i> Post-QBR execution</span>
+      </div>
+    </div>
+  </div>
+  <div class="journey">
+    <!-- Row 1: stage headers -->
+    <div class="corner">
+      <span class="lab-eyebrow">Workflow</span>
+      <span class="lab-title"><i class="ph ph-list-numbers" aria-hidden="true"></i> Stages</span>
+      <span class="lab-sub">The detailed steps within each phase.</span>
+    </div>
+
+    <div class="stage-head">
+      <span class="num">Stage 01</span>
+      <span class="name">Daily monitoring</span>
+      <span class="pill gray tag"><span class="dot"></span>Daily MSP workflow</span>
+    </div>
+    <div class="stage-head">
+      <span class="num">Stage 02</span>
+      <span class="name">Ticket triage</span>
+      <span class="pill gray tag"><span class="dot"></span>Daily MSP workflow</span>
+    </div>
+    <div class="stage-head h-green">
+      <span class="num">Stage 03</span>
+      <span class="name">Asset &amp; lifecycle management</span>
+      <span class="pill green-strong tag"><svg class="dot-lm" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg>Strong LM involvement</span>
+    </div>
+    <div class="stage-head h-green">
+      <span class="num">Stage 04</span>
+      <span class="name">Risk &amp; budget planning</span>
+      <span class="pill green-strong tag"><svg class="dot-lm" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg>Strong LM involvement</span>
+    </div>
+    <div class="stage-head h-green-strong">
+      <span class="num">Stage 05</span>
+      <span class="name">Reporting &amp; QBR prep</span>
+      <span class="pill green-strong tag"><svg class="dot-lm" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg>Strong LM + heavy synthesis</span>
+    </div>
+    <div class="stage-head h-green">
+      <span class="num">Stage 06</span>
+      <span class="name">QBR meeting</span>
+      <span class="pill green tag"><span class="dot"></span>Strategic client touchpoint</span>
+    </div>
+    <div class="stage-head h-amber">
+      <span class="num">Stage 07</span>
+      <span class="name">Post-QBR execution</span>
+      <span class="pill amber tag"><span class="dot"></span>Follow-up becomes fragmented</span>
+    </div>
+
+    <!-- Row 2: MSP activity -->
+    <div class="lane-label">
+      <span class="lab-eyebrow">Swimlane 01</span>
+      <span class="lab-title"><i class="ph ph-briefcase" aria-hidden="true"></i> MSP activity</span>
+      <span class="lab-sub">What service teams do day to day.</span>
+    </div>
+
+    <div class="cell lane-2">
+      <ul>
+        <li>Monitor client environments</li>
+        <li>Review alerts, device health, backups, service issues</li>
+      </ul>
+    </div>
+    <div class="cell lane-2">
+      <ul>
+        <li>Review incoming issues</li>
+        <li>Prioritize urgency</li>
+        <li>Assign technicians</li>
+      </ul>
+    </div>
+    <div class="cell lane-2 col-green">
+      <ul>
+        <li>Track devices, warranties, aging assets</li>
+        <li>Plan renewals and replacements</li>
+      </ul>
+    </div>
+    <div class="cell lane-2 col-green">
+      <ul>
+        <li>Identify lifecycle risks</li>
+        <li>Prepare replacement recommendations</li>
+        <li>Estimate future budget needs</li>
+      </ul>
+    </div>
+    <div class="cell lane-2 col-green-strong">
+      <ul>
+        <li>Gather reports across systems</li>
+        <li>Review risks, assets, roadmap, client status</li>
+      </ul>
+    </div>
+    <div class="cell lane-2 col-green">
+      <ul>
+        <li>Present reports and completed work</li>
+        <li>Discuss risks, budget, and roadmap initiatives</li>
+      </ul>
+    </div>
+    <div class="cell lane-2 col-amber">
+      <ul>
+        <li>Create or update initiatives</li>
+        <li>Assign follow-up actions</li>
+        <li>Track commitments and roadmap work</li>
+      </ul>
+    </div>
+
+    <!-- Row 3: Lifecycle Manager role -->
+    <div class="lane-label lane-lm">
+      <span class="lab-eyebrow">Swimlane 02</span>
+      <span class="lab-title"><svg class="lm-logo" width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.574 0H3.4258C1.53108 0 0 1.52381 0 3.40952C0 3.42857 0 3.44762 0 3.46667V12.5905C0 14.4762 1.53108 16 3.40666 16H3.4258H12.574C14.4687 16 15.9998 14.4762 15.9998 12.6095V12.5905V3.46667C16.019 1.58095 14.4687 0 12.574 0V0.0571429V0Z" fill="#489D7E"/><path d="M5.88184 9.7959C6.40061 10.4231 7.18813 10.8037 8.05273 10.8037C8.93662 10.8037 9.70581 10.4042 10.2246 9.7959L10.6084 11.6211L12.7412 11.3926C11.6844 12.8182 9.97422 13.75 8.05273 13.75C5.99681 13.7499 4.1909 12.7041 3.15332 11.1074L4.05664 9.22559L5.88184 9.7959ZM8.70605 2.28809C11.6075 2.61123 13.875 5.04448 13.875 8.00977C13.875 8.97908 13.6248 9.89119 13.2021 10.6895L11.1465 10.8418L10.7236 8.90332C10.8197 8.6182 10.8779 8.31337 10.8779 7.99023C10.8778 6.62176 9.87782 5.48147 8.57129 5.23438L9.97461 3.99902L8.70605 2.28809ZM9.01367 3.92285L7.55371 5.23438C6.22797 5.48147 5.22864 6.62176 5.22852 7.99023C5.22852 8.31334 5.28578 8.63677 5.38184 8.92188L3.63379 8.35156L2.76855 10.3662C2.442 9.64398 2.25 8.82646 2.25 7.99023C2.25014 4.89201 4.72907 2.36405 7.8418 2.25L9.01367 3.92285Z" fill="white"/></svg> Lifecycle Manager role</span>
+      <span class="lab-sub">Where the system carried weight.</span>
+    </div>
+
+    <div class="cell lane-3">
+      <div class="card">
+        <span class="ct">Supportive</span>
+        Provided visibility into lifecycle and risk signals.
+      </div>
+    </div>
+    <div class="cell lane-3">
+      <div class="card">
+        <span class="ct">Supportive</span>
+        Supplied account context when connected to broader client data.
+      </div>
+    </div>
+    <div class="cell lane-3 col-green">
+      <div class="card green-strong">
+        <span class="ct">Strong involvement</span>
+        Centralized asset and lifecycle visibility across clients.
+      </div>
+    </div>
+    <div class="cell lane-3 col-green">
+      <div class="card green-strong">
+        <span class="ct">Strong involvement</span>
+        Surfaced lifecycle risks and structured planning inputs.
+      </div>
+    </div>
+    <div class="cell lane-3 col-green-strong">
+      <div class="card green-strong">
+        <span class="ct">Strong involvement</span>
+        Helped prepare client-facing materials for QBR.
+      </div>
+    </div>
+    <div class="cell lane-3 col-green">
+      <div class="card green">
+        <span class="ct">Supports the moment</span>
+        Powered reports, roadmap, and planning conversations.
+      </div>
+    </div>
+    <div class="cell lane-3 col-amber">
+      <div class="card green">
+        <span class="ct">Partial support</span>
+        Supported roadmap and initiative tracking after the meeting.
+      </div>
+    </div>
+
+    <!-- Row 4: Manual work / friction -->
+    <div class="lane-label row-last">
+      <span class="lab-eyebrow">Swimlane 03</span>
+      <span class="lab-title"><i class="ph ph-hand-grabbing" aria-hidden="true"></i> Manual work &amp; friction</span>
+      <span class="lab-sub">Where humans had to fill the gap.</span>
+    </div>
+
+    <div class="cell lane-2 row-last">
+      <div class="card">Teams still interpreted which signals mattered most.</div>
+    </div>
+    <div class="cell lane-2 row-last">
+      <div class="card">Ticket patterns were often interpreted outside the system.</div>
+    </div>
+    <div class="cell lane-2 col-green row-last">
+      <div class="card amber">
+        <span class="ct">Manual</span>
+        MSPs still needed to explain business impact to clients.
+      </div>
+    </div>
+    <div class="cell lane-2 col-green row-last">
+      <div class="card amber">
+        <span class="ct">Manual</span>
+        Strategic framing still required human judgment.
+      </div>
+    </div>
+    <div class="cell lane-2 col-green-strong row-last">
+      <div class="card amber">
+        <span class="ct">Heavy synthesis</span>
+        “What matters, why now, and how do we explain it?”
+      </div>
+    </div>
+    <div class="cell lane-2 col-green row-last">
+      <div class="card amber">
+        <span class="ct">Manual</span>
+        Translating technical findings into a strategic client narrative.
+      </div>
+    </div>
+    <div class="cell lane-2 col-amber row-last">
+      <div class="card amber">
+        <span class="ct">Fragmented</span>
+        Follow-ups split across notes, email, PSA, and roadmap tools.
+      </div>
+    </div>
+  </div>
+  </section>
+
+  <!-- Insight cards -->
+  <section class="insights" aria-label="Insights">
+    <article class="insight green">
+      <span class="badge badge-row"><i class="ph ph-check-circle" aria-hidden="true"></i> Insight 01</span>
+      <h3>Why the system worked</h3>
+      <p>Lifecycle Manager gave MSPs a clearer view of client assets, risks, reports, and roadmap planning.</p>
+    </article>
+    <article class="insight amber">
+      <span class="badge badge-row"><i class="ph ph-warning-circle" aria-hidden="true"></i> Insight 02</span>
+      <h3>Where the workflow became manual</h3>
+      <p>The hardest work was translating operational signals into a strategic client story.</p>
+    </article>
+    <article class="insight dark">
+      <span class="badge badge-row"><i class="ph ph-target" aria-hidden="true"></i> Insight 03</span>
+      <h3>Why QBR mattered</h3>
+      <p>QBRs were the key moment where MSPs had to prove value, align priorities, and move clients toward future initiatives.</p>
+    </article>
+  </section>
+
+  <div class="divider"></div>
+  <div class="footer">
+    <span>Pre-AI MSP workflow · context map</span>
+    <span>1 / 1</span>
+  </div>
+</main>
+<script>
+  // Click-and-hold drag panning for the journey grid.
+  // Pointer Events unify mouse + touch + pen and give us free pointer-capture.
+  (function(){
+    const scroller = document.querySelector('.journey-scroll');
+    if(!scroller) return;
+    let down=false, startX=0, startScroll=0, moved=false;
+    const DRAG_THRESHOLD=4;
+
+    scroller.addEventListener('pointerdown', e => {
+      // Don't hijack drags that start on the sticky left column —
+      // it stays put, so dragging it would feel broken.
+      if(e.target.closest('.lane-label,.corner')) return;
+      // Let the native scrollbar handle its own drags.
+      if(e.offsetY > scroller.clientHeight) return;
+      down=true; moved=false;
+      startX=e.clientX;
+      startScroll=scroller.scrollLeft;
+      scroller.setPointerCapture(e.pointerId);
+    });
+
+    scroller.addEventListener('pointermove', e => {
+      if(!down) return;
+      const dx = e.clientX - startX;
+      if(!moved && Math.abs(dx) > DRAG_THRESHOLD){
+        moved=true;
+        scroller.classList.add('is-dragging');
+      }
+      if(moved){
+        e.preventDefault();
+        scroller.scrollLeft = startScroll - dx;
+      }
+    });
+
+    const end = e => {
+      if(!down) return;
+      down=false;
+      scroller.classList.remove('is-dragging');
+      try{ scroller.releasePointerCapture(e.pointerId); }catch{}
+      // Suppress the click that fires after a real drag.
+      if(moved){
+        const swallow = ev => { ev.stopPropagation(); ev.preventDefault(); };
+        scroller.addEventListener('click', swallow, {capture:true, once:true});
+      }
+    };
+    scroller.addEventListener('pointerup', end);
+    scroller.addEventListener('pointercancel', end);
+
+    // Fade the right edge only while more content remains to the right.
+    const FADE = 64;
+    const updateFade = () => {
+      const more = scroller.scrollWidth - scroller.clientWidth - scroller.scrollLeft;
+      scroller.style.setProperty('--fade-right', Math.min(FADE, Math.max(0, more)) + 'px');
+    };
+    scroller.addEventListener('scroll', updateFade, { passive:true });
+    addEventListener('resize', updateFade, { passive:true });
+    updateFade();
+  })();
+</script>
+</body>
+</html>

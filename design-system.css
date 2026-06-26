@@ -1,0 +1,322 @@
+/* ============================================================================
+   JUDE SHI — MASTER DESIGN SYSTEM
+   ----------------------------------------------------------------------------
+   Single source of truth for the whole site. Every page links this file.
+   Change a token or a component here and it updates EVERYWHERE.
+
+   Sections:
+     1. Tokens            (:root CSS variables — colour, type, space, motion)
+     2. Base / reset
+     3. Layout primitives (.wrap, grids, sections)
+     4. Typography        (.eyebrow, h.*, p.*, blockquote, .mono-note)
+     5. Components        (nav, .btn, .card, .figure, .tags, .tbl, .stat …)
+     6. Motion            (.reveal, #progress, #sideToc, cursor glow)
+     7. Dark surface      (.dark, footer)
+     8. Responsive + reduced-motion
+   ========================================================================== */
+
+/* ── 1. TOKENS ───────────────────────────────────────────────────────────── */
+:root{
+  /* brand + neutrals */
+  --bg:#eaedf4;
+  --bg-grad-top:#eef0f4; --bg-grad-mid:#e9ebef; --bg-grad-bot:#dee1e7;
+  --ink:#1e2636;
+  --accent:#1b4dff;
+  --accent-soft:rgba(27,77,255,.04);
+  --ink-2:#3c3e46; --ink-3:#54565e; --ink-4:#74767e; --ink-5:#8a8c93;
+  --line:rgba(21,22,27,.12); --line-soft:rgba(21,22,27,.08); --line-strong:rgba(21,22,27,.18);
+  --card:#eceef3; --card-2:#f3f4f7;
+  --white:#ffffff;
+
+  /* dark surface */
+  --dark:#121319; --dark-2:#0d0e13;
+  --dark-ink:#f4f3ef; --dark-ink-2:#b9bbc4; --dark-ink-3:#9a9ca6; --dark-ink-4:#6a6c74;
+  --dark-accent:#6f8bff;
+  --dark-line:rgba(255,255,255,.12); --dark-line-soft:rgba(255,255,255,.1);
+
+  /* radii */
+  --r-lg:24px; --r-md:18px; --r-sm:14px; --pill:100px;
+
+  /* type */
+  --sans:'Schibsted Grotesk',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --fs-display:clamp(56px,10vw,150px);
+  --fs-h1:clamp(52px,9vw,128px);
+  --fs-h2:clamp(30px,4.4vw,56px);
+  --fs-h3:clamp(22px,2.4vw,30px);
+  --fs-lead:clamp(18px,1.5vw,21px);
+  --fs-body:17px;
+  --lh-tight:.92; --lh-snug:1.1; --lh-body:1.62;
+  --tracking-tight:-.045em; --tracking-h:-.032em;
+
+  /* spacing + layout */
+  --maxw:1180px; --maxw-wide:1280px;
+  --pad-x:44px; --pad-x-sm:22px;
+  --sec-y:104px; --sec-y-tight:72px;
+  --gap-sub:128px;   /* universal VERTICAL gap between stacked sub-sections within a section */
+
+  /* elevation */
+  --shadow-card:0 30px 70px -50px rgba(20,30,60,.45);
+  --shadow-fig:0 30px 70px -44px rgba(20,30,60,.42);
+  --shadow-pin:0 40px 90px -50px rgba(20,30,60,.5);
+  --shadow-btn:0 14px 30px -12px rgba(21,22,27,.6);
+
+  /* frost */
+  --frost-bg:rgba(233,235,239,.72);
+  --frost-blur:blur(18px) saturate(1.5);
+
+  /* tooltip — house frosted-card style for hover tooltips (translucent so the backdrop blur reads) */
+  --tooltip-bg:rgba(255,255,255,.38);
+  --tooltip-blur:blur(16px) saturate(1.7);
+  --tooltip-border:rgba(21,22,27,.1);
+
+  /* motion */
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --dur:.8s;
+  --glow-color:rgba(86,134,255,.6);
+  --glow-color-active:rgba(110,152,255,.78);   /* brighter on pointer-down */
+}
+
+/* ── 2. BASE / RESET ─────────────────────────────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{background:transparent;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.5}
+::selection{background:var(--accent);color:#fff}
+a{color:inherit}
+img{display:block;max-width:100%;height:auto}
+
+/* ── 3. LAYOUT PRIMITIVES ────────────────────────────────────────────────── */
+.ds-wrap,.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x)}
+.wrap.wide{max-width:var(--maxw-wide)}
+.sec{padding:var(--sec-y) 0;position:relative}
+.sec-tight{padding:var(--sec-y-tight) 0;position:relative}
+section{position:relative}
+/* Universal vertical rhythm: --gap-sub between the major stacked blocks (direct
+   children of a section's .wrap), keeping tight heading-group gaps. Nested content
+   inside 2-col blocks (.grid2/.grid-cards columns) is untouched. */
+:is(.sec,.sec-tight) .wrap > * + *{margin-top:var(--gap-sub)!important}
+:is(.sec,.sec-tight) .wrap > .eyebrow + *{margin-top:20px!important}
+:is(.sec,.sec-tight) .wrap > .h + .lead{margin-top:22px!important}
+:is(.sec,.sec-tight) .wrap > .sub + .body{margin-top:10px!important}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.grid2.top{align-items:start}
+.grid-cards{display:grid;gap:18px}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c2{grid-template-columns:repeat(2,1fr)}
+
+/* ── 4. TYPOGRAPHY ───────────────────────────────────────────────────────── */
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:inline-flex;align-items:center;gap:13px}
+.eyebrow::before{content:"";display:inline-block;width:30px;height:1px;background:var(--accent)}
+h2.h{font-weight:700;font-size:var(--fs-h2);line-height:1.02;letter-spacing:var(--tracking-h);margin-top:20px;max-width:16ch}
+h3.sub{font-weight:700;font-size:var(--fs-h3);letter-spacing:-.02em;line-height:var(--lh-snug)}
+p.lead{font-size:var(--fs-lead);line-height:var(--lh-body);color:var(--ink-2);max-width:62ch}
+p.body{font-size:var(--fs-body);line-height:1.66;color:var(--ink-3);max-width:62ch}
+.muted{color:var(--ink-4)}
+.mono-note{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink-4)}
+blockquote{font-weight:600;font-size:clamp(22px,2.8vw,36px);line-height:1.24;letter-spacing:-.02em;color:var(--ink);max-width:20ch;position:relative}
+blockquote.full{max-width:24ch}
+blockquote cite{display:block;font-style:normal;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--ink-4);margin-top:20px;font-weight:400}
+
+/* ── 5. COMPONENTS ───────────────────────────────────────────────────────── */
+
+/* Nav — add data-nav to a <nav>; JS toggles .scrolled */
+.ds-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px var(--pad-x);transition:padding .3s var(--ease),background .3s,backdrop-filter .3s,box-shadow .3s}
+.ds-nav.scrolled{padding:13px var(--pad-x)}
+/* iOS-style PROGRESSIVE backdrop blur on scroll: blur + tint are full at the top and fade out
+   toward the bottom via a gradient mask, so there's no hard frosted edge. Lives behind the nav
+   content (z-index:-1) and extends a little past the bottom so the fade completes off the bar. */
+/* Progressive backdrop blur on scroll — stronger + taller. No tint. Blur is full near the top
+   and fades out lower down via the gradient mask; element extends well past the bar's bottom. */
+.ds-nav::before{content:"";position:absolute;top:0;left:0;right:0;bottom:-18px;z-index:-1;pointer-events:none;opacity:0;
+  -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 66%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 66%,transparent 100%);
+  transition:opacity .35s var(--ease)}
+.ds-nav.scrolled::before{opacity:1}
+
+/* Shared hover tooltip — frosted card. Lives on <body> (positioned by JS) so its backdrop-filter
+   isn't disabled by a transformed/filtered ancestor, which is why pseudo-element tooltips don't blur. */
+.ds-tip{position:fixed;top:0;left:0;z-index:200;max-width:min(280px,calc(100vw - 24px));padding:11px 14px;border-radius:var(--r-sm);
+  background:var(--tooltip-bg);-webkit-backdrop-filter:var(--tooltip-blur);backdrop-filter:var(--tooltip-blur);
+  border:1px solid var(--tooltip-border);box-shadow:var(--shadow-fig);
+  color:var(--ink);font:400 13px/1.45 var(--sans);text-align:left;
+  opacity:0;visibility:hidden;transform:translateY(5px);transition:opacity .2s var(--ease),transform .2s var(--ease);pointer-events:none}
+.ds-tip.show{opacity:1;visibility:visible;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){.ds-tip{transition:none}}
+
+.ds-nav .brand{font-weight:800;font-size:19px;letter-spacing:-.03em;text-decoration:none}
+.ds-nav .brand span{color:var(--accent)}
+/* Project title in the bar — fades in once the hero title scrolls out of view (toggled by JS via .show-proj). */
+.ds-nav__proj{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);
+  opacity:0;transform:translateY(4px);transition:opacity .35s var(--ease),transform .35s var(--ease);pointer-events:none;white-space:nowrap}
+.ds-nav.show-proj .ds-nav__proj{opacity:1;transform:none}
+.ds-nav .links{display:flex;gap:30px;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.ds-nav .links a{color:var(--ink-2);text-decoration:none;transition:color .2s}
+.ds-nav .links a:hover,.ds-nav .links a.cur{color:var(--ink)}
+/* Apple-style animated underline on the text nav links (not the Contact pill) */
+.ds-nav .links a:not(.pill){position:relative}
+.ds-nav .links a:not(.pill)::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:1.5px;background:currentColor;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .32s var(--ease)}
+.ds-nav .links a:not(.pill):hover::after,.ds-nav .links a.cur::after{transform:scaleX(1)}
+.ds-nav .links a.pill{display:inline-flex;align-items:center;gap:8px;color:var(--ink);border:1px solid var(--line-strong);border-radius:var(--pill);padding:9px 16px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:9px;padding:15px 26px;border-radius:var(--pill);font-family:var(--mono);font-size:13px;letter-spacing:.02em;text-decoration:none;transition:transform .25s var(--ease),background .25s,box-shadow .25s,border-color .25s}
+.btn.primary{background:var(--ink);color:#fff;font-weight:500}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-btn)}
+.btn.ghost{border:1px solid var(--line-strong);color:var(--ink)}
+.btn.ghost:hover{transform:translateY(-2px);border-color:var(--ink)}
+
+/* Cards + figures */
+.card{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:30px 32px;transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .45s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-fig);border-color:var(--line)}
+.figure{border-radius:var(--r-md);overflow:hidden;background:var(--card-2);border:1px solid var(--line-soft);box-shadow:var(--shadow-fig);transition:transform .55s var(--ease),box-shadow .55s var(--ease)}
+.figure:hover{transform:translateY(-4px);box-shadow:var(--shadow-pin)}
+.figure img{width:100%;height:auto;transition:transform .7s var(--ease)}
+.figure:hover img{transform:scale(1.025)}
+figcaption,.cap{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink-4);margin-top:14px}
+
+/* Stats */
+.stat{font-weight:700;font-size:clamp(40px,5vw,64px);letter-spacing:-.03em;line-height:1}
+.stat.accent{color:var(--accent)}
+.stat-l{font-family:var(--mono);font-size:11.5px;color:var(--ink-4);letter-spacing:.04em;margin-top:9px;text-transform:uppercase}
+
+/* Numbered steps */
+ol.steps{list-style:none;counter-reset:s;display:grid;gap:16px;margin-top:26px}
+ol.steps li{counter-increment:s;position:relative;padding-left:60px;min-height:42px}
+ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:0;font-family:var(--mono);font-size:13px;color:var(--accent);border:1px solid var(--line);border-radius:var(--pill);width:42px;height:42px;display:flex;align-items:center;justify-content:center}
+ol.steps li b{display:block;font-size:17px;margin-bottom:3px}
+ol.steps li span{font-size:15.5px;color:var(--ink-3);line-height:1.55}
+
+/* Tick list */
+ul.ticks{list-style:none;display:grid;gap:13px;margin-top:8px}
+ul.ticks li{position:relative;padding-left:26px;font-size:16.5px;line-height:1.55;color:var(--ink-2)}
+ul.ticks li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:15px;margin-top:8px;overflow:hidden;border-radius:var(--r-sm);border:1px solid var(--line-soft)}
+.tbl th,.tbl td{text-align:left;padding:15px 18px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.tbl thead th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);background:rgba(255,255,255,.5)}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl td:first-child{font-weight:600;color:var(--ink)}
+.tbl .em{color:var(--accent);font-weight:600}
+
+/* Before/after comparison variant — for Aspect → old → new tables.
+   The "old" (middle) column fades back; the "new" column (.em) leads with a
+   directional arrow and goes bright accent, so the upgrade reads at a glance.
+   Fixed widths give the new-approach column the most room (kills line-wraps). */
+.tbl--compare{table-layout:fixed;margin-top:0}
+.tbl--compare th:first-child,.tbl--compare td:first-child{width:30%}
+.tbl--compare th:nth-child(2),.tbl--compare td:nth-child(2){width:22%}
+.tbl--compare th:last-child,.tbl--compare td:last-child{width:48%}
+.tbl--compare tbody td:nth-child(2){color:var(--ink-4)}              /* old — faded */
+.tbl--compare .em{position:relative;padding-left:38px}
+.tbl--compare .em::before{content:"\2192";position:absolute;left:16px;color:var(--accent);font-weight:500}
+.tbl--compare tbody tr{transition:background .25s var(--ease)}
+.tbl--compare tbody tr:hover{background:rgba(21,22,27,.03)}
+
+/* Pill tags + chip + callout */
+.tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
+.tags span{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--ink-2);border:1px solid var(--line);border-radius:var(--pill);padding:7px 13px}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:var(--pill);padding:6px 13px}
+.callout{border-left:2px solid var(--accent);padding:4px 0 4px 24px}
+
+/* MoSCoW columns */
+.moscow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px}
+.moscow .col{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:22px}
+.moscow .col h4{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.moscow .col.wont h4{color:var(--ink-5)}
+.moscow .col ul{list-style:none;display:grid;gap:9px}
+.moscow .col li{font-size:14.5px;color:var(--ink-2);line-height:1.4;padding-left:14px;position:relative}
+.moscow .col li::before{content:"–";position:absolute;left:0;color:var(--ink-5)}
+
+/* ── 6. MOTION ───────────────────────────────────────────────────────────── */
+/* Scroll progress bar — add <div id="progress"></div> */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:60;transition:width .08s linear}
+
+/* Section dot index — add <div id="sideToc"></div>; JS fills from [data-toc] */
+#sideToc{position:fixed;top:50%;right:26px;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:11px;opacity:0;transition:opacity .4s}
+#sideToc.show{opacity:1}
+#sideToc a{width:9px;height:9px;border-radius:50%;background:var(--line-strong);box-shadow:0 0 0 .5px rgba(255,255,255,.45);transition:background .25s,transform .25s;position:relative}
+#sideToc a:hover{background:var(--accent);transform:scale(1.25)}
+#sideToc a.active{background:var(--accent);transform:scale(1.3)}
+#sideToc a span{position:absolute;right:18px;top:50%;transform:translateY(-50%);white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);background:rgba(243,244,247,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line-soft);border-radius:var(--pill);padding:5px 10px;opacity:0;pointer-events:none;transition:opacity .2s}
+#sideToc a:hover span{opacity:1}
+
+/* Reveal on scroll — add class .reveal (+ .d1.. for stagger) */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}.reveal.d5{transition-delay:.40s}.reveal.d6{transition-delay:.48s}
+
+/* Cursor glow — element injected by design-system.js.
+   Outer layer = JS-driven position only (no transition). Inner ::before = gradient,
+   carries the size (--glow-scale) and opacity so they animate independently of motion.
+   --glow-scale is registered so the browser interpolates it natively (smooth, no snap). */
+@property --glow-scale{syntax:"<number>";inherits:true;initial-value:1}
+#ds-cursor-glow{position:fixed;top:0;left:0;width:440px;height:440px;pointer-events:none;z-index:-1;transform:translate(-50%,-50%)}
+#ds-cursor-glow::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,
+    var(--glow-color) 0%,
+    color-mix(in srgb,var(--glow-color) 30%,transparent) 22%,
+    color-mix(in srgb,var(--glow-color) 13%,transparent) 46%,
+    color-mix(in srgb,var(--glow-color) 4%,transparent) 68%,
+    transparent 88%);
+  filter:blur(34px);opacity:0;transform:scale(var(--glow-scale));
+  transition:opacity .65s ease}
+#ds-cursor-glow.on::before{opacity:1}
+
+/* ── 7. DARK SURFACE ─────────────────────────────────────────────────────── */
+.dark{background:
+    radial-gradient(ellipse 90% 55% at 50%  -8%,  rgba(27,77,255,.38)  0%, transparent 56%),
+    radial-gradient(ellipse 55% 42% at 105% 105%, rgba(80,30,220,.26)  0%, transparent 52%),
+    radial-gradient(ellipse 48% 38% at -5%  95%,  rgba(10,40,200,.18)  0%, transparent 50%),
+    var(--dark);
+  color:var(--dark-ink)}
+.dark .eyebrow{color:var(--dark-accent)}
+.dark .chip{color:var(--dark-accent)}
+.dark .stat.accent{color:var(--dark-accent)}
+.dark .eyebrow::before{background:var(--dark-accent)}
+.dark p.body{color:var(--dark-ink-2)}
+.dark p.lead{color:#d4d5db}
+.dark .muted{color:var(--dark-ink-3)}
+/* Tables on a dark surface — text/borders must flip or the first column (--ink) goes invisible. */
+.dark .tbl{border-color:var(--dark-line-soft);color:var(--dark-ink-2)}
+.dark .tbl th,.dark .tbl td{border-color:var(--dark-line-soft)}
+.dark .tbl thead th{background:rgba(255,255,255,.06);color:var(--dark-ink-3)}
+.dark .tbl td:first-child{color:var(--dark-ink)}
+.dark .tbl .em{color:var(--dark-accent)}
+.dark .tbl--compare tbody td:nth-child(2){color:var(--dark-ink-4)}   /* old — faded */
+.dark .tbl--compare .em::before{color:var(--dark-accent)}
+.dark .tbl--compare tbody tr:hover{background:rgba(255,255,255,.045)}
+
+footer.ds-footer{background:var(--dark);color:var(--dark-ink);padding:120px 0 64px}
+footer.ds-footer .big{display:block;text-decoration:none;font-weight:800;font-size:clamp(38px,7vw,118px);line-height:.94;letter-spacing:var(--tracking-tight);color:#f6f5f1}
+footer.ds-footer .big span{color:var(--dark-accent)}
+footer.ds-footer .row{display:flex;flex-wrap:wrap;gap:30px;margin-top:50px;border-top:1px solid var(--dark-line);padding-top:34px;align-items:center;justify-content:space-between}
+footer.ds-footer .row a{font-family:var(--mono);font-size:15px;color:var(--dark-ink);text-decoration:none}
+footer.ds-footer .social{display:flex;gap:24px;font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;text-transform:uppercase}
+footer.ds-footer .social a{color:#a6a8b0;text-decoration:none;transition:color .2s;position:relative}
+footer.ds-footer .social a::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:1.5px;background:currentColor;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .32s var(--ease)}
+footer.ds-footer .social a:hover{color:var(--dark-ink)}
+footer.ds-footer .social a:hover::after{transform:scaleX(1)}
+footer.ds-footer .copy{margin-top:56px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dark-ink-4);letter-spacing:.06em;flex-wrap:wrap;gap:10px}
+
+/* ── 8. RESPONSIVE + REDUCED MOTION ──────────────────────────────────────── */
+@media (max-width:860px){
+  .ds-nav,.ds-nav.scrolled{padding:16px var(--pad-x-sm)}
+  .ds-nav .links{gap:16px}
+  .ds-nav .links a:not(.pill){display:none}
+  .wrap{padding:0 var(--pad-x-sm)}
+  .sec{padding:var(--sec-y-tight) 0}
+  .grid2{grid-template-columns:1fr;gap:24px}
+  .c3,.c2{grid-template-columns:1fr}
+  .moscow{grid-template-columns:1fr 1fr}
+  #sideToc{display:none}
+}
+@media (hover:none),(pointer:coarse){ #ds-cursor-glow{display:none} }
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  #ds-cursor-glow{display:none}
+  html{scroll-behavior:auto}
+  .card:hover,.figure:hover{transform:none}
+  .figure:hover img{transform:none}
+}
