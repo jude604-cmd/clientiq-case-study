@@ -579,11 +579,13 @@
   #v2 .quote-card cite{display:flex;align-items:center;gap:10px;margin-top:24px;font-style:normal;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.04em;color:var(--dark-ink-4)}
   #v2 .quote-card cite::before{content:'';width:22px;height:1.5px;background:var(--accent)}
   /* video-background variant (MSP-user quote card) */
-  #v2 .quote-card.quote-vid{overflow:hidden}
-  #v2 .quote-card.quote-vid .qc-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  #v2 .quote-card.quote-vid{overflow:hidden;min-height:420px;display:flex;flex-direction:column;justify-content:center;padding:72px 44px}
+  #v2 .quote-card.quote-vid .qc-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:1;transition:opacity .6s ease}
   #v2 .quote-card.quote-vid::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(150deg,rgba(7,16,11,.88),rgba(7,16,11,.64) 55%,rgba(7,16,11,.82))}
   #v2 .quote-card.quote-vid::before{z-index:2}
   #v2 .quote-card.quote-vid .qc-content{position:relative;z-index:2}
+  #v2 .quote-card.quote-vid cite{color:rgba(255,255,255,.85);font-size:13px}
+  #v2 .quote-card.quote-vid cite::before{background:var(--accent);width:24px}
   #v2 .v2-fig{margin:0;background:transparent;border:0}
   #v2 .v2-fig img{display:block;width:100%;height:auto;border-radius:14px}
   #v2 .v2-fig figcaption{margin-top:14px;font-family:var(--sans);font-size:14px;line-height:1.45;color:var(--dark-ink-3);padding:0}
@@ -1679,7 +1681,7 @@
         <figcaption>Context from multiple sources → judgment packaged into modular outputs → action inside existing planning surfaces.</figcaption>
       </figure>
       <h3 class="v2-subh" style="margin-top:56px">Three planning surfaces clients actually pay attention to.</h3>
-      <blockquote class="quote-card quote-vid" style="margin-top:26px"><video class="qc-vid" src="uploads/clientiq/closing-loop.mp4" autoplay loop muted playsinline preload="auto" aria-hidden="true"></video><div class="qc-content">Honestly, the things we use most are Meetings, Roadmaps and Goals — that’s the stuff clients actually pay attention to.<cite>MSP user</cite></div></blockquote>
+      <blockquote class="quote-card quote-vid" style="margin-top:26px"><video class="qc-vid" src="uploads/clientiq/closing-loop.mp4" autoplay muted playsinline preload="auto" aria-hidden="true"></video><div class="qc-content">Honestly, the things we use most are Meetings, Roadmaps and Goals — that’s the stuff clients actually pay attention to.<cite>MSP user</cite></div></blockquote>
       <div style="margin-top:36px">
         <table class="tbl">
           <thead><tr><th>Feature</th><th>QBR stage</th><th>Why it matters</th><th>ClientIQ support</th></tr></thead>
@@ -1724,7 +1726,7 @@
    keep a low-frequency watchdog as a final safety net. All guarded by inView() so an
    off-screen video stays paused. */
 (function(){
-  var vids = [].slice.call(document.querySelectorAll('#v2 .chat-vid video, .qc-vid'));
+  var vids = [].slice.call(document.querySelectorAll('#v2 .chat-vid video'));
   if (!vids.length) return;
   function inView(v){ var r = v.getBoundingClientRect(); var vh = innerHeight || document.documentElement.clientHeight; return r.bottom > 0 && r.top < vh; }
   function kick(v){
@@ -1756,6 +1758,35 @@
       last[i] = v.currentTime;
     });
   }, 1500);
+})();
+</script>
+<script>
+/* MSP-user quote-card background video: play through once, fade out, hold a beat, then
+   fade back in and replay (instead of an instant hard loop). */
+(function(){
+  var v = document.querySelector('#v2 .quote-vid .qc-vid');
+  if (!v) return;
+  var HOLD = 1100, replaying = false;
+  function inView(){ var r = v.getBoundingClientRect(); var vh = innerHeight || document.documentElement.clientHeight; return r.bottom > 0 && r.top < vh; }
+  function start(){ v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+  v.addEventListener('ended', function(){
+    if (replaying) return; replaying = true;
+    v.style.opacity = '0';                       // fade out (CSS transition .6s)
+    setTimeout(function(){
+      try { v.currentTime = 0; } catch(e){}
+      start();
+      requestAnimationFrame(function(){ v.style.opacity = '1'; });   // fade back in
+      replaying = false;
+    }, HOLD);
+  });
+  /* light stall recovery — never seeks to 0, so it can't fight the fade/replay */
+  ['stalled','waiting','suspend'].forEach(function(ev){
+    v.addEventListener(ev, function(){ if (inView() && v.paused && !replaying) start(); });
+  });
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting && v.paused && !replaying) start(); }); }, { threshold: 0.15 }).observe(v);
+  }
+  start();
 })();
 </script>
 
