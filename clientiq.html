@@ -535,11 +535,16 @@
   #v2 .shift-row .mvp{color:var(--dark-ink-3);font-size:15.5px;line-height:1.4}
   #v2 .shift-row .ar{color:var(--accent);font-family:var(--mono);font-size:15px;text-align:center}
   #v2 .shift-row .now{color:var(--dark-ink);font-weight:600;font-size:15.5px;line-height:1.4}
-  /* AI trust model table */
-  #v2 .v2-trust{border-top:1px solid var(--dark-line)}
-  #v2 .trust-row{display:grid;grid-template-columns:1fr 1.15fr;align-items:start;gap:32px;padding:17px 2px;border-bottom:1px solid var(--dark-line)}
-  #v2 .trust-row.head{padding:13px 2px;align-items:center;background:rgba(57,217,120,.07);border-bottom-color:rgba(57,217,120,.28)}
-  #v2 .trust-row.head span{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(120,223,160,.92)}
+  /* AI trust model table — glass card with green→blue gradient */
+  #v2 .v2-trust{position:relative;padding:6px clamp(20px,3vw,34px) 12px;border-radius:18px;overflow:hidden;
+    background:linear-gradient(142deg,rgba(57,217,120,.16) 0%,rgba(31,120,180,.13) 48%,rgba(27,77,255,.17) 100%);
+    border:1px solid rgba(255,255,255,.14);
+    -webkit-backdrop-filter:blur(20px) saturate(1.35);backdrop-filter:blur(20px) saturate(1.35);
+    box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 26px 56px -32px rgba(0,0,0,.6)}
+  #v2 .trust-row{display:grid;grid-template-columns:1fr 1.15fr;align-items:start;gap:32px;padding:17px 2px;border-bottom:1px solid rgba(255,255,255,.1)}
+  #v2 .trust-row:last-child{border-bottom:0}
+  #v2 .trust-row.head{padding:14px 2px;align-items:center;background:transparent;border-bottom-color:rgba(255,255,255,.2)}
+  #v2 .trust-row.head span{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(140,232,175,.95)}
   #v2 .trust-row .risk{color:var(--dark-ink-3);font-size:15.5px;line-height:1.42}
   #v2 .trust-row .resp{color:var(--dark-ink);font-weight:600;font-size:15.5px;line-height:1.42}
   /* feature grid */
