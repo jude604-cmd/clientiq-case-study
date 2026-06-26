@@ -474,6 +474,14 @@
   #mvp .quote-card::before{content:'\201C';position:absolute;top:18px;left:34px;font-family:Georgia,'Times New Roman',serif;font-size:96px;line-height:1;color:var(--accent);opacity:1;pointer-events:none}
   #mvp .quote-card cite{display:flex;align-items:center;gap:10px;margin-top:24px;font-style:normal;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.04em;color:var(--ink-4)}
   #mvp .quote-card cite::before{content:'';width:22px;height:1.5px;background:var(--accent)}
+  /* MVP quote card with background video — card size unchanged; video fits height, cropped to the left */
+  #mvp .quote-card.quote-vid{overflow:hidden}
+  #mvp .quote-card.quote-vid .qc-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:left center;z-index:0}
+  #mvp .quote-card.quote-vid::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(150deg,rgba(8,14,30,.86),rgba(8,14,30,.58) 55%,rgba(8,14,30,.8))}
+  #mvp .quote-card.quote-vid::before{z-index:2;color:#fff;opacity:.95}
+  #mvp .quote-card.quote-vid .qc-content{position:relative;z-index:2;color:#fff}
+  #mvp .quote-card.quote-vid cite{color:rgba(255,255,255,.85)}
+  #mvp .quote-card.quote-vid cite::before{background:#fff;width:24px}
   /* frosted-glass cards (outcome stats + quote) */
   #mvp .outcome-stats .card,
   #mvp .quote-card{
@@ -1636,7 +1644,7 @@
       <div class="card reveal d2"><div class="stat accent">Repeatable</div><div class="stat-l">strategic planning became regular, not one-off</div></div>
     </div>
     <div class="grid2 top" style="margin-top:48px">
-      <blockquote class="reveal quote-card">This is a really simple feature, but the suggestions are pretty good — and I can actually get a precise summary of this client before QBRs.<cite>MSP user</cite></blockquote>
+      <blockquote class="reveal quote-card quote-vid"><video class="qc-vid" src="uploads/clientiq/mvp-quote-bg.mp4" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video><div class="qc-content">This is a really simple feature, but the suggestions are pretty good — and I can actually get a precise summary of this client before QBRs.<cite>MSP user</cite></div></blockquote>
       <div>
         <p class="body reveal">Post-launch, initiative creation rose 119% on average and reached 216% at peak — and happened more regularly, suggesting ClientIQ made strategic planning repeatable. Public reactions showed MSPs recognized it as a meaningful step toward strategic account management.</p>
         <p class="body reveal d1" style="margin-top:18px"><b class="muted">Why direct conversion wasn’t tracked —</b> attribution was messy (users edited and reused outputs), instrumentation wasn’t ready for connected analytics, and the MVP’s priority was proving output quality and feasibility first.</p>
