@@ -511,8 +511,8 @@
   #v2 .v2-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
   #v2 .feat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:24px 24px 26px;transition:transform .25s ease,border-color .25s ease,background .25s ease}
   #v2 .feat:hover{transform:translateY(-3px);background:rgba(255,255,255,.06);border-color:rgba(0,194,72,.4)}
-  #v2 .feat h4{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--dark-ink);margin:0}
-  #v2 .feat h4::before{content:'';flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.16)}
+  #v2 .feat h3{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--dark-ink);margin:0}
+  #v2 .feat h3::before{content:'';flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.16)}
   #v2 .feat p{margin:12px 0 0;font-size:14px;line-height:1.5;color:var(--dark-ink-3)}
   /* contextual AI chat — headline addition callout */
   #v2 .v2-chat{position:relative;isolation:isolate;border-radius:22px;padding:40px;display:grid;grid-template-columns:1fr 250px;gap:46px;align-items:center;
@@ -537,16 +537,18 @@
   /* de-sync the second card so the two meshes never march in lockstep */
   #v2 .v2-chat.rev::before{animation-duration:21s;animation-delay:-6.5s}
   #v2 .v2-chat.rev::after{animation-duration:19s;animation-delay:-11s;animation-direction:alternate-reverse}
+  /* translate + opacity only — no scale/rotate, so the blurred layer composites
+     instead of re-rasterizing the 48px blur each frame */
   @keyframes v2mesh1{
-    0%{transform:translate(0,0) scale(1)}
-    30%{transform:translate(6%,-4%) scale(1.09)}
-    62%{transform:translate(-5%,5%) scale(1.03)}
-    100%{transform:translate(4%,3%) scale(1.11)}}
+    0%{transform:translate(0,0);opacity:.9}
+    30%{transform:translate(7%,-5%);opacity:1}
+    62%{transform:translate(-6%,6%);opacity:.82}
+    100%{transform:translate(5%,4%);opacity:.95}}
   @keyframes v2mesh2{
-    0%{transform:translate(0,0) scale(1.05) rotate(0deg)}
-    34%{transform:translate(-6%,4%) scale(1.13) rotate(4deg)}
-    70%{transform:translate(5%,-5%) scale(1) rotate(-3deg)}
-    100%{transform:translate(-3%,-4%) scale(1.08) rotate(2deg)}}
+    0%{transform:translate(0,0);opacity:.82}
+    34%{transform:translate(-7%,5%);opacity:1}
+    70%{transform:translate(6%,-6%);opacity:.88}
+    100%{transform:translate(-4%,-5%);opacity:.95}}
   @media (prefers-reduced-motion:reduce){#v2 .v2-chat::before,#v2 .v2-chat::after{animation:none}}
   #v2 .v2-chat .chat-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--dark-accent)}
   #v2 .v2-chat .chat-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.2)}
@@ -567,7 +569,7 @@
   #v2 .v2-cta{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
   #v2 .v2-cta .btn.go{background:var(--accent);color:#04150b;font-weight:600;box-shadow:0 12px 30px -12px rgba(0,194,72,.55)}
   #v2 .v2-cta .btn.go:hover{transform:translateY(-2px);box-shadow:0 18px 38px -14px rgba(0,194,72,.65)}
-  #v2 .v2-cta .cta-note{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;color:var(--dark-ink-4)}
+  #v2 .v2-cta .cta-note{font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;color:var(--dark-ink-3)}
   /* folded-in sub-sections (refined workflow + outcome) on the dark surface */
   #v2 .v2-subh{font-family:var(--sans);font-size:clamp(24px,2.6vw,32px);font-weight:600;letter-spacing:-.02em;line-height:1.16;color:var(--dark-ink);margin:0;max-width:24ch}
   #v2 blockquote{color:var(--dark-ink)}
@@ -592,7 +594,7 @@
   #v2 .v2-cta .btn.ghost{border:1px solid rgba(255,255,255,.25);color:var(--dark-ink)}
   #v2 .v2-cta .btn.ghost:hover{border-color:var(--dark-ink);transform:translateY(-2px)}
   /* green 3D cards — same raised treatment as #scoping's scope-cards, recolored green */
-  #v2 .card{position:relative;background:linear-gradient(155deg,#18c96a 0%,#00c248 46%,#06773e 100%);border:0;border-radius:var(--r-lg);
+  #v2 .card{position:relative;background:linear-gradient(155deg,#18c96a 0%,var(--accent) 46%,#06773e 100%);border:0;border-radius:var(--r-lg);
     box-shadow:0 1px 0 rgba(255,255,255,.30) inset,0 -10px 26px rgba(4,70,30,.4) inset,0 18px 30px -12px rgba(0,150,60,.22),0 40px 60px -28px rgba(0,194,72,.22);
     transform:translateY(0);transition:transform .25s ease,box-shadow .25s ease}
   #v2 .card::after{content:'';position:absolute;inset:0;border-radius:inherit;border:1px solid rgba(255,255,255,.24);pointer-events:none;mask:linear-gradient(#000,transparent 60%);-webkit-mask:linear-gradient(#000,transparent 60%)}
@@ -1636,18 +1638,18 @@
     <div class="reveal">
       <p class="v2-kicker">Deeper analytics, more data points</p>
       <div class="v2-feats">
-        <div class="feat"><h4>AI Executive Summary</h4><p>Reads the whole account first, then streams a grounded summary with a confidence badge.</p></div>
-        <div class="feat"><h4>Client Sentiment</h4><p>A single score you can open up — trend, radar and heatmap evidence behind the number.</p></div>
-        <div class="feat"><h4>Service Metrics</h4><p>SLA, response time, patch compliance and ticket volume that recolor as health recovers.</p></div>
-        <div class="feat"><h4>Recommendations</h4><p>AI-generated plays, prep questions and a meeting agenda — each one explainable.</p></div>
-        <div class="feat"><h4>Suggested Goals</h4><p>Scattered wins distilled into one measurable, AI-explained target to track.</p></div>
-        <div class="feat"><h4>Meeting Analytics</h4><p>Every meeting in one timeline — calendar, upcoming and past, in a single view.</p></div>
+        <div class="feat"><h3>AI Executive Summary</h3><p>Reads the whole account first, then streams a grounded summary with a confidence badge.</p></div>
+        <div class="feat"><h3>Client Sentiment</h3><p>A single score you can open up — trend, radar and heatmap evidence behind the number.</p></div>
+        <div class="feat"><h3>Service Metrics</h3><p>SLA, response time, patch compliance and ticket volume that recolor as health recovers.</p></div>
+        <div class="feat"><h3>Recommendations</h3><p>AI-generated plays, prep questions and a meeting agenda — each one explainable.</p></div>
+        <div class="feat"><h3>Suggested Goals</h3><p>Scattered wins distilled into one measurable, AI-explained target to track.</p></div>
+        <div class="feat"><h3>Meeting Analytics</h3><p>Every meeting in one timeline — calendar, upcoming and past, in a single view.</p></div>
       </div>
     </div>
 
     <div class="v2-chat rev reveal">
       <figure class="chat-vid">
-        <video src="uploads/clientiq/explainable-ai.mp4" autoplay loop muted playsinline preload="auto" aria-label="Screen recording showing a ClientIQ 2.0 AI output opening into the underlying evidence behind it"></video>
+        <video src="uploads/clientiq/explainable-ai.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Screen recording showing a ClientIQ 2.0 AI output opening into the underlying evidence behind it"></video>
       </figure>
       <div class="chat-copy">
         <span class="chat-badge">New in 2.0 · Source-grounded</span>
@@ -1663,7 +1665,7 @@
         <p>The headline addition is a chat scoped to one client. Instead of a fixed summary you read once, you can ask why sentiment is sliding, what’s driving the SLA miss, or how the last three meetings went — and get answers grounded in that account’s own signals, every claim tied to evidence you can open and verify.</p>
       </div>
       <figure class="chat-vid">
-        <video src="uploads/clientiq/clientiq-chat.mp4" autoplay loop muted playsinline preload="auto" aria-label="Screen recording of the ClientIQ 2.0 contextual AI chat answering questions about a single client"></video>
+        <video src="uploads/clientiq/clientiq-chat.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Screen recording of the ClientIQ 2.0 contextual AI chat answering questions about a single client"></video>
       </figure>
     </div>
 
@@ -1681,7 +1683,7 @@
         <figcaption>Context from multiple sources → judgment packaged into modular outputs → action inside existing planning surfaces.</figcaption>
       </figure>
       <h3 class="v2-subh" style="margin-top:56px">Three planning surfaces clients actually pay attention to.</h3>
-      <blockquote class="quote-card quote-vid" style="margin-top:26px"><video class="qc-vid" src="uploads/clientiq/closing-loop.mp4" autoplay muted playsinline preload="auto" aria-hidden="true"></video><div class="qc-content">Honestly, the things we use most are Meetings, Roadmaps and Goals — that’s the stuff clients actually pay attention to.<cite>MSP user</cite></div></blockquote>
+      <blockquote class="quote-card quote-vid" style="margin-top:26px"><video class="qc-vid" src="uploads/clientiq/closing-loop.mp4" autoplay muted playsinline preload="metadata" aria-hidden="true"></video><div class="qc-content">Honestly, the things we use most are Meetings, Roadmaps and Goals — that’s the stuff clients actually pay attention to.<cite>MSP user</cite></div></blockquote>
       <div style="margin-top:36px">
         <table class="tbl">
           <thead><tr><th>Feature</th><th>QBR stage</th><th>Why it matters</th><th>ClientIQ support</th></tr></thead>
@@ -1728,6 +1730,8 @@
 (function(){
   var vids = [].slice.call(document.querySelectorAll('#v2 .chat-vid video'));
   if (!vids.length) return;
+  /* prefers-reduced-motion: don't autoplay/loop — pause and bail (WCAG 2.2.2) */
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches){ vids.forEach(function(v){ try { v.pause(); v.removeAttribute('autoplay'); } catch(e){} }); return; }
   function inView(v){ var r = v.getBoundingClientRect(); var vh = innerHeight || document.documentElement.clientHeight; return r.bottom > 0 && r.top < vh; }
   function kick(v){
     if (!inView(v)) return;
@@ -1766,6 +1770,8 @@
 (function(){
   var v = document.querySelector('#v2 .quote-vid .qc-vid');
   if (!v) return;
+  /* prefers-reduced-motion: hold a static frame instead of looping (WCAG 2.2.2) */
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches){ try { v.pause(); v.removeAttribute('autoplay'); } catch(e){} return; }
   var END_HOLD = 1000, FADE = 1200, replaying = false;
   function inView(){ var r = v.getBoundingClientRect(); var vh = innerHeight || document.documentElement.clientHeight; return r.bottom > 0 && r.top < vh; }
   function start(){ v.muted = true; var p = v.play(); if (p && p.catch) p.catch(function(){}); }
