@@ -383,20 +383,6 @@
   .role-cards.danger .card::before{
     background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(180,35,24,.10),rgba(180,35,24,0) 72%)}
   @media (prefers-reduced-motion:reduce){.role-cards .card{transition:none}}
-  /* #pivot structural-gap cards: stay 3-up (not stacked) and compact on narrow screens */
-  @media (max-width:860px){
-    #pivot .grid-cards.c3.role-cards{grid-template-columns:repeat(3,1fr);gap:10px}
-    #pivot .role-cards .card{min-height:0;padding:16px 14px}
-    #pivot .role-cards .card .mono-note{font-size:11px}
-    #pivot .role-cards .card .sub{margin-top:8px!important;font-size:clamp(14px,2.4vw,19px);line-height:1.2;overflow-wrap:break-word;hyphens:auto}
-    #pivot .role-cards .card .body{margin-top:10px;padding-top:0;font-size:clamp(12px,1.9vw,14px);line-height:1.4;overflow-wrap:break-word;hyphens:auto}
-  }
-  @media (max-width:520px){
-    #pivot .grid-cards.c3.role-cards{gap:7px}
-    #pivot .role-cards .card{padding:12px 11px;border-radius:14px}
-    #pivot .role-cards .card .sub{font-size:clamp(13px,3.4vw,16px)}
-    #pivot .role-cards .card .body{font-size:clamp(11px,2.9vw,13px)}
-  }
 
   /* Glossary terms (MSP / vCIO / QBR) — underline + info icon. Tooltip = shared DS .ds-tip element (JS). */
   .gloss{white-space:nowrap;cursor:help;border-bottom:1.5px dotted currentColor;outline:none;padding-block:4px}
@@ -646,17 +632,6 @@
     justify-content:center;
     box-shadow:0 30px 66px -26px rgba(0,194,72,.55),inset 0 1px 0 rgba(255,255,255,.28)}
   #v2 .role-cards .card.tilt{box-shadow:0 48px 96px -28px rgba(0,194,72,.66),inset 0 1px 0 rgba(255,255,255,.34)}
-  /* tighter gaps + card padding on narrow screens (default role gap 48px, padding 34/36, min-height 320) */
-  @media (max-width:860px){
-    #v2 .grid-cards.c3.role-cards{gap:14px}
-    #v2 .role-cards .card{min-height:0;padding:24px 24px}
-    #v2 .role-cards .card .body{margin-top:16px!important}
-  }
-  @media (max-width:520px){
-    #v2 .grid-cards.c3.role-cards{gap:10px}
-    #v2 .role-cards .card{padding:20px 20px}
-    #v2 .role-cards .card .body{margin-top:12px!important}
-  }
   @media (max-width:860px){
     #v2 .v2-feats{grid-template-columns:1fr;gap:14px}
     #v2 .shift-row{grid-template-columns:1fr;gap:6px;text-align:left}

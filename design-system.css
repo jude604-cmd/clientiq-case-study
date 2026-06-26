@@ -311,6 +311,16 @@ footer.ds-footer .copy{margin-top:56px;display:flex;justify-content:space-betwee
   .c3,.c2{grid-template-columns:1fr}
   .moscow{grid-template-columns:1fr 1fr}
   #sideToc{display:none}
+  /* role-cards: consistent compact treatment when stacked on narrow screens.
+     Higher specificity (.grid-cards.role-cards) so it wins over the per-page base. */
+  .grid-cards.role-cards{gap:14px}
+  .grid-cards.role-cards .card{min-height:0;padding:24px}
+  .grid-cards.role-cards .card .body{margin-top:16px;padding-top:0}
+}
+@media (max-width:520px){
+  .grid-cards.role-cards{gap:10px}
+  .grid-cards.role-cards .card{padding:18px}
+  .grid-cards.role-cards .card .body{margin-top:13px}
 }
 @media (hover:none),(pointer:coarse){ #ds-cursor-glow{display:none} }
 @media (prefers-reduced-motion:reduce){
