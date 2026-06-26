@@ -313,7 +313,7 @@ footer.ds-footer .copy{margin-top:56px;display:flex;justify-content:space-betwee
   #sideToc{display:none}
   /* role-cards: consistent compact treatment when stacked on narrow screens.
      Higher specificity (.grid-cards.role-cards) so it wins over the per-page base. */
-  .grid-cards.role-cards{gap:14px}
+  .grid-cards.role-cards{gap:14px;grid-auto-rows:1fr}
   .grid-cards.role-cards .card{min-height:0;padding:24px}
   .grid-cards.role-cards .card .body{margin-top:16px;padding-top:0}
 }
