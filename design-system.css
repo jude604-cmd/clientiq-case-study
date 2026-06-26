@@ -39,7 +39,7 @@
 
   /* type */
   --sans:'Schibsted Grotesk',sans-serif;
-  --mono:'IBM Plex Mono',monospace;
+  --mono:'Schibsted Grotesk',sans-serif;
   --fs-display:clamp(56px,10vw,150px);
   --fs-h1:clamp(52px,9vw,128px);
   --fs-h2:clamp(30px,4.4vw,56px);
