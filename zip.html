@@ -236,9 +236,9 @@
      (High-fidelity design subsection onward → all of Deliver + Outcome) */
   /* :not(.bare) · a .bare figure opts out of the floating-screenshot shadow/radius (its image
      already carries its own page-coloured ground, so a shadow/rounding would re-box it) */
-  :is(#refine .released, #deliver, #outcome) figure.figure:not(.bare){
+  :is(#design-response .released, #deliver, #outcome) figure.figure:not(.bare){
     background:transparent; border:0; box-shadow:none; overflow:visible; padding:0; border-radius:0}
-  :is(#refine .released, #deliver, #outcome) figure.figure:not(.bare) img{
+  :is(#design-response .released, #deliver, #outcome) figure.figure:not(.bare) img{
     display:block; width:100%; border-radius:16px;
     filter:drop-shadow(0 7px 18px rgba(38,28,76,.10)) drop-shadow(0 30px 46px rgba(38,28,76,.09))}
 
@@ -288,6 +288,9 @@
     color:var(--ink-2); background:var(--accent-tint); border-radius:var(--pill); padding:9px 16px}
   .growth-loop li:not(:last-child)::after{content:"→"; color:var(--accent); margin:0 12px 0 16px; font-weight:600}
   @media(max-width:560px){ .growth-loop li:not(:last-child)::after{margin:0 8px 0 10px} }
+  /* the Design-approach process line reuses the loop chips but drops the pill fill, so the
+     marketplace growth loop stays the page's one distinct chip-loop motif (keep the loop visually distinct) */
+  #approach .growth-loop li{background:transparent; padding:6px 0}
 
   /* research findings — two table images side by side in equal-size white boxes */
   /* two parts of one validation table at different aspect ratios — size each card to its own image and
@@ -429,10 +432,10 @@
      Each image has a near-white ground (#fff / #f5f5f5) that is LIGHTER than the page #f1f1f3, so
      mix-blend-mode:darken clamps it to exactly the page colour — the white "box" disappears while
      the darker linework / nodes stay. No drop-shadow → the diagram sits straight on the page. */
-  #develop .diagram-blend figure.figure{background:transparent; border:0; box-shadow:none; overflow:visible; padding:0; border-radius:0}
-  #develop .diagram-blend figure.figure:hover{transform:none; box-shadow:none}
-  #develop .diagram-blend figure.figure img{display:block; width:100%; mix-blend-mode:darken}
-  #develop .diagram-blend figure.figure:hover img{transform:none}
+  #design-response .diagram-blend figure.figure{background:transparent; border:0; box-shadow:none; overflow:visible; padding:0; border-radius:0}
+  #design-response .diagram-blend figure.figure:hover{transform:none; box-shadow:none}
+  #design-response .diagram-blend figure.figure img{display:block; width:100%; mix-blend-mode:darken}
+  #design-response .diagram-blend figure.figure:hover img{transform:none}
 
   /* Transparent-background images (e.g. the usability-findings comparison): just drop the white
      card so the PNG's transparent areas show the page — no blend, no shadow needed. */
@@ -474,10 +477,16 @@
   #outcome .o-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(11px,1.7vh,32px) 48px}
   #outcome .oc-content .stat{line-height:.9}                            /* original editorial font-size; tight leading so the 2×2 fits */
   #outcome .oc-content .lead{max-width:62ch; font-size:clamp(15px,1.45vw,18px); line-height:1.42}
-  /* very short viewports only: tighten spacing further (NOT the type) so the big stats still fit */
-  @media (max-height:720px){ #outcome .oc-content .wrap > * + *{margin-top:7px!important}
-    #outcome .o-grid{gap:6px 48px}
-    #outcome .oc-content .lead{font-size:13.5px; line-height:1.3} }
+  /* shorter viewports: tighten the RHYTHM + the supporting lead (never the big stats) so the
+     2×2 of stats plus the two supporting paragraphs still fit one pinned viewport. Two tiers. */
+  @media (max-height:940px){
+    #outcome .oc-content .wrap > * + *{margin-top:clamp(8px,1.3vh,18px)!important}
+    #outcome .o-grid{gap:clamp(6px,1vh,14px) 48px}
+    #outcome .oc-content .lead{font-size:14px; line-height:1.3} }
+  @media (max-height:760px){
+    #outcome .oc-content .wrap > * + *{margin-top:4px!important}
+    #outcome .o-grid{gap:4px 48px}
+    #outcome .oc-content .lead{font-size:12px; line-height:1.22} }
   /* reduced motion / small screens: no pin, no scrub — composed end state, static + readable */
   #outcome.oc-static .oc-track{height:auto}
   #outcome.oc-static .oc-stage{position:static; height:auto; overflow:visible; padding:var(--sec-y-tight) 0}
@@ -878,7 +887,7 @@
           <div class="jump-pills">
             <a href="#problem">The problem</a>
             <a href="#explore">Concept testing</a>
-            <a href="#refine">Final designs</a>
+            <a href="#design-response">Design response</a>
             <a href="#outcome">Outcome</a>
           </div>
         </nav>
@@ -936,38 +945,28 @@
   </div>
 </section>
 
-<!-- ══ PROCESS (cycle) ══ -->
-<section class="sec" id="process-cycle" data-toc="Process">
+<!-- ══ 03 · DESIGN APPROACH (was the Process wheel) ══ -->
+<section class="sec" id="approach" data-toc="Design approach">
   <div class="wrap">
-    <h2 class="h reveal pw-title">Process</h2>
-    <p class="lead reveal d1" style="max-width:70ch">A design-thinking process helped turn a broad engagement problem into a focused creator-commerce strategy: understand the marketplace system, diagnose the content constraint, test product bets, and ship the experiences most likely to change creator behavior.</p>
-    <div class="pw reveal d2" role="img" aria-label="A repeating six-phase process: 01 Learn, 02 Analyze, 03 Explore, 04 Develop, 05 Refine, 06 Deliver.">
-      <svg class="pw-ring" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-        <defs>
-          <marker id="pwAh" markerWidth="3.6" markerHeight="3.6" refX="1.6" refY="1.8" orient="auto">
-            <path d="M0 0 L3.6 1.8 L0 3.6 Z" fill="#dcdce2"/>
-          </marker>
-        </defs>
-        <g stroke="#dcdce2" stroke-width="4.5" stroke-linecap="round">
-          <path d="M145 46.4 A70 70 0 0 1 76.1 165.8" marker-end="url(#pwAh)"/>
-          <path d="M55 153.6 A70 70 0 0 1 123.9 34.2" marker-end="url(#pwAh)"/>
-        </g>
-      </svg>
-      <button class="pw-step" type="button" style="--x:50%;--y:10%" data-detail="Ran market research and audited the Amazon Influencer Program, interviewed Zappos creators about how they make and share content, and gathered data on what was holding output back.">01. Learn</button>
-      <button class="pw-step" type="button" style="--x:85%;--y:30%" data-detail="Synthesised the research into creator personas, journey maps, and six testable hypotheses about what would actually get influencers making and re-sharing content.">02. Analyze</button>
-      <button class="pw-step" type="button" style="--x:85%;--y:70%" data-detail="Prototyped the Influencer Hub and Storefront concepts and concept-tested them with real influencers and customers to see what drove content creation.">03. Explore</button>
-      <button class="pw-step" type="button" style="--x:50%;--y:90%" data-detail="Built the MVP: information architecture, user flows and wireframes for the reworked Hub and the new shoppable creator Storefront.">04. Develop</button>
-      <button class="pw-step" type="button" style="--x:15%;--y:70%" data-detail="Ran iterative usability sessions, then took it to high fidelity: clearer navigation, prioritised actions, and Zappos brand-led detail.">05. Refine</button>
-      <button class="pw-step" type="button" style="--x:15%;--y:30%" data-detail="Accessibility handoff, success metrics, launch, and a long-term UX strategy for the program. Output went on to grow elevenfold, with engagement up 3.5×.">06. Deliver</button>
-      <div class="pw-detail" aria-live="polite"></div>
-    </div>
+    <div class="eyebrow reveal"><span>(03) · Design approach</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Design thinking, pointed at a marketplace.</h2>
+    <p class="lead reveal" style="max-width:66ch">I used a design-thinking approach to move from ambiguous engagement signals to focused product bets. The work combined analytics, creator and shopper research, concept testing, and delivery constraints to identify where ZIP could most directly increase repeat content creation.</p>
+    <ol class="growth-loop reveal d1" aria-label="Design approach, six phases" style="margin-top:40px">
+      <li>Understand the system</li>
+      <li>Diagnose the constraint</li>
+      <li>Explore product bets</li>
+      <li>Validate direction</li>
+      <li>Shape the experience</li>
+      <li>Deliver and extend</li>
+    </ol>
+    <p class="body reveal" style="margin-top:28px;max-width:74ch">A design-thinking process helped turn a broad engagement problem into a focused creator-commerce strategy: understand the marketplace system, diagnose the content constraint, test product bets, and ship the experiences most likely to change creator behavior.</p>
   </div>
 </section>
 
 <!-- ══ 03 · THE PROBLEM ══ -->
 <section class="sec" id="problem" data-toc="The problem">
   <div class="wrap">
-    <div class="eyebrow reveal"><span>(03) · The problem</span></div>
+    <div class="eyebrow reveal"><span>(04) · The problem</span></div>
     <div class="grid2 top">
       <div>
         <h2 class="h reveal d1">ZIP had a participation problem.</h2>
@@ -983,14 +982,14 @@
   </div>
 </section>
 
-<!-- ══ 04 · WHAT THE DATA SHOWED ══ -->
+<!-- ══ 05 · WHAT THE DATA SHOWED ══ -->
 <section class="sec" id="problem-statement" data-toc="What the data showed">
   <div class="wrap">
     <div>
-      <div class="eyebrow reveal"><span>(04) · What the data showed</span></div>
+      <div class="eyebrow reveal"><span>(05) · What the data showed</span></div>
       <h2 class="h reveal d1" style="color:var(--accent)">The data pointed past traffic.</h2>
     </div>
-    <p class="lead reveal" style="max-width:74ch">Creator activity was thin: influencers created roughly one collection on average and logged in only a few times a month. On the shopper side, high-traffic collection pages weren't consistently converting, which told us traffic alone wasn't the constraint.</p>
+    <p class="lead reveal" style="max-width:74ch">Creator activity was thin: influencers created roughly one collection on average and logged in only a few times a month. On the shopper side, high-traffic collection pages were not consistently converting, which showed that traffic alone was not the constraint.</p>
 
     <div class="signal-block reveal" role="group" aria-label="What the early-2022 analytics told us">
       <div class="signal-row">
@@ -1003,24 +1002,32 @@
         <div><dt>Product implication</dt><dd>We needed to improve the quality of the creator-to-shopper journey, not simply drive more traffic to the same surfaces.</dd></div>
       </dl>
     </div>
+  </div>
+</section>
 
-    <div class="loop-block reveal" style="margin-top:var(--gap-sub)">
-      <h3 class="sub">The growth loop we needed to strengthen</h3>
-      <ol class="growth-loop" aria-label="Marketplace growth loop" style="margin-top:28px">
-        <li>Creator content output</li>
-        <li>Shopper inspiration</li>
-        <li>Product discovery</li>
-        <li>Purchases</li>
-        <li>Creator incentive</li>
-        <li>Repeat content creation</li>
-      </ol>
-      <p class="body" style="margin-top:28px;max-width:66ch">The experience had to serve both sides of the marketplace. For creators, the product needed to make content creation feel useful, repeatable, and worth the effort. For shoppers, it needed to turn influencer content into credible product discovery instead of another generic shopping page.</p>
-    </div>
+<!-- ══ 06 · WHY CONTENT QUALITY MATTERED (the diagnosis) ══ -->
+<section class="sec" id="content-quality" data-toc="Why content quality">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(06) · The diagnosis</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">Content was the bridge, not the inventory.</h2>
+    <p class="lead reveal" style="max-width:66ch">In creator commerce, content was not just inventory. It was the bridge between creator trust and shopper decision-making. If influencers did not create enough useful content, shoppers had fewer reasons to explore products, and creators had fewer reasons to return.</p>
+  </div>
+</section>
 
-    <div class="reveal" style="margin-top:var(--gap-sub)">
-      <h3 class="sub">Why content quality mattered</h3>
-      <p class="body" style="margin-top:18px;max-width:66ch">In creator commerce, content wasn't just output. It was the bridge between creator trust and shopper decision-making. If influencers didn't create enough useful content, shoppers had fewer reasons to explore products, and creators had fewer reasons to return. That weakened the growth loop on both sides of the marketplace.</p>
-    </div>
+<!-- ══ 07 · THE GROWTH LOOP WE NEEDED TO STRENGTHEN ══ -->
+<section class="sec" id="growth-loop" data-toc="The growth loop">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(07) · The growth loop</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">The growth loop we needed to strengthen.</h2>
+    <ol class="growth-loop reveal d1" aria-label="Marketplace growth loop" style="margin-top:40px">
+      <li>Creator content output</li>
+      <li>Shopper inspiration</li>
+      <li>Product discovery</li>
+      <li>Purchases</li>
+      <li>Creator incentive</li>
+      <li>Repeat content creation</li>
+    </ol>
+    <p class="body reveal" style="margin-top:28px;max-width:66ch">Weak content output broke the loop from both sides: shoppers had less credible inspiration, and creators had fewer signals that publishing was worth repeating.</p>
   </div>
 </section>
 
@@ -1028,7 +1035,7 @@
 <section class="sec" id="user-groups" data-toc="User groups">
   <div class="wrap">
     <h2 class="h reveal">User Groups</h2>
-    <p class="ug-sub reveal d1">ZIP had to work across three connected groups: creators who made the content, shoppers who acted on it, and agents who kept the system running. The constraint was creator participation, so that is where the design focused first.</p>
+    <p class="ug-sub reveal d1">ZIP had to work across three connected groups: influencers who created the content, customers who shopped it, and agents who kept it running. Because creator participation was the constraint, the design strategy focused first on making content creation easier, more useful, and more repeatable.</p>
     <div class="ug-stage reveal d2" id="ug-stage">
       <canvas id="ug-canvas" aria-hidden="true"></canvas>
       <ul class="ug-legend" aria-label="ZIP user groups">
@@ -1045,18 +1052,18 @@
   <div class="wrap">
     <div class="decision-note reveal">
       <p class="dn-k">What this meant for the product</p>
-      <p class="dn-h">Reshape the creator journey around repeat content creation.</p>
-      <p class="dn-b">The opportunity wasn't to add features around the existing workflow. It was to reshape the creator journey around repeat content creation: a clearer destination to share, a faster way to build shoppable content, and a simpler hub to manage work over time. That set up the three bets the rest of the project tested and built: Storefront, Shoppable Content, and Hub.</p>
+      <p class="dn-h">Reshape the creator journey around three behaviors.</p>
+      <p class="dn-b">The opportunity was not to add more features around the existing workflow. It was to reshape the creator journey around three behaviors: giving creators a destination worth sharing, making content faster to produce, and helping shoppers act on inspiration.</p>
     </div>
   </div>
 </section>
 
-<!-- ══ 05 · LEARN ══ -->
-<section class="sec" id="learn" data-toc="Learn">
+<!-- ══ 08 · RESEARCH AND CONCEPT TESTING (was Learn + Analyze + Explore) ══ -->
+<section class="sec" id="learn" data-toc="Research">
   <div class="wrap">
-    <div class="eyebrow reveal"><span>(05) · Learn</span></div>
-    <h2 class="h reveal d1" style="max-width:18ch">Understanding how influencers actually behave.</h2>
-    <p class="lead reveal" style="max-width:62ch">I looked at how creators use influencer platforms, what keeps them around, and where Zappos was losing them. That meant behavioural research alongside a close audit of Amazon's own influencer program.</p>
+    <div class="eyebrow reveal"><span>(08) · Research and concept testing</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Research and concept testing.</h2>
+    <p class="lead reveal" style="max-width:66ch">I used research to separate broad engagement symptoms from the decisions that would actually shape the product. The work focused on who ZIP should serve first, where motivation dropped, and which concepts would make content creation feel worth repeating.</p>
 
     <div class="reveal" style="margin-top:var(--gap-sub)">
       <figure class="figure wordclouds">
@@ -1159,16 +1166,15 @@
   </div>
 </section>
 
-<!-- ══ 06 · ANALYZE ══ -->
-<section class="sec" id="analyze" data-toc="Analyze">
+<!-- ══ RESEARCH (cont.) · DEFINING THE AUDIENCE + JOURNEY ══ -->
+<section class="sec" id="analyze" data-toc="Audience">
   <div class="wrap">
-    <div class="eyebrow reveal"><span>(06) · Analyze</span></div>
-    <h2 class="h reveal d1" style="max-width:20ch">Defining who we design for, and what to test.</h2>
+    <h2 class="h reveal d1" style="max-width:20ch">Defining who we design for.</h2>
     <p class="lead reveal" style="max-width:62ch">With the research in hand, I pinned down who we were designing for, then turned what I'd learned into a set of bets worth testing.</p>
 
     <div class="reveal" style="margin-top:var(--gap-sub)">
       <h3 class="sub">Personas</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">Naming the exact creator we were designing for kept every later call, which content tools to build and how the storefront should behave, pointed at one real person instead of a generic "influencer." The 2022 target: Gen&nbsp;Z and Millennial female fashion influencers.</p>
+      <p class="body" style="margin-top:18px;max-width:62ch">Defining the audience clarified that ZIP was not solving for celebrity-scale creators first. The MVP needed to support micro and mid-tier fashion influencers who were still building repeatable content habits and needed lightweight ways to publish, share, and learn what worked.</p>
       <ul class="ticks" style="max-width:62ch">
         <li><b>Primary</b>: micro influencers (1k–100k) and mid-tier influencers (50k–100k).</li>
         <li><b>Secondary</b>: nano influencers (under 1k) building their audience.</li>
@@ -1240,7 +1246,7 @@
 
     <div class="reveal">
       <h3 class="sub">User journey map</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">Mapping the content-creation journey end to end surfaced the touchpoints and pain points that mattered most, and showed exactly where creators dropped off.</p>
+      <p class="body" style="margin-top:18px;max-width:62ch">The journey map showed where creator motivation dropped: setup felt unclear, publishing took effort, and the value of returning was not obvious enough. That pushed the design away from one-off content pages and toward a repeatable content system.</p>
       <figure class="figure" style="margin-top:32px;padding-bottom:40px">
         <img src="uploads/zip/journey-map.png" alt="End-to-end influencer journey map across discovery, content creation, sharing and earning" width="2386" height="1914" loading="lazy">
       </figure>
@@ -1285,12 +1291,11 @@
   </div>
 </section>
 
-<!-- ══ 07 · EXPLORE ══ -->
-<section class="sec" id="explore" data-toc="Explore">
+<!-- ══ RESEARCH (cont.) · CONCEPT TESTING ══ -->
+<section class="sec" id="explore" data-toc="Concept testing">
   <div class="wrap">
-    <div class="eyebrow reveal"><span>(07) · Explore</span></div>
-    <h2 class="h reveal d1" style="max-width:20ch">Testing concepts with influencers and customers.</h2>
-    <p class="lead reveal" style="max-width:62ch">I prototyped the new feature pages and concept-tested them in moderated, think-aloud sessions: first with influencers on the Hub, then with experienced shoppers on the content.</p>
+    <h2 class="h reveal d1" style="max-width:22ch">Concept testing pointed straight to a Storefront.</h2>
+    <p class="lead reveal" style="max-width:64ch">Concept testing gave the strongest product signal in the project: influencers were not asking for a better dashboard first. They expected a persistent, shareable Storefront they could customize and link to.</p>
 
     <div class="reveal" style="margin-top:var(--gap-sub)">
       <h3 class="sub">Six hypotheses to validate</h3>
@@ -1342,7 +1347,7 @@
 
     <div class="reveal">
       <h3 class="sub">Influencers mistook the Hub for a Storefront</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">Despite a clear scenario, every influencer expected one shareable storefront, a page they could customise and link to. It was the clearest signal of the whole project: a dedicated storefront wasn't a nice-to-have, it was the mental model the product was missing.</p>
+      <p class="body" style="margin-top:18px;max-width:62ch">In the Hub sessions this showed up as behavior, not opinion: participants kept customising the dashboard and hunting for a link to share it. The pattern was unanimous, which is what made it the clearest signal of the whole project: a dedicated storefront wasn't a nice-to-have, it was the mental model the product was missing.</p>
       <ul class="ticks" style="margin-top:28px;max-width:74ch">
         <li>Influencers need a centralized storefront to display all their content.</li>
         <li>A storefront is regarded as shareable content.</li>
@@ -1385,14 +1390,19 @@
       </div>
     </div>
 
-    <div class="reveal">
-      <h3 class="sub">Where we decided to focus</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">Testing narrowed six hypotheses down to three priorities: two new features and one optimization.</p>
-      <div class="grid-cards c3 prio reveal d1" role="list" aria-label="The three priorities we focused on" style="margin-top:40px">
-        <div class="card" role="listitem"><span class="tag-new">New feature</span><h4 class="sub">Influencer Storefront</h4><p class="body">A customisable, shareable home for each creator: collections, performance and bio in one place.</p></div>
-        <div class="card" role="listitem"><span class="tag-new">New feature</span><h4 class="sub">Shoppable Content</h4><p class="body">Lifestyle imagery with tagged products, turning inspiration into a direct path to purchase.</p></div>
-        <div class="card" role="listitem"><span class="tag-new" style="color:#4b4564;background:rgba(255,255,255,.5)">Optimization</span><h4 class="sub">Influencer Hub</h4><p class="body">A reorganised dashboard with clearer navigation and prioritised actions.</p></div>
-      </div>
+  </div>
+</section>
+
+<!-- ══ 09 · THE PRODUCT BETS (was "Where we decided to focus" + "Why these bets") ══ -->
+<section class="sec" id="product-bets" data-toc="The product bets">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(09) · The product bets</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">Where we decided to focus.</h2>
+    <p class="lead reveal" style="max-width:62ch">Testing narrowed six hypotheses down to three priorities: two new features and one optimization.</p>
+    <div class="grid-cards c3 prio reveal d1" role="list" aria-label="The three product bets we focused on" style="margin-top:48px">
+      <div class="card" role="listitem"><span class="tag-new">New feature</span><h4 class="sub">Influencer Storefront</h4><p class="body">A customisable, shareable home for each creator: collections, performance and bio in one place.</p></div>
+      <div class="card" role="listitem"><span class="tag-new">New feature</span><h4 class="sub">Shoppable Content</h4><p class="body">Lifestyle imagery with tagged products, turning inspiration into a direct path to purchase.</p></div>
+      <div class="card" role="listitem"><span class="tag-new" style="color:#4b4564;background:rgba(255,255,255,.5)">Optimization</span><h4 class="sub">Influencer Hub</h4><p class="body">A reorganised dashboard with clearer navigation and prioritised actions.</p></div>
     </div>
 
     <div class="reveal bets" style="margin-top:var(--gap-sub)">
@@ -1404,13 +1414,14 @@
   </div>
 </section>
 
-<!-- ══ 08 · DEVELOP ══ -->
-<section class="sec" id="develop" data-toc="Develop">
+<!-- ══ 10 · DESIGN RESPONSE (was Develop + Refine) ══ -->
+<section class="sec" id="design-response" data-toc="Design response">
   <div class="wrap">
-    <div class="eyebrow reveal"><span>(08) · Develop</span></div>
-    <h2 class="h reveal d1" style="max-width:20ch">From scope to structure to wireframes.</h2>
-    <p class="lead reveal" style="max-width:62ch">With priorities locked, I turned the concepts into structure: scope, architecture, and the flows that would carry the MVP.</p>
+    <div class="eyebrow reveal"><span>(10) · Design response</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Designing the three parts of the loop.</h2>
+    <p class="lead reveal" style="max-width:66ch">With the product bets defined, I organized the design work around the three parts of the creator-commerce loop: the destination creators shared, the content shoppers acted on, and the workspace creators returned to.</p>
 
+    <!-- shared structure: scope + architecture + flows -->
     <div class="reveal scoping-mvp" style="margin-top:var(--gap-sub)">
       <div class="scoping-inner grid2 top">
         <div>
@@ -1424,17 +1435,12 @@
     </div>
 
     <div class="reveal diagram-blend">
-      <h3 class="sub">Information architecture</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">I mapped every content piece and how it related, so the Storefront, Shoppable Content and Hub fit into one coherent system.</p>
+      <h3 class="sub">One system behind three surfaces</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">I mapped every content piece and how it related so the Storefront, Shoppable Content and Hub fit into one coherent system, with the flows that move a post from draft to published.</p>
       <figure class="figure" style="margin-top:32px">
         <img src="uploads/zip/information-architecture.png" alt="Information architecture diagram of the ZIP platform's content relationships" width="2400" height="1913" loading="lazy">
       </figure>
-    </div>
-
-    <div class="reveal diagram-blend">
-      <h3 class="sub">User flows</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">From the architecture, I mapped the end-to-end flows: how a creator builds and publishes content, and how that content moves through review onto the storefront.</p>
-      <figure class="figure" style="margin-top:32px">
+      <figure class="figure" style="margin-top:48px">
         <img src="uploads/zip/user-flow-creation.avif" alt="Content creation flow: from creating new content through editing photo or video, tagging products and confirming, to submitting for approval" width="1986" height="1188" loading="lazy">
       </figure>
       <figure class="figure" style="margin-top:48px">
@@ -1442,30 +1448,47 @@
       </figure>
     </div>
 
-    <div class="reveal diagram-blend">
-      <h3 class="sub">Wireframes</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">Low-to-medium fidelity layouts that reduced steps and surfaced the right information at the right moment.</p>
-      <figure class="figure" style="margin-top:32px">
+    <!-- Bet 1 · Storefront -->
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Storefront: a destination worth sharing</h3>
+      <p class="body" style="margin-top:18px;max-width:64ch">The Storefront gave creators a persistent, customizable destination instead of forcing them to share isolated content links. It made their ZIP presence feel more like a personal shopping channel and gave every new post a durable place to live.</p>
+    </div>
+    <div class="reveal diagram-blend" style="margin-top:32px!important">
+      <figure class="figure">
         <img src="uploads/zip/wireframe-1.jpg" alt="Wireframe explorations for the influencer storefront and content creation screens" width="2400" height="1797" loading="lazy">
       </figure>
-      <figure class="figure" style="margin-top:48px">
+    </div>
+    <div class="reveal released" style="margin-top:48px!important">
+      <figure class="figure">
+        <img src="uploads/zip/hifi-storefront.jpg" alt="High-fidelity design of the customisable influencer storefront" width="2400" height="1350" loading="lazy">
+        <figcaption>Influencer Storefront: a customisable home showing collections, metrics and bio.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Bet 2 · Shoppable Content -->
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Shoppable Content: making inspiration actionable</h3>
+      <p class="body" style="margin-top:18px;max-width:64ch">Shoppable Content turned lifestyle imagery into a direct path to purchase. The goal was not to decorate product listings; it was to help shoppers understand how items looked in context, then act without losing momentum.</p>
+    </div>
+    <div class="reveal diagram-blend" style="margin-top:32px!important">
+      <figure class="figure">
         <img src="uploads/zip/wireframe-2.jpg" alt="Wireframe layouts for the shoppable content flow" width="2400" height="957" loading="lazy">
       </figure>
     </div>
-  </div>
-</section>
+    <div class="reveal released" style="margin-top:48px!important">
+      <figure class="figure">
+        <img src="uploads/zip/hifi-shoppable.jpg" alt="High-fidelity design of the shoppable content creation interface with tagged products" width="2400" height="1350" loading="lazy">
+        <figcaption>Shoppable Content: tag products within lifestyle imagery to create a direct path to purchase.</figcaption>
+      </figure>
+    </div>
 
-<!-- ══ 09 · REFINE ══ -->
-<section class="sec" id="refine" data-toc="Refine">
-  <div class="wrap">
-    <div class="eyebrow reveal"><span>(09) · Refine</span></div>
-    <h2 class="h reveal d1" style="max-width:20ch">Simplifying, polishing, and bringing the brand in.</h2>
-    <p class="lead reveal" style="max-width:62ch">Taking rough layouts to launch-ready screens: simplifying the flows, designing in high fidelity, and letting the Zappos personality through.</p>
-
+    <!-- Bet 3 · Hub -->
     <div class="reveal" style="margin-top:var(--gap-sub)">
-      <h3 class="sub">Usability testing &amp; simplification</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">Iterative testing showed long pages were confusing creators. The fix: streamline the flow and make it mobile-friendly, so creating content felt fast rather than daunting.</p>
-      <figure class="figure bare" style="margin-top:32px">
+      <h3 class="sub">Hub: making repeat creation easier</h3>
+      <p class="body" style="margin-top:18px;max-width:64ch">The Hub became the operational center for repeat creation: a simpler place to manage content, track status, review performance signals, and return to the next publishing task. Iterative testing showed long pages were confusing creators, so the flow was streamlined and made mobile-friendly.</p>
+    </div>
+    <div class="reveal" style="margin-top:32px!important">
+      <figure class="figure bare">
         <img src="uploads/zip/usability-findings.png" alt="Before-and-after comparison summarising usability test findings and simplifications" width="2400" height="905" loading="lazy">
       </figure>
       <figure style="margin-top:48px">
@@ -1475,27 +1498,17 @@
         <figcaption class="videocap">Prototype walkthrough: the streamlined, mobile-friendly content-creation flow tested with creators.</figcaption>
       </figure>
     </div>
-
-    <div class="reveal released">
-      <h3 class="sub">High-fidelity design</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">The three priorities, fully designed.</p>
-      <figure class="figure" style="margin-top:32px">
-        <img src="uploads/zip/hifi-shoppable.jpg" alt="High-fidelity design of the shoppable content creation interface with tagged products" width="2400" height="1350" loading="lazy">
-        <figcaption>Shoppable Content: tag products within lifestyle imagery to create a direct path to purchase.</figcaption>
-      </figure>
-      <figure class="figure" style="margin-top:48px">
-        <img src="uploads/zip/hifi-storefront.jpg" alt="High-fidelity design of the customisable influencer storefront" width="2400" height="1350" loading="lazy">
-        <figcaption>Influencer Storefront: a customisable home showing collections, metrics and bio.</figcaption>
-      </figure>
-      <figure class="figure" style="margin-top:48px">
+    <div class="reveal released" style="margin-top:48px!important">
+      <figure class="figure">
         <img src="uploads/zip/hifi-hub.jpg" alt="High-fidelity design of the reorganised influencer hub dashboard" width="2400" height="1350" loading="lazy">
         <figcaption>Influencer Hub: reorganised navigation with clearer, prioritised actions.</figcaption>
       </figure>
     </div>
 
-    <div class="reveal released">
+    <!-- Brand personality across all three -->
+    <div class="reveal released" style="margin-top:var(--gap-sub)">
       <h3 class="sub">Illustrations &amp; brand</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">Zappos is known for a peculiar, fun shopping experience, so I designed custom illustrations and iconography to carry that personality into the product. Participants loved them.</p>
+      <p class="body" style="margin-top:18px;max-width:62ch">Zappos is known for a peculiar, fun shopping experience, so I designed custom illustrations and iconography to carry that personality across all three surfaces. Participants loved them.</p>
       <div class="grid-cards c3" style="margin-top:40px;align-items:center">
         <figure class="figure"><img src="uploads/zip/illustration-1.png" alt="Custom ZIP brand illustration" width="1104" height="576" loading="lazy"></figure>
         <figure class="figure"><img src="uploads/zip/illustration-2.png" alt="Second custom ZIP brand illustration" width="1104" height="576" loading="lazy"></figure>
@@ -1506,12 +1519,12 @@
   </div>
 </section>
 
-<!-- ══ 10 · DELIVER ══ -->
-<section class="sec" id="deliver" data-toc="Deliver">
+<!-- ══ 11 · DELIVERY AND ACCESSIBILITY (was Deliver) ══ -->
+<section class="sec" id="deliver" data-toc="Delivery">
   <div class="wrap">
-    <div class="eyebrow reveal"><span>(10) · Deliver</span></div>
+    <div class="eyebrow reveal"><span>(11) · Delivery and accessibility</span></div>
     <h2 class="h reveal d1" style="max-width:20ch">Accessible by design, measured for impact.</h2>
-    <p class="lead reveal" style="max-width:62ch">Shipping responsibly: building accessibility into the handoff, and defining how we'd know the work had landed.</p>
+    <p class="lead reveal" style="max-width:62ch">Launch quality meant building accessibility into the handoff itself, and defining up front how we would know the work had landed for both sides of the marketplace.</p>
 
     <div class="reveal" style="margin-top:var(--gap-sub)">
       <h3 class="sub">Accessibility handoff</h3>
@@ -1520,7 +1533,7 @@
     </div>
 
     <figure class="figure bare reveal" style="margin-top:48px">
-      <img src="uploads/zip/accessibility-annotations.png" alt="Accessibility annotations marked up across the signup and account-creation flow — heading levels, aria-labels, alt text and copy fixes called out screen by screen for the build team" width="1200" height="816" loading="lazy">
+      <img src="uploads/zip/accessibility-annotations.png" alt="Accessibility annotations marked up across the signup and account-creation flow: heading levels, aria-labels, alt text and copy fixes called out screen by screen for the build team" width="1200" height="816" loading="lazy">
       <figcaption>Annotating the signup flow for the build team: heading order, aria-labels and alt text, screen by screen.</figcaption>
     </figure>
 
@@ -1556,12 +1569,12 @@
   </div>
 </section>
 
-<!-- ══ 11 · AFTER LAUNCH — extending the strategy ══ -->
+<!-- ══ 12 · AFTER LAUNCH — extending the strategy (compressed) ══ -->
 <section class="sec" id="ux-strategy" data-toc="After launch">
   <div class="wrap uxs-content">
-    <div class="eyebrow reveal"><span>(11) · After launch</span></div>
+    <div class="eyebrow reveal"><span>(12) · After launch</span></div>
     <h2 class="h reveal d1" style="max-width:20ch">Extending the strategy.</h2>
-    <p class="lead reveal" style="max-width:66ch">Shipping the MVP wasn't the end of the strategy. In 2023 I took the same thesis back into the live product, re-assessing the storefront against real usage and proposing where to invest next to keep the growth loop turning.</p>
+    <p class="lead reveal" style="max-width:66ch">After launch, I used the same growth-loop lens to assess where the storefront shopping experience could be optimized next. The follow-up work focused on the shopper side of the loop: reducing friction between inspiration, product exploration, and add-to-cart behavior.</p>
     <!-- Post-launch UX Assessment -->
     <div class="uxs-row reveal">
       <figure class="figure uxs-img">
@@ -1573,27 +1586,11 @@
       </div>
     </div>
 
-    <!-- UX Proposal -->
-    <div class="uxs-row reveal">
-      <figure class="figure uxs-img">
-        <img src="uploads/zip/uxs-proposal-doc.png" alt="ZIP priority learnings and proposal document" width="1244" height="1574" loading="lazy">
-      </figure>
-      <div class="uxs-aside">
-        <h3 class="sub">UX proposal</h3>
-        <p class="body" style="margin-top:18px;max-width:46ch">Based on the qualitative and quantitative data I gathered across both Amazon and Zappos, I set three UX priorities:</p>
-        <ol class="uxs-list">
-          <li>Customer shopping experience optimization</li>
-          <li>Influencer monetization system</li>
-          <li>Influencer performance report optimization</li>
-        </ol>
-      </div>
-    </div>
-
     <!-- Hypothesis Validation -->
     <div class="reveal">
       <div class="grid2 top">
         <h3 class="sub">Hypothesis validation</h3>
-        <p class="lead" style="max-width:54ch">I ran unmoderated concept testing to validate the hypothesis on the customer shopping experience with three defined groups of users.</p>
+        <p class="lead" style="max-width:54ch">I ran unmoderated concept testing on the customer shopping experience with three defined groups of users, then watched where they actually tapped and how easily they reached add-to-cart.</p>
       </div>
       <div class="uxs-validation" style="margin-top:40px">
         <figure class="figure uxs-img">
@@ -1618,28 +1615,7 @@
           <p class="uxs-results-note">*Ease of use: 1 = very difficult, 5 = very easy</p>
         </figure>
       </div>
-    </div>
-
-    <!-- Demo Videos -->
-    <div class="reveal">
-      <div class="grid2 top">
-        <h3 class="sub">Demo videos</h3>
-        <p class="lead" style="max-width:54ch">Based on the research insights, I recorded these videos to demonstrate the customer-experience-optimization concept to stakeholders. The concept was later included in the team's OP1 file.</p>
-      </div>
-      <div class="grid2" style="margin-top:32px">
-        <figure>
-          <div class="video">
-            <iframe src="https://www.youtube-nocookie.com/embed/OAHXMiP5vUs?autoplay=1&mute=1&controls=0&loop=1&playlist=OAHXMiP5vUs&rel=0&playsinline=1" title="Concept demo: search and badge, part 1" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <figcaption class="videocap">Concept demo: search and badge, part 1.</figcaption>
-        </figure>
-        <figure>
-          <div class="video">
-            <iframe src="https://www.youtube-nocookie.com/embed/8TMVobu9Y9c?autoplay=1&mute=1&controls=0&loop=1&playlist=8TMVobu9Y9c&rel=0&playsinline=1" title="Concept demo: search and badge, part 2" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <figcaption class="videocap">Concept demo: search and badge, part 2.</figcaption>
-        </figure>
-      </div>
+      <p class="body reveal" style="margin-top:40px;max-width:66ch">The resulting concept was included in the team's OP1 planning, giving the next phase a clearer evidence-backed direction.</p>
     </div>
   </div>
 </section>
@@ -1653,7 +1629,7 @@
       <!-- Layer 2: the outcome content (rises up from the bottom over Layer 1) -->
       <div class="oc-content">
         <div class="wrap">
-          <div class="eyebrow"><span>(12) · Outcome</span></div>
+          <div class="eyebrow"><span>(13) · Outcome</span></div>
           <h2 class="h" style="max-width:18ch">More creators. Far more content.</h2>
           <p class="lead" style="max-width:62ch">Following the launch period, the redesigned creator experience was associated with:</p>
           <div class="o-grid">
@@ -1674,6 +1650,7 @@
               <div class="stat-l">improved overall accessibility and usability</div>
             </div>
           </div>
+          <p class="lead" style="max-width:66ch">Directionally, the shopper side moved with it: the bounce-rate and time-on-site shifts shown above. Accessibility improvements were designed into the handoff so the experience could scale with a stronger baseline for keyboard, screen-reader, and responsive behavior.</p>
           <p class="lead" style="max-width:64ch">These metrics mattered because they mapped directly to the original product problem. ZIP did not need a more polished creator interface for its own sake; it needed a system that made influencers more likely to return, create, and publish content that shoppers could act on.</p>
         </div>
       </div>
