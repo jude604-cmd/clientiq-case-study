@@ -484,17 +484,7 @@
   #outcome.oc-static .oc-content{position:static; transform:none!important; opacity:1!important}
   #outcome.oc-static .outcome-bg{filter:blur(14px); opacity:.5}
 
-  /* ── UX Strategy 2023 — recreated part (source title band is Zappos blue → recoloured to accent) ── */
-  #ux-strategy{padding-top:0}
-  #ux-strategy .uxs-band{background:var(--accent); padding:clamp(60px,11vh,140px) 0; color:#fff}
-  /* eyebrow sits on the solid accent band → soft white halo behind white text (the page's accent chip would vanish here) */
-  #ux-strategy .uxs-band .eyebrow{margin-bottom:28px}
-  #ux-strategy .uxs-band .eyebrow span{color:#fff}
-  #ux-strategy .uxs-band .eyebrow span::before{background:rgba(255,255,255,.34)}
-  #ux-strategy .uxs-h{font-family:'Thunder',var(--sans); font-weight:900; font-synthesis:none;
-    text-transform:uppercase; letter-spacing:-.01em; line-height:.84; color:#fff;
-    font-size:clamp(60px,12vw,176px); margin:0}
-  #ux-strategy .uxs-content{padding-top:clamp(56px,9vh,118px)}
+  /* ── After launch — 2023 post-launch strategy (standard section header, consistent with the page) ── */
   /* image-left / text-right rows (narrow image column, like the source) */
   #ux-strategy .uxs-row{display:grid; grid-template-columns:minmax(230px,350px) 1fr;
     gap:clamp(32px,5vw,84px); align-items:center}
@@ -1557,15 +1547,9 @@
 
 <!-- ══ 11 · AFTER LAUNCH — extending the strategy ══ -->
 <section class="sec" id="ux-strategy" data-toc="After launch">
-  <!-- full-bleed title band — source band is Zappos blue, recoloured to the page accent -->
-  <div class="uxs-band reveal">
-    <div class="wrap">
-      <div class="eyebrow"><span>(11) · After launch</span></div>
-      <h2 class="uxs-h">Extending<br>the strategy</h2>
-    </div>
-  </div>
-
   <div class="wrap uxs-content">
+    <div class="eyebrow reveal"><span>(11) · After launch</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Extending the strategy.</h2>
     <p class="lead reveal" style="max-width:66ch">Shipping the MVP wasn't the end of the strategy. In 2023 I took the same thesis back into the live product, re-assessing the storefront against real usage and proposing where to invest next to keep the growth loop turning.</p>
     <!-- Post-launch UX Assessment -->
     <div class="uxs-row reveal">
