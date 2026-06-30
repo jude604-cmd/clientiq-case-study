@@ -124,20 +124,19 @@
   /* user-groups cards float with their own breathing room → don't also stack big section paddings below */
   #user-groups{padding-top:44px; padding-bottom:20px}
   #learn{padding-top:72px}
-  #process-cycle{padding-top:16px; padding-bottom:24px}   /* tight top/bottom around the cycle chart */
-  #process-cycle .pw-title{color:var(--ink)}
-  /* pull the chart up close to the title (overrides the DS `.wrap > * + *` 128px gap, which is !important) */
-  #process-cycle .pw{position:relative; width:min(560px,90%); margin:44px auto 0!important; aspect-ratio:1}
-  #process-cycle .pw-ring{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; filter:blur(7px)}   /* soften + lighten the cycle arrows */
-  #process-cycle .pw-step{position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%);
-    font-family:var(--sans); font-weight:700; font-size:clamp(17px,2.3vw,29px); letter-spacing:-.012em;
-    color:var(--accent); white-space:nowrap;
-    border:0; background:none; margin:0; padding:6px 6px; line-height:1; cursor:pointer;
+  /* pull the wheel up close to the lead (overrides the DS `.wrap > * + *` 128px gap, which is !important) */
+  #approach .pw{position:relative; width:min(560px,90%); margin:48px auto 8px!important; aspect-ratio:1}
+  #approach .pw-ring{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; filter:blur(7px)}   /* soften + lighten the cycle arrows */
+  /* phase labels are now short phrases (not single words), so allow a 2-line wrap, centred on the point */
+  #approach .pw-step{position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%);
+    font-family:var(--sans); font-weight:700; font-size:clamp(13px,1.45vw,19px); letter-spacing:-.012em;
+    color:var(--accent); white-space:normal; text-align:center; width:8.5em;   /* explicit width (not max-width) so labels keep a fixed 2-line box at any --x position, not squeezed by their left offset */
+    border:0; background:none; margin:0; padding:6px 8px; line-height:1.12; cursor:pointer;
     transition:transform .3s var(--ease), opacity .25s var(--ease)}
-  #process-cycle .pw-step:hover,#process-cycle .pw-step:focus-visible{transform:translate(-50%,-50%) scale(1.07); outline:none}
-  #process-cycle .pw.show-detail .pw-step:not(:hover):not(:focus-visible){opacity:.4}   /* dim the others while one is active */
+  #approach .pw-step:hover,#approach .pw-step:focus-visible{transform:translate(-50%,-50%) scale(1.07); outline:none}
+  #approach .pw.show-detail .pw-step:not(:hover):not(:focus-visible){opacity:.4}   /* dim the others while one is active */
   /* frosted-glass detail panel, centred in the wheel */
-  #process-cycle .pw-detail{
+  #approach .pw-detail{
     position:absolute; left:50%; top:50%; width:min(320px,64%);
     transform:translate(-50%,-50%) scale(.94);
     padding:22px 24px; border-radius:var(--r-md);
@@ -147,8 +146,8 @@
     font-family:var(--sans); font-size:clamp(13.5px,1.1vw,15.5px); line-height:1.5; color:var(--ink-2); text-align:center;
     opacity:0; visibility:hidden; pointer-events:none;
     transition:opacity .3s var(--ease), transform .35s var(--ease), visibility .3s}
-  #process-cycle .pw.show-detail .pw-detail{opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1)}
-  @media (max-width:560px){ #process-cycle .pw{width:98%} #process-cycle .pw-step{font-size:14px} #process-cycle .pw-detail{width:70%;padding:16px 18px} }
+  #approach .pw.show-detail .pw-detail{opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1)}
+  @media (max-width:560px){ #approach .pw{width:98%} #approach .pw-step{font-size:12px;width:7.5em} #approach .pw-detail{width:72%;padding:16px 18px} }
 
   /* ── User groups: three lanyard badges in a 3D (three.js) scene ── */
   /* heading + caption sit ABOVE the canvas (which bleeds upward over this area) so the purple
@@ -288,9 +287,6 @@
     color:var(--ink-2); background:var(--accent-tint); border-radius:var(--pill); padding:9px 16px}
   .growth-loop li:not(:last-child)::after{content:"→"; color:var(--accent); margin:0 12px 0 16px; font-weight:600}
   @media(max-width:560px){ .growth-loop li:not(:last-child)::after{margin:0 8px 0 10px} }
-  /* the Design-approach process line reuses the loop chips but drops the pill fill, so the
-     marketplace growth loop stays the page's one distinct chip-loop motif (keep the loop visually distinct) */
-  #approach .growth-loop li{background:transparent; padding:6px 0}
 
   /* research findings — two table images side by side in equal-size white boxes */
   /* two parts of one validation table at different aspect ratios — size each card to its own image and
@@ -947,15 +943,27 @@
     <div class="eyebrow reveal"><span>(03) · Method</span></div>
     <h2 class="h reveal d1" style="max-width:14ch">Design approach.</h2>
     <p class="lead reveal" style="max-width:66ch">I used a design-thinking approach to move from ambiguous engagement signals to focused product bets. The work combined analytics, creator and shopper research, concept testing, and delivery constraints to identify where ZIP could most directly increase repeat content creation.</p>
-    <ol class="growth-loop reveal d1" aria-label="Design approach, six phases" style="margin-top:40px">
-      <li>Understand the system</li>
-      <li>Diagnose the constraint</li>
-      <li>Explore product bets</li>
-      <li>Validate direction</li>
-      <li>Shape the experience</li>
-      <li>Deliver and extend</li>
-    </ol>
-    <p class="body reveal" style="margin-top:28px;max-width:74ch">A design-thinking process helped turn a broad engagement problem into a focused creator-commerce strategy: understand the marketplace system, diagnose the content constraint, test product bets, and ship the experiences most likely to change creator behavior.</p>
+    <div class="pw reveal d1" role="img" aria-label="A six-phase design-thinking process arranged in a repeating cycle: 1 Understand the system, 2 Diagnose the constraint, 3 Explore product bets, 4 Validate direction, 5 Shape the experience, 6 Deliver and extend.">
+      <svg class="pw-ring" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+        <defs>
+          <marker id="pwAh" markerWidth="3.6" markerHeight="3.6" refX="1.6" refY="1.8" orient="auto">
+            <path d="M0 0 L3.6 1.8 L0 3.6 Z" fill="#dcdce2"/>
+          </marker>
+        </defs>
+        <g stroke="#dcdce2" stroke-width="4.5" stroke-linecap="round">
+          <path d="M145 46.4 A70 70 0 0 1 76.1 165.8" marker-end="url(#pwAh)"/>
+          <path d="M55 153.6 A70 70 0 0 1 123.9 34.2" marker-end="url(#pwAh)"/>
+        </g>
+      </svg>
+      <button class="pw-step" type="button" style="--x:50%;--y:10%" data-detail="Mapped the creator-commerce marketplace and how ZIP's three sides connect, through analytics, a competitive audit of Amazon's program, and interviews with creators and shoppers.">Understand the system</button>
+      <button class="pw-step" type="button" style="--x:80%;--y:30%" data-detail="Read past traffic to the real bottleneck: thin creator content was breaking the marketplace growth loop from both sides.">Diagnose the constraint</button>
+      <button class="pw-step" type="button" style="--x:80%;--y:70%" data-detail="Turned the diagnosis into testable bets about what would make content creation feel useful, repeatable, and worth coming back to.">Explore product bets</button>
+      <button class="pw-step" type="button" style="--x:50%;--y:90%" data-detail="Concept-tested with influencers and shoppers; the storefront signal and the shoppable-imagery evidence narrowed the direction to three bets.">Validate direction</button>
+      <button class="pw-step" type="button" style="--x:20%;--y:70%" data-detail="Designed the response across Storefront, Shoppable Content, and Hub, from information architecture and flows to high-fidelity screens.">Shape the experience</button>
+      <button class="pw-step" type="button" style="--x:20%;--y:30%" data-detail="Shipped with accessibility built into the handoff, defined success metrics, and used the same growth-loop lens to plan what came next.">Deliver and extend</button>
+      <div class="pw-detail" aria-live="polite"></div>
+    </div>
+    <p class="body reveal" style="margin-top:40px!important;max-width:74ch">A design-thinking process helped turn a broad engagement problem into a focused creator-commerce strategy: understand the marketplace system, diagnose the content constraint, test product bets, and ship the experiences most likely to change creator behavior.</p>
   </div>
 </section>
 
@@ -1718,7 +1726,7 @@
 
   /* Process wheel: hover/focus a phase → show its detail in the centred frosted panel. */
   (function(){
-    var pw = document.querySelector('#process-cycle .pw');
+    var pw = document.querySelector('#approach .pw');
     if (!pw) return;
     var panel = pw.querySelector('.pw-detail');
     pw.querySelectorAll('.pw-step').forEach(function(s){
