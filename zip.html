@@ -397,19 +397,27 @@
     font-size:clamp(26px,3.1vw,44px); line-height:1.08; letter-spacing:-.02em; margin:0; text-wrap:balance}
   .statement .body{margin-top:30px; max-width:64ch}
 
-  /* ── Set Goals & Objectives beat (end of Analyze) ───────────────────────── */
-  .goals .goals-h{font-family:var(--sans); font-weight:700; color:var(--accent);
-    font-size:clamp(30px,4vw,56px); line-height:1.04; letter-spacing:-.02em; margin:0; text-wrap:balance}
-  .goals-grid{display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,4.5vw,72px); margin-top:44px}
-  .goals-label{font-family:var(--sans); font-weight:700; font-size:clamp(16px,1.5vw,19px); color:var(--ink); margin:28px 0 14px}
+  /* ── Set Goals & Objectives beat (end of Analyze) — amplified into an objectives "spec":
+     Thunder display headline, mono accent kicker labels, a hairline rule between WHO and WHAT,
+     and larger items carrying the weight under the quiet kickers. ───────────────────────── */
+  .goals .goals-h{font-family:'Thunder',var(--sans); font-weight:600; font-synthesis:none; color:var(--accent);
+    font-size:clamp(36px,4.6vw,66px); line-height:.96; letter-spacing:-.005em; margin:0; text-wrap:balance}
+  .goals-grid{display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px,5vw,84px); margin-top:48px}
+  /* hairline spec divider: WHO | WHAT (1px neutral column rule, not a card side-stripe) */
+  .goals-grid > div:last-child{padding-left:clamp(36px,5vw,84px); border-left:1px solid var(--line)}
+  .goals-label{font-family:var(--mono); font-weight:500; font-size:12px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--accent); margin:34px 0 15px}
   .goals-grid > div > .goals-label:first-child{margin-top:0}
-  /* solid accent panel, white text (was a side-stripe border-left, an absolute-ban AI tell).
-     Reads as a confident "north-star" highlight; white on accent clears WCAG AA (~4.8:1). */
+  .goals .ticks{gap:15px}
+  .goals .ticks li{font-family:var(--sans); font-size:clamp(16px,1.4vw,18.5px); font-weight:500;
+    line-height:1.4; color:var(--ink); padding-left:26px}
+  .goals .ticks li::before{top:.62em; width:8px; height:8px}   /* reposition + slightly enlarge the dot for the bigger items */
+  /* solid accent panel, white text. Reads as a confident "north-star" highlight; white on accent clears WCAG AA. */
   .goals .ux-focus{margin-top:clamp(40px,5vw,64px); background:var(--accent); border-radius:var(--r-lg); padding:clamp(28px,3.4vw,48px); color:#fff}
   .ux-focus .ux-eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin:0 0 12px}
   .ux-focus .ux-title{font-family:var(--sans); font-weight:700; font-size:clamp(20px,2.3vw,30px); color:#fff; line-height:1.1; margin:0 0 16px}
   .ux-focus .ux-body{font-size:clamp(17px,1.5vw,21px); line-height:1.5; color:#fff; max-width:64ch; margin:0}
-  @media(max-width:760px){ .goals-grid{grid-template-columns:1fr; gap:28px} }
+  @media(max-width:760px){ .goals-grid{grid-template-columns:1fr; gap:30px} .goals-grid > div:last-child{padding-left:0; border-left:0} }
 
   /* ── video embeds (YouTube) ───────────────────────────────────────────── */
   .video{position:relative;border-radius:var(--r-md);overflow:hidden;background:#100f1a;
