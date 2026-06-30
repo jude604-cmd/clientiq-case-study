@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zappos Influencer Program — Jude Shi · Case Study</title>
-<meta name="description" content="Zappos Influencer Program (ZIP): designing a content-creation platform that grew influencer output 11× — a UX case study by Jude Shi.">
+<title>Zappos Influencer Program · Jude Shi · Case Study</title>
+<meta name="description" content="Zappos Influencer Program (ZIP): designing a content-creation platform that grew influencer output 11×. A UX case study by Jude Shi.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -940,7 +940,8 @@
 <section class="sec" id="process-cycle" data-toc="Process">
   <div class="wrap">
     <h2 class="h reveal pw-title">Process</h2>
-    <div class="pw reveal d1" role="img" aria-label="A repeating six-phase process: 01 Learn, 02 Analyze, 03 Explore, 04 Develop, 05 Refine, 06 Deliver.">
+    <p class="lead reveal d1" style="max-width:70ch">A design-thinking process helped turn a broad engagement problem into a focused creator-commerce strategy: understand the marketplace system, diagnose the content constraint, test product bets, and ship the experiences most likely to change creator behavior.</p>
+    <div class="pw reveal d2" role="img" aria-label="A repeating six-phase process: 01 Learn, 02 Analyze, 03 Explore, 04 Develop, 05 Refine, 06 Deliver.">
       <svg class="pw-ring" viewBox="0 0 200 200" fill="none" aria-hidden="true">
         <defs>
           <marker id="pwAh" markerWidth="3.6" markerHeight="3.6" refX="1.6" refY="1.8" orient="auto">
@@ -953,9 +954,9 @@
         </g>
       </svg>
       <button class="pw-step" type="button" style="--x:50%;--y:10%" data-detail="Ran market research and audited the Amazon Influencer Program, interviewed Zappos creators about how they make and share content, and gathered data on what was holding output back.">01. Learn</button>
-      <button class="pw-step" type="button" style="--x:85%;--y:30%" data-detail="Synthesised the research into creator personas, journey maps, and six testable hypotheses about what would actually get influencers making — and re-sharing — content.">02. Analyze</button>
+      <button class="pw-step" type="button" style="--x:85%;--y:30%" data-detail="Synthesised the research into creator personas, journey maps, and six testable hypotheses about what would actually get influencers making and re-sharing content.">02. Analyze</button>
       <button class="pw-step" type="button" style="--x:85%;--y:70%" data-detail="Prototyped the Influencer Hub and Storefront concepts and concept-tested them with real influencers and customers to see what drove content creation.">03. Explore</button>
-      <button class="pw-step" type="button" style="--x:50%;--y:90%" data-detail="Built the MVP — information architecture, user flows and wireframes for the reworked Hub and the new shoppable creator Storefront.">04. Develop</button>
+      <button class="pw-step" type="button" style="--x:50%;--y:90%" data-detail="Built the MVP: information architecture, user flows and wireframes for the reworked Hub and the new shoppable creator Storefront.">04. Develop</button>
       <button class="pw-step" type="button" style="--x:15%;--y:70%" data-detail="Ran iterative usability sessions, then took it to high fidelity: clearer navigation, prioritised actions, and Zappos brand-led detail.">05. Refine</button>
       <button class="pw-step" type="button" style="--x:15%;--y:30%" data-detail="Accessibility handoff, success metrics, launch, and a long-term UX strategy for the program. Output went on to grow elevenfold, with engagement up 3.5×.">06. Deliver</button>
       <div class="pw-detail" aria-live="polite"></div>
@@ -982,23 +983,7 @@
   </div>
 </section>
 
-<!-- ══ USER GROUPS ══ -->
-<section class="sec" id="user-groups" data-toc="User groups">
-  <div class="wrap">
-    <h2 class="h reveal">User Groups</h2>
-    <p class="ug-sub reveal d1">ZIP is a marketplace with three sides: influencers who create the content, customers who shop it, and agents who keep it running. This case study focuses on the influencer experience, the side that sets the whole loop in motion.</p>
-    <div class="ug-stage reveal d2" id="ug-stage">
-      <canvas id="ug-canvas" aria-hidden="true"></canvas>
-      <ul class="ug-legend" aria-label="ZIP user groups">
-        <li>Influencer Experience</li>
-        <li>Customer Experience</li>
-        <li>Agent Experience</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PROBLEM STATEMENT ══ -->
+<!-- ══ 04 · WHAT THE DATA SHOWED ══ -->
 <section class="sec" id="problem-statement" data-toc="What the data showed">
   <div class="wrap">
     <div>
@@ -1020,8 +1005,7 @@
     </div>
 
     <div class="loop-block reveal" style="margin-top:var(--gap-sub)">
-      <h3 class="sub">Why content quality mattered</h3>
-      <p class="body" style="margin-top:18px;max-width:66ch">In creator commerce, content isn't just inventory. It's the bridge between creator trust and shopper decision-making. If influencers didn't create enough useful content, shoppers had fewer reasons to explore products, and creators had fewer reasons to return. That weakened the growth loop on both sides of the marketplace.</p>
+      <h3 class="sub">The growth loop we needed to strengthen</h3>
       <ol class="growth-loop" aria-label="Marketplace growth loop" style="margin-top:28px">
         <li>Creator content output</li>
         <li>Shopper inspiration</li>
@@ -1030,12 +1014,39 @@
         <li>Creator incentive</li>
         <li>Repeat content creation</li>
       </ol>
+      <p class="body" style="margin-top:28px;max-width:66ch">The experience had to serve both sides of the marketplace. For creators, the product needed to make content creation feel useful, repeatable, and worth the effort. For shoppers, it needed to turn influencer content into credible product discovery instead of another generic shopping page.</p>
     </div>
 
-    <div class="decision-note reveal" style="margin-top:48px">
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Why content quality mattered</h3>
+      <p class="body" style="margin-top:18px;max-width:66ch">In creator commerce, content wasn't just output. It was the bridge between creator trust and shopper decision-making. If influencers didn't create enough useful content, shoppers had fewer reasons to explore products, and creators had fewer reasons to return. That weakened the growth loop on both sides of the marketplace.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ USER GROUPS — the marketplace system the design had to serve ══ -->
+<section class="sec" id="user-groups" data-toc="User groups">
+  <div class="wrap">
+    <h2 class="h reveal">User Groups</h2>
+    <p class="ug-sub reveal d1">ZIP had to work across three connected groups: creators who made the content, shoppers who acted on it, and agents who kept the system running. The constraint was creator participation, so that is where the design focused first.</p>
+    <div class="ug-stage reveal d2" id="ug-stage">
+      <canvas id="ug-canvas" aria-hidden="true"></canvas>
+      <ul class="ug-legend" aria-label="ZIP user groups">
+        <li>Influencer Experience</li>
+        <li>Customer Experience</li>
+        <li>Agent Experience</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHAT THIS MEANT — the diagnosis-to-strategy bridge ══ -->
+<section class="sec-tight" id="strategy-transition">
+  <div class="wrap">
+    <div class="decision-note reveal">
       <p class="dn-k">What this meant for the product</p>
       <p class="dn-h">Reshape the creator journey around repeat content creation.</p>
-      <p class="dn-b">The opportunity wasn't to add features around the existing workflow. It was to reshape the creator journey around repeat content creation: a clearer destination to share, a faster way to build shoppable content, and a simpler hub to manage work over time.</p>
+      <p class="dn-b">The opportunity wasn't to add features around the existing workflow. It was to reshape the creator journey around repeat content creation: a clearer destination to share, a faster way to build shoppable content, and a simpler hub to manage work over time. That set up the three bets the rest of the project tested and built: Storefront, Shoppable Content, and Hub.</p>
     </div>
   </div>
 </section>
@@ -1157,7 +1168,7 @@
 
     <div class="reveal" style="margin-top:var(--gap-sub)">
       <h3 class="sub">Personas</h3>
-      <p class="body" style="margin-top:18px;max-width:62ch">A well-defined audience keeps every design, content and functionality decision pointed at the right people. The 2022 target: Gen&nbsp;Z and Millennial female fashion influencers.</p>
+      <p class="body" style="margin-top:18px;max-width:62ch">Naming the exact creator we were designing for kept every later call, which content tools to build and how the storefront should behave, pointed at one real person instead of a generic "influencer." The 2022 target: Gen&nbsp;Z and Millennial female fashion influencers.</p>
       <ul class="ticks" style="max-width:62ch">
         <li><b>Primary</b>: micro influencers (1k–100k) and mid-tier influencers (50k–100k).</li>
         <li><b>Secondary</b>: nano influencers (under 1k) building their audience.</li>
@@ -1388,7 +1399,7 @@
       <h3 class="sub">Why these bets</h3>
       <p class="body" style="margin-top:18px;max-width:66ch">The research pointed to several possible directions: better onboarding, deeper creator analytics, more monetization tools, social sharing, storefront improvements, and faster content creation.</p>
       <p class="body" style="margin-top:20px;max-width:66ch">We prioritized the surfaces most likely to increase content production and reuse: a clearer creator destination, a faster way to build shoppable content, and a simpler hub for managing work. These were the highest-leverage points in the creator workflow because they reduced effort before asking influencers to optimize performance.</p>
-      <p class="body" style="margin-top:20px;max-width:66ch">We intentionally deprioritized deeper reporting and advanced monetization features for this phase. The core problem was not yet optimization. Creators first needed a reason and a path to create content consistently.</p>
+      <p class="body" style="margin-top:20px;max-width:66ch">We intentionally deprioritized deeper reporting and advanced monetization features for this phase. This wasn't the moment to optimize; creators first needed a reason and an easy path to publish at all.</p>
     </div>
   </div>
 </section>
