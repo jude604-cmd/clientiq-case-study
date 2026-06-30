@@ -30,7 +30,7 @@
       if (nav) nav.classList.toggle('scrolled', h.scrollTop > 40);
       if (progress){
         const max = h.scrollHeight - h.clientHeight;
-        progress.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+        progress.style.transform = 'scaleX(' + (max > 0 ? h.scrollTop / max : 0) + ')';
       }
       ticking = false;
     });
@@ -81,7 +81,8 @@
     const spy = new IntersectionObserver((es) => {
       es.forEach(e => { if (e.isIntersecting){
         const i = secs.indexOf(e.target);
-        dots.forEach((d, di) => d.classList.toggle('active', di === i));
+        dots.forEach((d, di) => { const on = di === i; d.classList.toggle('active', on);
+          if (on) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
       }});
     }, { threshold:0.5 });
     secs.forEach(s => spy.observe(s));

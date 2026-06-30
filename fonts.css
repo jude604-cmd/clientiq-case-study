@@ -1,0 +1,349 @@
+/* ============================================================================
+   SELF-HOSTED FONT KIT  (loaded for use; NOT applied to the page yet)
+   Relative paths → deploys on Vercel as-is. @font-face is lazy: a family is
+   only downloaded once something actually renders in it, so declaring all of
+   these has ~zero cost until you opt one in via font-family.
+   --------------------------------------------------------------------------
+   LICENSING (you said you'll handle these before going live):
+     • Epoch ......... commercial use OK
+     • Origin ........ verify your license
+     • Thunder ....... Pangram Pangram — verify license
+     • PP Mori ....... FREE FOR PERSONAL USE only
+     • Britti Sans / Lalo Grotesk / Mirtha Display / Krooner (Nois) = TRIAL,
+       evaluation only — replace with licensed versions before public deploy.
+   ========================================================================== */
+
+/* — Origin Display — */
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-Thin.woff2') format('woff2');
+  font-weight:100;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-ExtraLight.woff2') format('woff2');
+  font-weight:200;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-Light.woff2') format('woff2');
+  font-weight:300;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-Medium.woff2') format('woff2');
+  font-weight:500;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-SemiBold.woff2') format('woff2');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-ExtraBold.woff2') format('woff2');
+  font-weight:800;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Display';
+  src:url('fonts/origin/OriginDisplay-Black.woff2') format('woff2');
+  font-weight:900;font-style:normal;font-display:swap;
+}
+
+/* — Origin Text — */
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-Thin.woff2') format('woff2');
+  font-weight:100;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-ExtraLight.woff2') format('woff2');
+  font-weight:200;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-Light.woff2') format('woff2');
+  font-weight:300;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-Medium.woff2') format('woff2');
+  font-weight:500;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-SemiBold.woff2') format('woff2');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-ExtraBold.woff2') format('woff2');
+  font-weight:800;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Origin Text';
+  src:url('fonts/origin/OriginText-Black.woff2') format('woff2');
+  font-weight:900;font-style:normal;font-display:swap;
+}
+
+/* — Thunder  (Pangram Pangram — verify license) — */
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-Thin.woff2') format('woff2');
+  font-weight:100;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-ExtraLight.woff2') format('woff2');
+  font-weight:200;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-Light.woff2') format('woff2');
+  font-weight:300;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-Medium.woff2') format('woff2');
+  font-weight:500;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-SemiBold.woff2') format('woff2');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-ExtraBold.woff2') format('woff2');
+  font-weight:800;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder';
+  src:url('fonts/thunder/ThunderLC-Black.woff2') format('woff2');
+  font-weight:900;font-style:normal;font-display:swap;
+}
+
+/* — Thunder HC  (Pangram Pangram — verify license) — */
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-Thin.woff2') format('woff2');
+  font-weight:100;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-ExtraLight.woff2') format('woff2');
+  font-weight:200;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-Light.woff2') format('woff2');
+  font-weight:300;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-Medium.woff2') format('woff2');
+  font-weight:500;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-SemiBold.woff2') format('woff2');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-ExtraBold.woff2') format('woff2');
+  font-weight:800;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Thunder HC';
+  src:url('fonts/thunder/ThunderHC-Black.woff2') format('woff2');
+  font-weight:900;font-style:normal;font-display:swap;
+}
+
+/* — Epoch  (Commercial use OK (credit appreciated)) — */
+@font-face{
+  font-family:'Epoch';
+  src:url('fonts/epoch/Epoch-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+
+/* — PP Mori  (Free for Personal Use only) — */
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-ExtralightItalic.woff2') format('woff2');
+  font-weight:200;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-Extralight.woff2') format('woff2');
+  font-weight:200;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-Italic.woff2') format('woff2');
+  font-weight:400;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-SemiboldItalic.woff2') format('woff2');
+  font-weight:600;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-Semibold.woff2') format('woff2');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-BlackItalic.woff2') format('woff2');
+  font-weight:900;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'PP Mori';
+  src:url('fonts/mori/PPMori-Black.woff2') format('woff2');
+  font-weight:900;font-style:normal;font-display:swap;
+}
+
+/* — Britti Sans  (TRIAL — evaluation only) — */
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-LightItalic.woff2') format('woff2');
+  font-weight:300;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-Light.woff2') format('woff2');
+  font-weight:300;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-RegularItalic.woff2') format('woff2');
+  font-weight:400;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-SemiboldItalic.woff2') format('woff2');
+  font-weight:600;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-Semibold.woff2') format('woff2');
+  font-weight:600;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-BoldItalic.woff2') format('woff2');
+  font-weight:700;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Britti Sans';
+  src:url('fonts/nois/BrittiSansTrial-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+
+/* — Lalo Grotesk  (TRIAL — evaluation only) — */
+@font-face{
+  font-family:'Lalo Grotesk';
+  src:url('fonts/nois/LaloGroteskTrial-Slant.woff2') format('woff2');
+  font-weight:400;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Lalo Grotesk';
+  src:url('fonts/nois/LaloGroteskTrial-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Lalo Grotesk';
+  src:url('fonts/nois/LaloGroteskTrial-BoldSlant.woff2') format('woff2');
+  font-weight:700;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Lalo Grotesk';
+  src:url('fonts/nois/LaloGroteskTrial-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+
+/* — Mirtha Display  (TRIAL — evaluation only) — */
+@font-face{
+  font-family:'Mirtha Display';
+  src:url('fonts/nois/MirthaDisplayTrial-Italic.woff2') format('woff2');
+  font-weight:400;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Mirtha Display';
+  src:url('fonts/nois/MirthaDisplayTrial-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'Mirtha Display';
+  src:url('fonts/nois/MirthaDisplayTrial-BoldItalic.woff2') format('woff2');
+  font-weight:700;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Mirtha Display';
+  src:url('fonts/nois/MirthaDisplayTrial-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+
+/* — Krooner  (TRIAL — evaluation only) — */
+@font-face{
+  font-family:'Krooner';
+  src:url('fonts/nois/KroonerTrial-Italic.woff2') format('woff2');
+  font-weight:400;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'Krooner';
+  src:url('fonts/nois/KroonerTrial-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}

@@ -1,0 +1,2068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zappos Influencer Program — Jude Shi · Case Study</title>
+<meta name="description" content="Zappos Influencer Program (ZIP): designing a content-creation platform that grew influencer output 11× — a UX case study by Jude Shi.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<!-- Self-hosted font kit (Origin, Thunder, Epoch, PP Mori, Nois). Declared/available;
+     not yet applied to any element. See fonts.css for the family names + licence notes. -->
+<link rel="stylesheet" href="fonts.css">
+<style>
+  /* ════════════════════════════════════════════════════════════════════════
+     ZIP — Zappos Influencer Program case study.
+     PAGE-SCOPED ONLY. Tokens + shared components live in design-system.css.
+     Theme: LAVENDER. Overriding :root here recolours THIS PAGE ONLY — the
+     shared stylesheet (and clientiq's blue) is untouched.
+     ════════════════════════════════════════════════════════════════════════ */
+
+  :root{
+    /* lavender accent — #6d4aff hits 5.16:1 on white (WCAG AA for text) */
+    --accent:#6d4aff;
+    --accent-soft:rgba(109,74,255,.06);
+    --accent-tint:rgba(109,74,255,.09);
+    /* brighter, airier surfaces: white cards on a soft lavender wash */
+    --card:#ffffff; --card-2:#ffffff;
+    --line:rgba(58,40,110,.13); --line-soft:rgba(58,40,110,.085); --line-strong:rgba(58,40,110,.2);
+    /* --ink-4 darkened to #655f78 so 11–13px captions/labels clear WCAG AA (4.5:1) on the lavender wash */
+    --ink:#211b33; --ink-2:#3b3552; --ink-3:#544e69; --ink-4:#655f78; --ink-5:#6f6885;
+    /* dark surface (footer) → lilac */
+    --dark-accent:#bbaaff;
+    --glow-color:rgba(124,92,255,.5); --glow-color-active:rgba(150,120,255,.7);
+    /* generous, airy rhythm */
+    --sec-y:164px; --sec-y-tight:110px; --gap-sub:128px;
+  }
+  html{background:#f1f1f3}
+  body{background:#f1f1f3}   /* flat light-grey page bg (was the lavender gradient + purple orbs) */
+
+  /* breathing room on the shared primitives (scoped to this page) */
+  .grid2{gap:52px}
+  .grid-cards{gap:28px}
+  .card{padding:34px 36px}
+  ol.steps{gap:24px;margin-top:36px}
+  ul.ticks{gap:17px}
+  .figure{margin-top:8px}
+
+  /* Accessibility: visible skip link + a consistent focus ring everywhere */
+  .skip-link{position:absolute;left:16px;top:16px;z-index:100;background:var(--accent);color:#fff;
+    font-family:var(--mono);font-size:13px;padding:11px 18px;border-radius:var(--pill);text-decoration:none;
+    transform:translateY(calc(-100% - 32px));transition:transform .2s var(--ease)}   /* animate transform, not the top layout prop */
+  .skip-link:focus{transform:none}
+  a:focus-visible,button:focus-visible,iframe:focus-visible,[tabindex]:focus-visible{
+    outline:2.5px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+  /* Section eyebrow chip — lavender label (mirrors the site's case-study convention) */
+  :is(.sec,.sec-tight) .eyebrow span{background:var(--accent);color:#fff;padding:2px 10px 3px;border-radius:5px}
+
+  /* anchors clear the fixed nav */
+  section[id]{scroll-margin-top:88px}
+
+  /* ── HERO (light + airy, typographic) ─────────────────────────────────── */
+  #hero{--title-fz:clamp(76px,15.5vw,220px);min-height:92svh;display:flex;align-items:stretch;position:relative;overflow:hidden;isolation:isolate}  /* isolate → #hero is the backdrop-root the shop cards' frost samples (the whole hero: figure + title), and it keeps the back figure's z-index:-1 contained */
+  /* fade the hero's lower half into the Overview's colour so there's no seam at the boundary —
+     the transition starts mid-hero (gradual) instead of a hard line at the bottom edge */
+  #hero::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:linear-gradient(180deg, transparent 42%, #f1f1f3 90%)}
+  #hero .orb{position:absolute;z-index:0;pointer-events:none;filter:blur(8px);
+    border-radius:42% 58% 63% 37%/45% 38% 62% 55%;animation:meshWarp 20s ease-in-out infinite}
+  #hero .orb.a{top:-14%;right:-8%;width:50vw;height:50vw;
+    background:radial-gradient(circle at 42% 40%,rgba(124,92,255,.22),rgba(124,92,255,0) 68%)}
+  #hero .orb.b{bottom:-22%;left:-10%;width:42vw;height:42vw;animation-duration:26s;
+    background:radial-gradient(circle at 50% 50%,rgba(170,130,255,.16),rgba(170,130,255,0) 70%)}
+  @keyframes meshWarp{0%,100%{border-radius:42% 58% 63% 37%/45% 38% 62% 55%;transform:translate(0,0) rotate(0) scale(1)}
+    25%{border-radius:58% 42% 38% 62%/55% 60% 40% 45%;transform:translate(-1.4%,1.1%) rotate(2deg) scale(1.05)}
+    50%{border-radius:48% 52% 55% 45%/62% 45% 55% 38%;transform:translate(1.2%,-1.3%) rotate(-1.5deg) scale(.97)}
+    75%{border-radius:55% 45% 42% 58%/40% 58% 42% 60%;transform:translate(-.8%,-.6%) rotate(1deg) scale(1.03)}}
+  #hero .inner{position:relative;z-index:3;width:100%;display:flex}
+  #hero .inner .wrap{display:flex;flex-direction:column;justify-content:flex-end;padding-top:150px;padding-bottom:84px}
+  #hero .hero-logo{display:block;width:clamp(170px,16vw,260px);height:auto;margin:0 0 30px;opacity:.92}
+  #hero h1{font-weight:800;font-size:clamp(52px,9vw,132px);line-height:.9;letter-spacing:-.045em;margin:22px 0 0;color:var(--ink)}
+  #hero h1 .accent{color:var(--accent)}
+  #hero .tag{margin-top:28px;font-size:clamp(19px,2.1vw,27px);font-weight:500;line-height:1.32;letter-spacing:-.015em;color:var(--ink-2);max-width:24ch}
+  .metaRow{display:flex;flex-wrap:wrap;gap:16px 44px;margin-top:50px;border-top:1px solid var(--line);padding-top:30px}
+  .metaRow .item{min-width:120px}
+  .metaRow .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4)}
+  .metaRow .v{font-size:16px;font-weight:500;margin-top:7px;color:var(--ink)}
+  /* hero entrance — blur-up + rise, staggered */
+  @keyframes heroRise{from{opacity:0;filter:blur(7px);transform:translateY(14px)}to{opacity:1;filter:blur(0);transform:none}}
+  /* Title entrance has NO filter: animating filter→none leaves a filled blur(0) (the
+     interpolation identity), which creates a stacking context that would trap the lifted
+     letter behind the figure forever. Opacity+transform only → h1 keeps no stacking context. */
+  @keyframes heroRiseTitle{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  #hero .hero-logo,#hero .eyebrow,#hero h1,#hero .tag,#hero .metaRow{opacity:0;animation:heroRise .9s var(--ease) both}
+  #hero .eyebrow{animation-delay:.04s}#hero h1{animation-delay:.08s}#hero .tag{animation-delay:.18s}#hero .metaRow{animation-delay:.28s}
+
+  /* ── jump links (light frosted pills) ─────────────────────────────────── */
+  .jump-links{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-top:30px}
+  .jump-links .jump-lead{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}
+  .jump-links .jump-pills{display:flex;flex-wrap:wrap;gap:12px}
+  .jump-links a{font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:var(--accent);text-decoration:none;
+    padding:10px 20px;border:1px solid var(--line-strong);border-radius:var(--pill);background:rgba(255,255,255,.6);
+    transition:color .2s,border-color .2s,background .2s,transform .25s var(--ease),box-shadow .25s var(--ease)}
+  .jump-links a:hover,.jump-links a:focus-visible{background:var(--accent);border-color:var(--accent);color:#fff;
+    transform:translateY(-4px);box-shadow:0 12px 24px -6px rgba(109,74,255,.5)}   /* elevate + purple shadow */
+
+  /* ── role cards (light lavender frosted, icon + title) ────────────────── */
+  .role-cards .card{display:flex;flex-direction:column;min-height:0}
+  .rc-head{display:flex;align-items:center;gap:14px}
+  .rc-icon{flex:none;width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    background:transparent;color:var(--accent);position:relative;isolation:isolate}
+  .rc-icon::before{content:"";position:absolute;inset:-3px;z-index:-1;   /* soft blurred LIGHT-purple circle behind each purple icon */
+    background:rgba(109,74,255,.28);border-radius:50%;filter:blur(7px)}
+  .rc-icon svg{width:23px;height:23px;display:block}
+  #role .role-cards .rc-head .sub{color:var(--ink)}   /* black card titles */
+
+  /* ── Process: six phases arranged in a repeating cycle ── */
+  #role{padding-bottom:60px}   /* tighten the gap down to the Process title */
+  /* the #problem → #user-groups boundary stacked two 164px paddings (348px gap); trim both so it
+     matches the section's intra gaps (~128px, the --gap-sub used between statband and quote) */
+  #problem{padding-bottom:64px}
+  /* user-groups cards float with their own breathing room → don't also stack big section paddings below */
+  #user-groups{padding-top:44px; padding-bottom:20px}
+  #learn{padding-top:72px}
+  #process-cycle{padding-top:16px; padding-bottom:24px}   /* tight top/bottom around the cycle chart */
+  #process-cycle .pw-title{color:var(--ink)}
+  /* pull the chart up close to the title (overrides the DS `.wrap > * + *` 128px gap, which is !important) */
+  #process-cycle .pw{position:relative; width:min(560px,90%); margin:44px auto 0!important; aspect-ratio:1}
+  #process-cycle .pw-ring{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; filter:blur(7px)}   /* soften + lighten the cycle arrows */
+  #process-cycle .pw-step{position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%);
+    font-family:var(--sans); font-weight:700; font-size:clamp(17px,2.3vw,29px); letter-spacing:-.012em;
+    color:var(--accent); white-space:nowrap;
+    border:0; background:none; margin:0; padding:6px 6px; line-height:1; cursor:pointer;
+    transition:transform .3s var(--ease), opacity .25s var(--ease)}
+  #process-cycle .pw-step:hover,#process-cycle .pw-step:focus-visible{transform:translate(-50%,-50%) scale(1.07); outline:none}
+  #process-cycle .pw.show-detail .pw-step:not(:hover):not(:focus-visible){opacity:.4}   /* dim the others while one is active */
+  /* frosted-glass detail panel, centred in the wheel */
+  #process-cycle .pw-detail{
+    position:absolute; left:50%; top:50%; width:min(320px,64%);
+    transform:translate(-50%,-50%) scale(.94);
+    padding:22px 24px; border-radius:var(--r-md);
+    background:rgba(255,255,255,.55);
+    -webkit-backdrop-filter:blur(16px) saturate(1.3); backdrop-filter:blur(16px) saturate(1.3);
+    box-shadow:0 20px 50px -16px rgba(40,30,80,.32), inset 0 0 0 1px rgba(255,255,255,.6);
+    font-family:var(--sans); font-size:clamp(13.5px,1.1vw,15.5px); line-height:1.5; color:var(--ink-2); text-align:center;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .3s var(--ease), transform .35s var(--ease), visibility .3s}
+  #process-cycle .pw.show-detail .pw-detail{opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1)}
+  @media (max-width:560px){ #process-cycle .pw{width:98%} #process-cycle .pw-step{font-size:14px} #process-cycle .pw-detail{width:70%;padding:16px 18px} }
+
+  /* ── User groups: three lanyard badges in a 3D (three.js) scene ── */
+  #user-groups .h{text-align:center; max-width:none}
+  /* subtitle hugs the title + stage sits a normal gap below — override the DS `.wrap > * + *` 128px (it's !important) */
+  #user-groups .ug-sub{text-align:center; color:var(--ink-4); font-size:clamp(16px,1.5vw,20px); margin-top:18px!important}
+  #user-groups .ug-hint{color:var(--ink-5); font-size:.86em}
+  #user-groups .ug-stage{position:relative; max-width:1100px; margin:46px auto 0!important; height:clamp(380px,46vw,560px); touch-action:pan-y; overflow:visible}
+  /* canvas bleeds above/below the stage box so a hovered (zoomed) card can grow past it without clipping;
+     pointer-events:none so the overflow doesn't block the text it overlaps — events are bound to the stage */
+  #user-groups #ug-canvas{display:block; position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none}
+  /* legend = accessible labels + graceful fallback if WebGL/JS is unavailable */
+  #user-groups .ug-legend{list-style:none; margin:0; padding:0; position:absolute; inset:0;
+    display:grid; grid-template-columns:repeat(3,1fr); align-items:end; gap:40px;
+    pointer-events:none; opacity:0; clip:rect(0 0 0 0); clip-path:inset(50%)}
+  #user-groups .ug-stage.no3d .ug-legend{position:static; opacity:1; clip:auto; clip-path:none;
+    align-items:center; text-align:center; color:var(--ink-2); font-size:clamp(17px,1.5vw,21px); font-weight:500}
+  #user-groups .ug-stage.no3d #ug-canvas{display:none}
+  @media (max-width:680px){ #user-groups .ug-stage{height:clamp(420px,118vw,560px)} }
+
+  /* ── persona card (teal, two columns of white cards) ─────────────────────── */
+  .persona{--p-ink:#16243f; --p-body:#363957; --p-bullet:#7c6cf0;
+    background:linear-gradient(180deg, #b3a0ff 0%, #f1f1f3 100%); border-radius:26px; padding:22px;
+    display:grid; grid-template-columns:36% 1fr; gap:18px; align-items:stretch; color:var(--p-body)}
+  .persona-col{display:flex; flex-direction:column; gap:18px; min-width:0}
+  .persona .pcard{background:#fff; border-radius:16px; padding:24px}
+  /* profile card uses the influencer photo as its background; white gradient keeps text readable
+     (photo shows at the top behind the name/portrait, fading to near-white over the meta) */
+  .persona .pprofile{display:flex; flex-direction:column; flex:1 1 auto;
+    background:linear-gradient(rgba(255,255,255,.5) 0%, rgba(255,255,255,.22) 16%, rgba(255,255,255,.22) 46%, rgba(255,255,255,.92) 62%, rgba(255,255,255,.98) 100%),
+      url("uploads/zip/persona-bg.webp") center top/cover no-repeat;}
+  .persona .pprofile .pmeta{margin-top:auto}   /* push the meta to the bottom; photo fills the space above */
+  .persona .pcard-title{margin:0 0 16px; font-family:"Schibsted Grotesk",system-ui,sans-serif;
+    font-weight:700; font-size:19px; line-height:1.2; color:var(--p-ink)}
+  .persona .pname{margin:2px 0 18px; text-align:center; font-family:"Schibsted Grotesk",system-ui,sans-serif;
+    font-weight:700; font-size:20px; color:var(--p-ink)}
+  .persona .pportrait{display:block; width:160px; height:160px; border-radius:50%; object-fit:cover;
+    margin:0 auto 22px; background:#eee}
+  .persona .pmeta{display:grid; grid-template-columns:max-content 1fr; column-gap:18px; row-gap:13px; margin:0}
+  .persona .pmeta dt{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.05em;
+    text-transform:uppercase; color:#6b6f7a; align-self:start; padding-top:2px}
+  .persona .pmeta dd{margin:0; font-weight:500; font-size:15px; line-height:1.3; color:var(--p-body)}
+  .persona .pquote{display:flex; flex-direction:column; gap:8px}
+  .persona .pquote-mark{font-family:Georgia,"Times New Roman",serif; font-weight:700; font-size:42px;
+    line-height:.7; color:#6d4aff}
+  .persona .pquote p{margin:0; font-weight:500; font-size:15px; line-height:1.5; color:var(--p-body)}
+  .persona .ptags{display:flex; flex-wrap:wrap; gap:11px}
+  .persona .ptags span{border:1px solid #e4e4ec; border-radius:9px; padding:8px 16px;
+    font-weight:500; font-size:14px; color:var(--p-ink)}
+  .persona .pcard p.pbody{margin:0; font-weight:400; font-size:15px; line-height:1.6; color:var(--p-body)}
+  .persona .pcard ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:11px}
+  .persona .pcard li{position:relative; padding-left:20px; font-weight:400; font-size:15px;
+    line-height:1.5; color:var(--p-body)}
+  .persona .pcard li::before{content:""; position:absolute; left:2px; top:.5em; width:6px; height:6px;
+    border-radius:50%; background:var(--p-bullet)}
+  .persona .psocial{display:flex; align-items:center; gap:20px}
+  .persona .psocial svg{width:27px; height:27px; color:var(--p-ink); display:block}
+  .persona .pplatform{display:flex; flex-direction:column; align-items:center; gap:7px; width:max-content}
+  .persona .pplatform svg{width:30px; height:30px; color:var(--p-ink)}
+  .persona .pplatform span{font-size:13px; color:var(--p-body)}
+  @media (max-width:760px){ .persona{grid-template-columns:1fr; padding:16px; gap:14px}
+    .persona .pcard{padding:20px} }
+
+  /* survey pie charts (recreated in the page purple palette) ──────────────── */
+  .pies{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+    background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; padding:34px 30px; margin-top:24px}
+  .pie-chart{display:flex; flex-direction:column; align-items:center; text-align:center; min-width:0}
+  /* fixed 2-line height + bottom-align → 1-line & 2-line titles end at the same baseline,
+     so all three pies and their legends line up across the row */
+  .pie-title{font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:600; font-size:15px;
+    line-height:1.3; color:var(--ink); margin:0; max-width:24ch;
+    min-height:2.6em; display:flex; align-items:flex-end; justify-content:center; text-align:center}
+  .pie-n{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-5); margin:4px 0 16px}
+  .pie-chart svg{width:172px; height:auto; display:block}
+  .pie-pct{fill:#fff; font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:700; font-size:15px;
+    text-anchor:middle; dominant-baseline:middle}
+  .pie-pct-sm{fill:var(--ink-2); font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:600;
+    font-size:12px; text-anchor:middle}
+  .pie-lead{stroke:var(--ink-4); stroke-width:1}
+  .pie-legend{display:flex; flex-wrap:wrap; justify-content:center; gap:8px 14px; margin-top:16px}
+  .pie-legend span{display:inline-flex; align-items:center; gap:7px; font-weight:500; font-size:12.5px; color:var(--ink-2)}
+  .pie-legend span::before{content:""; width:11px; height:11px; border-radius:3px; background:var(--c); flex:none}
+  @media(max-width:760px){ .pies{grid-template-columns:1fr; gap:30px; padding:26px 22px} }
+
+  /* "released" figures — drop the white card chrome so images sit straight on the page
+     (High-fidelity design subsection onward → all of Deliver + Outcome) */
+  /* :not(.bare) · a .bare figure opts out of the floating-screenshot shadow/radius (its image
+     already carries its own page-coloured ground, so a shadow/rounding would re-box it) */
+  :is(#refine .released, #deliver, #outcome) figure.figure:not(.bare){
+    background:transparent; border:0; box-shadow:none; overflow:visible; padding:0; border-radius:0}
+  :is(#refine .released, #deliver, #outcome) figure.figure:not(.bare) img{
+    display:block; width:100%; border-radius:16px;
+    filter:drop-shadow(0 7px 18px rgba(38,28,76,.10)) drop-shadow(0 30px 46px rgba(38,28,76,.09))}
+
+  /* recreated market-share pie chart (page purple palette) */
+  .market-chart{background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; padding:clamp(24px,3vw,38px)}
+  /* match the gap above the market chart to the word-clouds→pies gap (override DS `.wrap > * + *` 128px) */
+  #learn .market-chart{margin-top:24px!important}
+  .market-chart .mc-title{font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:700;
+    font-size:clamp(17px,1.7vw,21px); line-height:1.25; color:var(--ink); margin:0; max-width:34ch}
+  .market-chart .mc-body{display:flex; align-items:center; justify-content:center;
+    gap:clamp(28px,5vw,56px); flex-wrap:wrap; margin-top:26px}
+  .market-chart .mc-body svg{width:clamp(200px,22vw,264px); height:auto; flex:none}
+  .market-chart .mc-legend{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:18px}
+  .market-chart .mc-legend li{display:flex; align-items:center; gap:12px; font-weight:500; font-size:16px; color:var(--ink-2)}
+  .market-chart .mc-legend li span{width:16px; height:16px; border-radius:4px; background:var(--c); flex:none}
+
+  /* ── problem-statement analytics table (the "low engagement" evidence) ──── */
+  .data-table-card{background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; overflow:hidden; padding:0}
+  .dt-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  .dt{width:100%; min-width:860px; border-collapse:collapse; font-size:13px}
+  .dt thead th{position:sticky; top:0; background:#7c769f; color:#fff;
+    font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:600; font-size:12px; letter-spacing:.01em;
+    text-align:left; padding:13px 13px; white-space:nowrap; vertical-align:bottom}
+  .dt th.num,.dt td.num{text-align:right; font-variant-numeric:tabular-nums}
+  .dt tbody td{padding:10px 13px; border-bottom:1px solid rgba(58,40,110,.07); color:var(--ink-2); white-space:nowrap}
+  .dt tbody td:first-child{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink)}
+  .dt tbody tr:nth-child(even) td{background:rgba(124,108,240,.035)}
+  .dt tbody tr:last-child td{border-bottom:none}
+  .dt .dt-omit td{text-align:center; color:var(--ink-4); font-family:"IBM Plex Mono",monospace;
+    font-size:11px; letter-spacing:.04em; background:rgba(124,108,240,.06)}
+  .problem-table-cap{margin-top:16px; font-size:14px; color:var(--ink-3); max-width:70ch}
+
+  /* research findings — two table images side by side in equal-size white boxes */
+  .rf-pair{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2vw,28px); margin-top:32px}
+  .rf-pair figure{margin:0; background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px;
+    aspect-ratio:4/5; overflow:hidden; padding:clamp(12px,1.6vw,22px); display:flex}
+  .rf-pair img{width:100%; height:100%; object-fit:contain; display:block; margin:auto}
+  @media(max-width:760px){ .rf-pair{grid-template-columns:1fr} }
+
+  /* labels above the two word clouds (one per half) */
+  .wordclouds .wc-labels{display:grid; grid-template-columns:1fr 1fr; gap:24px; padding:26px 30px 4px; text-align:center}
+  .wordclouds .wc-labels span{font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:600;
+    font-size:clamp(13px,1.3vw,16px); line-height:1.3; color:var(--ink)}
+  /* released from the card — flat white panel (radius matches the pie-chart cards), no shadow/border/hover */
+  figure.wordclouds{background:#fff; border:0; box-shadow:none; border-radius:18px; overflow:hidden; padding:0}
+  figure.wordclouds:hover{transform:none; box-shadow:none}
+  figure.wordclouds:hover img{transform:none}
+
+  /* final delivery — each device cropped from the composite, positioned, individually hoverable
+     (crop backgrounds are #f1f1f3, matching the page, so the pieces read as one collage) */
+  /* scattered collage — absolutely-positioned devices on a fixed-aspect canvas.
+     Positions are solved so every gap between neighbouring devices is identical
+     (34px on the 1600x1066 design canvas) with zero overlaps. */
+  .devices{position:relative; width:100%; aspect-ratio:1092 / 728; background:transparent}
+  .devices .dev{position:absolute}
+  /* committed desktop positions (arranged in the ?edit layout editor) */
+  .devices .d-review{left:13.8175%;top:8.251%;width:35%}
+  .devices .d-manage{left:25.1595%;top:50.294%;width:23.803%}
+  .devices .d-product{left:78.4795%;top:10.324%;width:12.812%}
+  .devices .d-insights{left:52.1115%;top:55.52%;width:35%}
+  .devices .d-profile{left:51.9465%;top:1.518%;width:23.554%}
+  .devices .d-report{left:8.7085%;top:50.934%;width:13.125%}
+  /* committed tablet positions (?edit layout editor) */
+  @media(max-width:980px){
+    .devices{aspect-ratio:678 / 532}
+    .devices .d-review{left:14.257%;top:10.71%;width:35%}
+    .devices .d-manage{left:25.596%;top:48.473%;width:23.803%}
+    .devices .d-product{left:80.297%;top:6.57%;width:12.811%}
+    .devices .d-insights{left:52.956%;top:47.96%;width:35%}
+    .devices .d-profile{left:53.104%;top:1.894%;width:23.554%}
+    .devices .d-report{left:8.341%;top:48.919%;width:13.125%}
+  }
+  /* committed mobile positions (?edit layout editor) */
+  @media(max-width:600px){
+    .devices{aspect-ratio:356 / 919.3}
+    .devices .d-review{left:12.564%;top:28.042%;width:73.993%}
+    .devices .d-manage{left:39.42%;top:73.046%;width:47.582%}
+    .devices .d-product{left:63.694%;top:8.046%;width:21.919%}
+    .devices .d-insights{left:12.544%;top:50.195%;width:74.458%}
+    .devices .d-profile{left:10.31%;top:0.026%;width:48.756%}
+    .devices .d-report{left:12.619%;top:73.775%;width:21.976%}
+  }
+  /* clean transparent device cut-outs → CSS casts the shadow (it hugs the device shape) */
+  .devices .dev img{display:block; width:100%; height:auto;
+    filter:drop-shadow(0 9px 20px rgba(38,28,76,.15)) drop-shadow(0 2px 5px rgba(38,28,76,.10));
+    transition:transform .4s cubic-bezier(.2,.7,.2,1), filter .4s; will-change:transform}
+  /* only the hovered device lifts + deepens its shadow (boxes don't overlap → no cascade) */
+  .devices .dev:hover{z-index:5}
+  .devices .dev:hover img{transform:translateY(-18px) scale(1.04);
+    filter:drop-shadow(0 26px 40px rgba(38,28,76,.26)) drop-shadow(0 4px 10px rgba(38,28,76,.12))}
+  @media(max-width:600px){ .devices .dev:hover img{transform:translateY(-8px) scale(1.02)} }
+
+  .rc-head .sub{margin:0;font-size:clamp(18px,1.8vw,21px);line-height:1.15}
+  .role-cards .card .body{margin-top:18px}
+
+  /* ── numbers / stat band ──────────────────────────────────────────────── */
+  .statband{background:var(--accent-tint);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+    padding:54px 48px;display:grid;grid-template-columns:repeat(2,1fr);gap:40px}
+  .statband.three{grid-template-columns:repeat(3,1fr)}
+  .statband .stat-l{max-width:26ch}
+
+  /* ── hypothesis grid ──────────────────────────────────────────────────── */
+  .hypo .card{position:relative}
+  .hypo .num{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid var(--line);
+    border-radius:var(--pill);width:38px;height:38px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .hypo .sub{font-size:19px}
+  .hypo .body{margin-top:12px}
+
+  /* persona card belongs to the Personas subsection — hug it (40px) instead of the
+     128px inter-subsection gap the DS `.wrap > * + *` rule would otherwise force */
+  #analyze .persona{margin-top:40px!important}
+
+  /* ── strong statement — the key takeaway that motivates the hypotheses ───── */
+  .statement .statement-h{font-family:var(--sans); font-weight:700; color:var(--accent);
+    font-size:clamp(26px,3.1vw,44px); line-height:1.08; letter-spacing:-.02em; margin:0; text-wrap:balance}
+  .statement .body{margin-top:30px; max-width:64ch}
+
+  /* ── Set Goals & Objectives beat (end of Analyze) ───────────────────────── */
+  .goals .goals-h{font-family:var(--sans); font-weight:700; color:var(--accent);
+    font-size:clamp(30px,4vw,56px); line-height:1.04; letter-spacing:-.02em; margin:0; text-wrap:balance}
+  .goals-grid{display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,4.5vw,72px); margin-top:44px}
+  .goals-label{font-family:var(--sans); font-weight:700; font-size:clamp(16px,1.5vw,19px); color:var(--ink); margin:28px 0 14px}
+  .goals-grid > div > .goals-label:first-child{margin-top:0}
+  /* solid accent panel, white text (was a side-stripe border-left, an absolute-ban AI tell).
+     Reads as a confident "north-star" highlight; white on accent clears WCAG AA (~4.8:1). */
+  .goals .ux-focus{margin-top:clamp(40px,5vw,64px); background:var(--accent); border-radius:var(--r-lg); padding:clamp(28px,3.4vw,48px); color:#fff}
+  .ux-focus .ux-eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin:0 0 12px}
+  .ux-focus .ux-title{font-family:var(--sans); font-weight:700; font-size:clamp(20px,2.3vw,30px); color:#fff; line-height:1.1; margin:0 0 16px}
+  .ux-focus .ux-body{font-size:clamp(17px,1.5vw,21px); line-height:1.5; color:#fff; max-width:64ch; margin:0}
+  @media(max-width:760px){ .goals-grid{grid-template-columns:1fr; gap:28px} }
+
+  /* ── video embeds (YouTube) ───────────────────────────────────────────── */
+  .video{position:relative;border-radius:var(--r-md);overflow:hidden;background:#100f1a;
+    box-shadow:var(--shadow-fig);aspect-ratio:16/9}
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  .videocap{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink-4);margin-top:14px}
+
+  /* ── priorities (3 outcome cards) ─────────────────────────────────────── */
+  /* mesh-style cards — a soft light-purple bloom over a cool-white base, positioned RELATIVE to
+     each card's place in the row: left → bottom-left, middle → bottom-centre, right → bottom-right,
+     so the three together read as one left-to-right sweep. (cool base sits opposite each bloom) */
+  .prio .card{border:0; border-radius:24px;
+    box-shadow:0 18px 40px -18px rgba(109,74,255,.32), 0 4px 12px -4px rgba(109,74,255,.14)}   /* soft purple rest shadow */
+  .prio .card:hover{box-shadow:0 26px 56px -20px rgba(109,74,255,.42), 0 6px 16px -5px rgba(109,74,255,.18)}
+  .prio .card:nth-child(1){background:
+    radial-gradient(125% 130% at 14% 100%, rgba(155,122,255,.78) 0%, rgba(172,142,255,.46) 30%, rgba(202,184,250,.15) 52%, rgba(255,255,255,0) 72%),
+    linear-gradient(218deg, #eceaf4 0%, #f5f3fb 52%, #ffffff 100%)}
+  .prio .card:nth-child(2){background:
+    radial-gradient(140% 135% at 50% 104%, rgba(155,122,255,.78) 0%, rgba(172,142,255,.46) 30%, rgba(202,184,250,.15) 52%, rgba(255,255,255,0) 72%),
+    linear-gradient(180deg, #efedf7 0%, #f6f4fc 52%, #ffffff 100%)}
+  .prio .card:nth-child(3){background:
+    radial-gradient(125% 130% at 86% 100%, rgba(155,122,255,.78) 0%, rgba(172,142,255,.46) 30%, rgba(202,184,250,.15) 52%, rgba(255,255,255,0) 72%),
+    linear-gradient(142deg, #eceaf4 0%, #f5f3fb 52%, #ffffff 100%)}
+  /* very large breathing space between each card's title and its description */
+  .prio .card .sub + .body{margin-top:72px}
+  /* stronger title hierarchy — Thunder display face, a clear step over the 16px body */
+  .prio .card .sub{font-family:'Thunder',var(--sans); font-weight:600; font-synthesis:none;
+    font-size:clamp(23px,2.1vw,31px); line-height:1.0; letter-spacing:-.005em; color:var(--ink)}
+
+
+  /* Scoping the MVP — workshop whiteboard photo as the section background */
+  .scoping-mvp{position:relative; border-radius:18px; overflow:hidden; padding:clamp(26px,3.4vw,50px);
+    background:#f5f4fa url("uploads/zip/scoping-workshop.avif") center/cover no-repeat}
+  .scoping-mvp::before{content:""; position:absolute; inset:0; pointer-events:none; background:rgba(244,243,250,.8)}
+  .scoping-mvp .scoping-inner{position:relative; z-index:1}
+
+  /* Develop diagrams (user flows · IA · wireframes): released AND blended into the page.
+     Each image has a near-white ground (#fff / #f5f5f5) that is LIGHTER than the page #f1f1f3, so
+     mix-blend-mode:darken clamps it to exactly the page colour — the white "box" disappears while
+     the darker linework / nodes stay. No drop-shadow → the diagram sits straight on the page. */
+  #develop .diagram-blend figure.figure{background:transparent; border:0; box-shadow:none; overflow:visible; padding:0; border-radius:0}
+  #develop .diagram-blend figure.figure:hover{transform:none; box-shadow:none}
+  #develop .diagram-blend figure.figure img{display:block; width:100%; mix-blend-mode:darken}
+  #develop .diagram-blend figure.figure:hover img{transform:none}
+
+  /* Transparent-background images (e.g. the usability-findings comparison): just drop the white
+     card so the PNG's transparent areas show the page — no blend, no shadow needed. */
+  figure.figure.bare{background:transparent; border:0; box-shadow:none; overflow:visible; padding:0; border-radius:0}
+  figure.figure.bare:hover{transform:none; box-shadow:none}
+  figure.figure.bare:hover img{transform:none}
+  /* UX-metrics: the annotated mockup beside the two stacked metric cards, flat (no shadow) */
+  .uxm-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:52px;align-items:center}
+  .uxm-grid > figure{margin:0}
+  .uxm-grid .card{box-shadow:none}
+  @media(max-width:860px){.uxm-grid{grid-template-columns:1fr;gap:32px}}
+  .prio .tag-new{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:#5a37e6;background:rgba(255,255,255,.6);border-radius:var(--pill);padding:5px 11px;margin-bottom:14px}
+
+  /* ── outcome — pinned scrollytelling finale ──────────────────────────────────
+     Two stacked layers in a sticky stage: L1 = the shipped device collage, L2 = the
+     content. Scroll sequence (JS-scrubbed — body{overflow-x:hidden} makes <body> the
+     scroller, which breaks CSS scroll-timelines here): the collage shows ALONE & sharp →
+     it blurs + fades to a soft backdrop while the content rises up from the bottom over it →
+     LOCKS at the end state (no replay on scroll back up/down). On reduced-motion / small
+     screens it renders statically (no pin). See the #outcome IIFE near the page foot. */
+  #outcome{background:#ffffff; padding:0}
+  #outcome .oc-track{position:relative; height:200vh}              /* 100vh stage + 100vh of pinned scrub */
+  #outcome .oc-stage{position:sticky; top:0; height:100vh; overflow:hidden; isolation:isolate}
+  #outcome .outcome-bg{position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:url("uploads/zip/outcome-bg.avif") center / cover no-repeat;
+    filter:blur(var(--obg-blur,0px)); opacity:var(--obg-op,1);
+    transform:translateZ(0); will-change:filter,opacity}
+  #outcome .oc-content{position:absolute; inset:0; z-index:1;
+    display:flex; flex-direction:column; justify-content:center; will-change:transform,opacity}
+  /* compact the RHYTHM only (overrides the DS 128px `> * + *` rule) so the block fits one
+     viewport — the ORIGINAL big type is kept; never shrink the type to make it fit. */
+  #outcome .oc-content .wrap > * + *{margin-top:clamp(15px,2.3vh,46px)!important}
+  #outcome .oc-content .h{text-shadow:0 1px 20px rgba(255,255,255,.5)}   /* original editorial size; halo for legibility over the collage */
+  #outcome .o-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(11px,1.7vh,32px) 48px}
+  #outcome .oc-content .stat{line-height:.9}                            /* original editorial font-size; tight leading so the 2×2 fits */
+  #outcome .oc-content .lead{max-width:62ch}
+  /* very short viewports only: tighten spacing further (NOT the type) so the big stats still fit */
+  @media (max-height:720px){ #outcome .oc-content .wrap > * + *{margin-top:12px!important}
+    #outcome .o-grid{gap:8px 48px} }
+  /* reduced motion / small screens: no pin, no scrub — composed end state, static + readable */
+  #outcome.oc-static .oc-track{height:auto}
+  #outcome.oc-static .oc-stage{position:static; height:auto; overflow:visible; padding:var(--sec-y-tight) 0}
+  #outcome.oc-static .oc-content{position:static; transform:none!important; opacity:1!important}
+  #outcome.oc-static .outcome-bg{filter:blur(14px); opacity:.5}
+
+  /* ── UX Strategy 2023 — recreated part (source title band is Zappos blue → recoloured to accent) ── */
+  #ux-strategy{padding-top:0}
+  #ux-strategy .uxs-band{background:var(--accent); padding:clamp(60px,11vh,140px) 0; color:#fff}
+  #ux-strategy .uxs-h{font-family:'Thunder',var(--sans); font-weight:900; font-synthesis:none;
+    text-transform:uppercase; letter-spacing:-.01em; line-height:.84; color:#fff;
+    font-size:clamp(60px,12vw,176px); margin:0}
+  #ux-strategy .uxs-content{padding-top:clamp(56px,9vh,118px)}
+  /* image-left / text-right rows (narrow image column, like the source) */
+  #ux-strategy .uxs-row{display:grid; grid-template-columns:minmax(230px,350px) 1fr;
+    gap:clamp(32px,5vw,84px); align-items:center}
+  #ux-strategy .uxs-aside .sub{color:var(--ink)}
+  #ux-strategy .uxs-list{list-style:none; margin:24px 0 0; padding:0; counter-reset:uxs;
+    display:flex; flex-direction:column; gap:15px}
+  #ux-strategy .uxs-list li{counter-increment:uxs; position:relative; padding-left:48px;
+    font-size:clamp(17px,1.5vw,21px); line-height:1.4; color:var(--ink-2)}
+  #ux-strategy .uxs-list li::before{content:counter(uxs); position:absolute; left:0; top:-1px;
+    width:32px; height:32px; border-radius:50%; background:var(--accent-tint); color:var(--accent);
+    font-family:var(--mono); font-size:13px; font-weight:500; display:flex; align-items:center; justify-content:center}
+  /* document/diagram screenshots: released + blended (white ground → page colour, no box, no shadow) */
+  #ux-strategy .uxs-img{background:transparent; border:0; box-shadow:none; overflow:visible; padding:0; border-radius:0; margin:0}
+  #ux-strategy .uxs-img:hover{transform:none; box-shadow:none}
+  #ux-strategy .uxs-img img{display:block; width:100%}   /* keep the white ground (no darken blend) */
+  #ux-strategy .uxs-img:hover img{transform:none}
+  /* hypothesis validation: heatmap + recreated results table side by side */
+  #ux-strategy .uxs-validation{display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,3vw,44px); align-items:start}
+  #ux-strategy .uxs-results{background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; overflow:hidden; padding:0; margin:0}
+  #ux-strategy .uxs-results figcaption{font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:700;
+    font-size:clamp(16px,1.6vw,20px); color:var(--ink); padding:22px 24px 0}
+  #ux-strategy .uxs-table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:16px}
+  #ux-strategy .uxs-table th{background:#7c769f; color:#fff; font-family:"Schibsted Grotesk",system-ui,sans-serif;
+    font-weight:600; font-size:12px; text-align:center; padding:12px 8px}
+  #ux-strategy .uxs-table th:first-child{text-align:left; padding-left:18px}
+  #ux-strategy .uxs-table td{padding:13px 8px; border-bottom:1px solid rgba(58,40,110,.07); text-align:center; color:var(--ink-2); font-variant-numeric:tabular-nums}
+  #ux-strategy .uxs-table td:first-child{text-align:left; padding-left:18px; font-weight:500; color:var(--ink)}
+  #ux-strategy .uxs-table tbody tr:nth-child(even) td{background:rgba(124,108,240,.035)}
+  #ux-strategy .uxs-table tbody tr:last-child td{border-bottom:0}
+  #ux-strategy .uxs-table .yes{color:#3a9d63; font-weight:700; font-size:15px}
+  #ux-strategy .uxs-results-note{font-family:var(--mono); font-size:11.5px; color:var(--ink-4); padding:0 24px 20px; margin:14px 0 0}
+  @media(max-width:760px){
+    #ux-strategy .uxs-row{grid-template-columns:1fr; gap:26px}
+    #ux-strategy .uxs-validation{grid-template-columns:1fr}
+  }
+
+  /* ── footer dark surface → lilac glow ─────────────────────────────────── */
+  /* Lift the small copyright row to clear AA (DS default --dark-ink-4 is 3.5:1 on the dark band) */
+  footer.ds-footer .copy{color:var(--dark-ink-3)}
+  footer.ds-footer{background:
+    radial-gradient(ellipse 90% 55% at 50% -8%, rgba(124,92,255,.34) 0%, transparent 56%),
+    radial-gradient(ellipse 55% 42% at 105% 105%, rgba(150,90,235,.24) 0%, transparent 52%),
+    radial-gradient(ellipse 48% 38% at -5% 95%, rgba(90,60,200,.16) 0%, transparent 50%),
+    var(--dark)}
+
+  /* ── responsive ───────────────────────────────────────────────────────── */
+  @media (max-width:860px){
+    /* the project name is too long to share the bar with the brand + Contact pill on phones */
+    .ds-nav__proj{display:none}
+    .statband,.statband.three{grid-template-columns:1fr;gap:30px;padding:38px 30px}
+    #outcome .o-grid{grid-template-columns:1fr;gap:40px}
+    #hero .inner .wrap{padding-top:120px;padding-bottom:60px}
+    .metaRow .item{min-width:calc(50% - 22px)}
+  }
+  /* Tablet tier: the DS collapses every grid to 1 column at ≤860px, which leaves the
+     card/stat grids sparse and over-tall on tablets. Restore 2 columns from 600–860px. */
+  @media (min-width:600px) and (max-width:860px){
+    .grid-cards.c3,.grid-cards.c2{grid-template-columns:1fr 1fr}
+    .statband{grid-template-columns:1fr 1fr}
+    #outcome .o-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #hero .orb{animation:none}
+    #hero .hero-logo,#hero .eyebrow,#hero h1,#hero .tag,#hero .metaRow,#hero .title-wrap{opacity:1;filter:none;transform:none;animation:none}
+  }
+
+  /* ── Display type → THUNDER (heavy condensed display · ref: VERYVERY). Weight carries
+     the hierarchy: Black titles, Bold sub-heads, Medium quotes. Body copy stays Schibsted
+     Grotesk; mono labels stay IBM Plex Mono. Epoch is still in fonts.css to swap back. ── */
+  #hero h1,
+  .stat,
+  footer.ds-footer .big{
+    font-family:'Thunder',var(--sans);
+    font-weight:900;            /* Black — keep the project title heavy */
+    font-synthesis:none;
+    letter-spacing:-.005em;
+  }
+  /* Section headlines a few steps lighter than the hero: at sentence length the
+     Black weight reads as a dense block, so SemiBold gives them air. */
+  h2.h{font-family:'Thunder',var(--sans);font-weight:200;font-synthesis:none;letter-spacing:-.005em}
+  h3.sub{font-family:'Thunder',var(--sans);font-weight:500;font-synthesis:none;letter-spacing:0}
+  blockquote{font-family:'Thunder',var(--sans);font-weight:500;font-synthesis:none;letter-spacing:0}
+
+  /* ── Editorial scale (ref: VERYVERY) · big display type + big imagery. Sizes are
+     pushed up because Thunder is condensed (~60% width) and needs more size to carry
+     the same presence. Palette unchanged. ── */
+  #hero h1{font-size:var(--title-fz);line-height:.8;letter-spacing:-.01em;text-transform:uppercase}
+  #hero .tag{font-size:clamp(20px,2.3vw,30px);max-width:26ch}
+  h2.h{font-size:clamp(42px,6.4vw,96px);line-height:.94;letter-spacing:-.01em}
+  h3.sub{font-size:clamp(27px,3.2vw,46px);line-height:.98}
+  blockquote.full,blockquote{font-size:clamp(34px,4.6vw,64px);line-height:1.04}
+  #outcome .stat{font-size:clamp(84px,13vw,210px)}
+
+  /* big imagery: the opener image runs full-bleed, edge to edge (body is overflow-x:hidden) */
+  #overview .wrap > figure.figure{
+    margin-top:64px;                  /* page-content width (NOT full-bleed) so the devices align with the text columns */
+    border-radius:0;box-shadow:none;
+    background:transparent;border:0;   /* transparent PNG of the devices sits straight on the section bg — no white card */
+    overflow:visible;                 /* base .figure clips overflow → that cropped the drop-shadow into a hard rectangle; let it bleed */
+  }
+  #overview .wrap > figure.figure:hover{transform:none;box-shadow:none}
+  /* drop-shadow follows the PNG's alpha, so each device casts its own soft shadow (like the original) */
+  #overview .wrap > figure.figure img{width:100%;
+    filter:drop-shadow(0 5px 9px rgba(38,28,76,.10)) drop-shadow(0 24px 34px rgba(38,28,76,.17))}
+
+  /* Overview: white section; the product-shot video sits behind ONLY the headline
+     block as a rounded media panel. A soft scrim keeps the dark headline readable. */
+  /* fade the top edge from transparent → #e9e6f1 so the section bg blends seamlessly out of the
+     hero's lavender wash (at the boundary both sides show the same page gradient — no hard seam).
+     #e9e6f1 = the flat purple haze composited over the video's grey studio wall, so the solid
+     part still matches the tinted video exactly. */
+  #overview{background:#f1f1f3; padding-top:84px; padding-bottom:84px}   /* light neutral grey; the hero's lower-half fade meets this seamlessly. Tighter top/bottom than the default --sec-y (164px) */
+  #overview .grid2.top{align-items:center}   /* panel uses its own (portrait) height; right column is vertically centred beside it */
+  #overview .ov-head{
+    position:relative; isolation:isolate; overflow:hidden;
+    aspect-ratio:860 / 1068;   /* match the video's portrait ratio → it fills with NO crop and NO side gaps */
+    padding:34px 36px;
+    display:flex; flex-direction:column; align-items:flex-start; justify-content:center;   /* eyebrow + headline vertically centred in the panel */
+    gap:40px;   /* gap between the badge and the title — matches the other sections' 40px */
+  }
+  #overview .ov-head .h{margin-top:0!important}   /* kill the inherited 20px margin so the gap is exactly 30px (was 30 gap + 20 margin = 50, inconsistent with other sections) */
+  #overview .ov-head .ov-bg{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    object-fit:cover; object-position:center;   /* fill the full column width (no side gaps); crops top/bottom as needed */
+    z-index:-2; pointer-events:none;
+  }
+  :is(.sec,.sec-tight) :is(.wrap,.grid2) .eyebrow + *{margin-top:40px!important}   /* gap between every badge and its title — covers both direct (.wrap > .eyebrow) and nested (.grid2 … .eyebrow, e.g. the Problem section) layouts; matches the DS rule's specificity so it wins by source order. Overview is overridden to use its flex gap instead. */
+  /* ALL section title labels: swap the solid accent chip for a soft, blurred colour block behind crisp text, and drop the leading dash */
+  :is(.sec,.sec-tight) .eyebrow::before{display:none}   /* remove the leading dash */
+  :is(.sec,.sec-tight) .eyebrow span{position:relative; isolation:isolate; background:transparent}
+  :is(.sec,.sec-tight) .eyebrow span::before{
+    content:""; position:absolute; inset:-5px -4px; z-index:-1;
+    background:var(--accent); border-radius:10px; filter:blur(9px);
+  }
+  #overview .ov-head h2 .endline{   /* graphical long line replacing the period after "reach" — thin, black, sharp caps */
+    display:inline-block; width:1.1em; height:.045em; margin-left:.14em;
+    vertical-align:.18em; background:currentColor; border-radius:0;
+  }
+  #overview .ov-head::after{   /* very light, foggy lavender haze over the video so it joins the tinted section */
+    content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:rgba(250,250,255,.4);   /* neutral flat haze → composited over the grey studio wall it reads ~#f1f1f3, matching the section bg */
+  }
+  @media (prefers-reduced-motion:reduce){ #overview .ov-head .ov-bg{display:none} }
+
+  /* hero figure woven through the wordmark (ref: VERYVERY editorial). The figure lives
+     INSIDE .title-wrap and is positioned relative to the TITLE box — not the hero — so it
+     stays glued to the words at any viewport height (the title is bottom-anchored, the hero
+     grows taller on big screens; anchoring to the title keeps them locked together).
+     Two copies interlock with the type: a BACK copy behind the h1 (letters cut across her),
+     and a FRONT copy with its lower feet clipped away in front — so most of her covers the
+     letters but her dangling lower foot passes BEHIND the words. */
+  /* Stacking: title-wrap isolates a context. The h1 has NO z-index (position:relative,
+     z-auto) so it does NOT trap its letters — that lets a single letter break out and sit
+     ABOVE the figure. Layers (bottom→top): back copy (-1) behind the text · h1 text (auto)
+     · front copy (1) covering the upper letters · a lifted letter (.lift, 2) above her. */
+  #hero .title-wrap{position:relative;animation:heroRiseTitle .9s var(--ease) backwards .08s}  /* the WHOLE title+figure group does the entrance. NO isolation + `backwards` fill (not `both`) so this element is NOT a backdrop-root — that lets the shop cards' frost sample the FULL hero behind them (figure+title+wash), not just this group. The internal z-order (back -1 < h1 < front 1 < lift 2 < shop 5) still holds inside #hero's isolated context. */
+  #hero .title-wrap h1{position:relative;animation:none;opacity:1;filter:none;transform:none}  /* explicitly KILL the shared heroRise on the h1 AND restore opacity:1: an opacity/transform animation (or a static opacity<1) keeps the h1 a stacking context, which would trap the lifted letter behind the figure forever. The .title-wrap group does the entrance instead. */
+  #hero .hm{position:absolute;height:auto;pointer-events:none}  /* figure rides the .title-wrap group entrance (no separate animation → no extra stacking context) */
+  #hero .hm.back{z-index:-1}                               /* full figure, behind the title text */
+  #hero .hm.front{z-index:1;clip-path:inset(0 0 32% 0)}    /* drop the whole PROGRAM band (~bottom third) → she sits COMPLETELY behind the word "PROGRAM", in front of INFLUENCER above it; hides the mid-thigh crop behind the letters */
+  #hero h1 .lift{position:relative;z-index:2}              /* this letter jumps IN FRONT of her */
+  /* The figure is sized & placed PURELY in TITLE-FONT units (var(--title-fz), the same
+     value the h1 reads) · so the image and the title resolve to the identical px at every
+     viewport and scale in perfect lockstep, with NO per-breakpoint drift. Anchored by
+     `bottom` (not top) so her feet always sit on the PROGRAM. baseline. aspect-ratio pins
+     height so the baseline gap stays a fixed multiple of the font. Multipliers calibrated
+     to the approved look: width 1.361×, left 1.502×, bottom 0.061× the title font. */
+  #hero .hm.sit{
+    width:calc(var(--title-fz) * 1.361);
+    aspect-ratio:900 / 1515;          /* upright portrait → deterministic height */
+    left:calc(var(--title-fz) * 1.502);
+    bottom:calc(var(--title-fz) * 0.213 - 6px);  /* baseline lock: lands her crop on the PROGRAM. cap baseline at every size. The fz term tracks the title; the small NEGATIVE 6px cancels a structural offset (line-height:.8 pushes her up ~6px more on small screens). Calibrated from rendered screenshots at fz76 + fz220. */
+    top:auto; right:auto;             /* kill any inherited top so `bottom` anchors */
+  }
+  /* keep the standfirst above both figure copies so a font-load fallback can never let
+     the bottom-anchored image bleed onto the lead paragraph (adversarial-verify hardening) */
+  #hero .tag{position:relative;z-index:4}
+  @keyframes modelsIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){ #hero .hm{animation:none;opacity:1} }
+
+  /* ════════════════════════════════════════════════════════════════════════
+     SHOP-THE-LOOK · interactive product tags pinned to the hero figure.
+     The .shop overlay reuses the EXACT figure placement (identical --title-fz
+     multipliers as .hm.sit) so the dots stay welded to her at every viewport.
+     Each dot is pinned by percentage inside that box — her sunglasses / top /
+     pants. Sequence (driven by the inline script): the figure settles → dots
+     spawn staggered → all three cards auto-reveal once → cards fade to rest →
+     thereafter hover/focus a dot to recall its card.
+     ════════════════════════════════════════════════════════════════════════ */
+  #hero .shop{
+    position:absolute;
+    width:calc(var(--title-fz) * 1.361);
+    aspect-ratio:900 / 1515;
+    left:calc(var(--title-fz) * 1.502);
+    bottom:calc(var(--title-fz) * 0.213 - 6px);
+    top:auto; right:auto;
+    z-index:5;                 /* above the figure(1) and the lifted letters(2) */
+    pointer-events:none;       /* layer is click-through; the dots opt back in */
+  }
+  /* A .pin is a NON-transformed anchor point. The dot scales (transform) INSIDE it,
+     and the card is the dot's SIBLING — NOT its child. Why: a transformed ancestor
+     becomes a backdrop-root, so when the card lived inside the scaling .dot its
+     backdrop-filter sampled the dot's tiny (empty) group → no frost. As a sibling of
+     the dot, the card's nearest backdrop-root is .title-wrap (which holds the figure +
+     title), so the blur samples HER and the type → real frosted glass. */
+  #hero .pin{position:absolute; left:var(--x); top:var(--y); z-index:1}
+  #hero .shop.dots-in .pin:hover,
+  #hero .shop.dots-in .pin:focus-within,
+  #hero .shop .pin.is-open{z-index:3}   /* active card rides above its neighbours */
+  #hero .dot{
+    --dot-d:clamp(10px,0.8vw,13px);
+    position:absolute; left:0; top:0;
+    width:var(--dot-d); height:var(--dot-d);
+    margin:calc(var(--dot-d) / -2) 0 0 calc(var(--dot-d) / -2);  /* centre on the pin point */
+    padding:0; border:0; border-radius:50%;
+    background:rgba(255,255,255,.5); cursor:pointer; pointer-events:auto;  /* rest: small + translucent */
+    box-shadow:0 1px 6px rgba(18,10,46,.26), 0 0 0 1px rgba(255,255,255,.5);
+    opacity:0; transform:scale(.2);
+    transition:opacity .5s var(--ease), transform .55s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  /* expand the tap/hit target to ~44px without enlarging the visible dot (touch usability) */
+  #hero .dot::after{content:""; position:absolute; inset:-16px; border-radius:50%}
+  #hero .shop.dots-in .dot{opacity:1; transform:scale(1); transition-delay:var(--delay,0s)}
+  /* hover / focus / open → grow to a crisp, fully-opaque white dot with an accent ring */
+  #hero .shop.dots-in .pin:hover .dot,
+  #hero .shop.dots-in .pin:focus-within .dot,
+  #hero .shop .pin.is-open .dot{
+    transform:scale(1.55);
+    background:#fff;
+    box-shadow:0 4px 15px rgba(18,10,46,.44), 0 0 0 2px var(--accent);
+    outline:none;
+  }
+  /* sonar pulse — a quiet "tap me" cue while the dot is at rest */
+  #hero .dot-pulse{position:absolute; inset:0; border-radius:50%; background:rgba(255,255,255,.6); pointer-events:none; opacity:0}
+  #hero .shop.dots-in .dot-pulse{animation:dotPulse 2.4s var(--ease) infinite; animation-delay:calc(var(--delay,0s) + .55s)}
+  #hero .pin:hover .dot-pulse,#hero .pin:focus-within .dot-pulse{animation-play-state:paused; opacity:0}
+  @keyframes dotPulse{0%{transform:scale(1);opacity:.5} 70%,100%{transform:scale(2.8);opacity:0}}
+  /* product card — black frosted glass; sibling of the dot, offset off the pin point */
+  #hero .ptag{
+    position:absolute; left:18px; top:0;
+    transform:translateY(-50%) translateX(-8px) scale(.96); transform-origin:left center;
+    width:clamp(196px,17vw,240px);
+    display:flex; align-items:center; gap:13px;
+    padding:11px 14px 11px 11px;
+    background:rgba(12,9,22,.34); border-radius:var(--r-md);   /* lighter tint so the blur reads */
+    -webkit-backdrop-filter:blur(22px) saturate(1.5); backdrop-filter:blur(22px) saturate(1.5);
+    box-shadow:0 22px 60px -18px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.1);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .42s var(--ease), transform .48s var(--ease), visibility .42s;
+  }
+  #hero .ptag-img{width:56px; height:56px; flex:0 0 auto; border-radius:var(--r-sm); object-fit:contain; background:rgba(255,255,255,.92); padding:4px}
+  #hero .ptag-txt{display:flex; flex-direction:column; gap:4px; min-width:0; text-align:left}
+  #hero .ptag-brand{font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.62); line-height:1}
+  #hero .ptag-name{font-size:13.5px; font-weight:600; color:#fff; line-height:1.18; letter-spacing:-.01em}
+  #hero .ptag-price{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 7px; font-family:var(--mono); font-size:12.5px; font-weight:500; color:#fff; line-height:1}
+  #hero .ptag-price .was{color:rgba(255,255,255,.5); text-decoration:line-through; font-weight:400; font-size:11px}
+  #hero .ptag-price .off{color:#ff8a90; font-weight:600; font-size:10.5px; letter-spacing:.01em}
+  /* corner badge — NEW (accent) / SALE (red), poking just above the card's top edge */
+  #hero .ptag-badge{
+    position:absolute; top:-9px; right:12px; z-index:2;
+    font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:#fff; line-height:1; padding:4px 8px; border-radius:100px;
+    box-shadow:0 4px 12px rgba(0,0,0,.32);
+  }
+  #hero .ptag-badge.is-new{background:var(--accent)}
+  #hero .ptag-badge.is-sale{background:#ff4d57}
+  /* reveal: the one-time auto demo, or hover / focus / tap afterwards */
+  #hero .shop.demo .ptag,
+  #hero .shop.ready .pin:hover .ptag,
+  #hero .shop.ready .pin:focus-within .ptag,
+  #hero .shop.ready .pin.is-open .ptag{
+    opacity:1; visibility:visible; transform:translateY(-50%) translateX(0) scale(1);
+  }
+  @media (prefers-reduced-motion:reduce){
+    #hero .dot,#hero .ptag{transition:none}
+    #hero .shop.dots-in .dot-pulse{animation:none; opacity:0}
+  }
+  /* phones: the figure sits near the right, so a full-width card would run off the
+     edge (the hero clips overflow). Shrink the card + tighten its layout. */
+  @media (max-width:640px){
+    #hero .ptag{width:min(54vw,172px); gap:10px; padding:9px 11px 9px 9px}
+    #hero .ptag-img{width:46px; height:46px}
+    #hero .ptag-name{font-size:12.5px}
+    #hero .ptag-brand{font-size:9px}
+  }
+</style>
+</head>
+<body data-cursor-glow>
+<a class="skip-link" href="#overview">Skip to content</a>
+<div id="progress"></div>
+
+<nav class="ds-nav" data-nav>
+  <a class="brand" href="index.html">Jude Shi<span>.</span></a>
+  <span class="ds-nav__proj" aria-hidden="true">Zappos Influencer Program</span>
+  <div class="links">
+    <a href="work.html">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#visual">Visual</a>
+    <a class="pill" href="index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- dot index -->
+<div id="sideToc"></div>
+
+<!-- ══ HERO ══ -->
+<header id="hero" data-hero>
+  <div class="orb a" aria-hidden="true"></div>
+  <div class="orb b" aria-hidden="true"></div>
+  <div class="inner">
+    <div class="wrap">
+      <img class="hero-logo" src="uploads/zip/amazon-logo.svg" alt="Amazon" width="603" height="182">
+      <div class="title-wrap">
+        <img class="hm sit back"  src="uploads/zip/model-sit.png" alt="" aria-hidden="true">
+        <img class="hm sit front" src="uploads/zip/model-sit.png" alt="" aria-hidden="true">
+        <h1>Zappos<br><span class="accent">Influ<span class="lift">en</span>cer</span><br>Program<span class="accent">.</span></h1>
+        <!-- shop-the-look: product tags pinned to her sunglasses / top / pants -->
+        <div class="shop" data-shop aria-label="Shop the look">
+          <div class="pin" style="--x:67%;--y:26%;--delay:0s">
+            <button class="dot" type="button" aria-expanded="false" aria-controls="ptag-glasses" aria-label="Shop the sunglasses: Versace VE4412, on sale $237.00, was $316.00 (25% off)">
+              <span class="dot-pulse" aria-hidden="true"></span>
+            </button>
+            <span class="ptag" id="ptag-glasses">
+              <span class="ptag-badge is-sale">Sale −25%</span>
+              <img class="ptag-img" src="uploads/zip/shop-glasses.png" alt="" width="160" height="160" loading="lazy">
+              <span class="ptag-txt">
+                <span class="ptag-brand">Versace</span>
+                <span class="ptag-name">VE4412 Sunglasses</span>
+                <span class="ptag-price"><s class="was">$316.00</s><span class="now">$237.00</span></span>
+              </span>
+            </span>
+          </div>
+          <div class="pin" style="--x:67%;--y:47%;--delay:.12s">
+            <button class="dot" type="button" aria-expanded="false" aria-controls="ptag-top" aria-label="Shop the top: Saltwater Luxe Bordeaux Long Sleeve Sweater, $110.00">
+              <span class="dot-pulse" aria-hidden="true"></span>
+            </button>
+            <span class="ptag" id="ptag-top">
+              <img class="ptag-img" src="uploads/zip/shop-top.png" alt="" width="160" height="160" loading="lazy">
+              <span class="ptag-txt">
+                <span class="ptag-brand">Saltwater Luxe</span>
+                <span class="ptag-name">Bordeaux Long Sleeve Sweater</span>
+                <span class="ptag-price">$110.00</span>
+              </span>
+            </span>
+          </div>
+          <div class="pin" style="--x:53%;--y:68%;--delay:.24s">
+            <button class="dot" type="button" aria-expanded="false" aria-controls="ptag-pants" aria-label="Shop the pants: Theory Women's Length Pant, new, $425.00">
+              <span class="dot-pulse" aria-hidden="true"></span>
+            </button>
+            <span class="ptag" id="ptag-pants">
+              <span class="ptag-badge is-new">New</span>
+              <img class="ptag-img" src="uploads/zip/shop-pants.png" alt="" width="160" height="160" loading="lazy">
+              <span class="ptag-txt">
+                <span class="ptag-brand">Theory</span>
+                <span class="ptag-name">Women's Testra… Length Pant</span>
+                <span class="ptag-price">$425.00</span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <p class="tag">Redesigning the creator experience for Zappos' affiliate program so influencers actually made and shared content. Output grew elevenfold.</p>
+      <div class="metaRow">
+        <div class="item"><div class="k">Role</div><div class="v">Senior UX Designer</div></div>
+        <div class="item"><div class="k">Company</div><div class="v">Amazon · Zappos</div></div>
+        <div class="item"><div class="k">Timeline</div><div class="v">2021 – 2022</div></div>
+        <div class="item"><div class="k">Focus</div><div class="v">Research, content tools, design strategy</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ 01 · OVERVIEW ══ -->
+<section class="sec" id="overview" data-toc="Overview">
+  <div class="wrap">
+    <div class="grid2 top">
+      <div class="ov-head">
+        <video class="ov-bg" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+          <source src="uploads/zip/overview-bg.mp4" type="video/mp4">
+        </video>
+        <div class="eyebrow reveal"><span>(01) · Overview</span></div>
+        <h2 class="h reveal d1">A platform where creators monetize their reach<span class="endline" aria-hidden="true"></span></h2>
+      </div>
+      <div>
+        <p class="lead reveal">The Zappos Influencer Program (ZIP) lets creators earn from their audiences by building pages of Zappos products and sharing them on social media, paid on what their followers go on to buy. It launched quietly in 2021 to a first cohort of influencers.</p>
+        <p class="body reveal d1" style="margin-top:20px">By 2022 the goal had moved from launch to <em>growth</em>: more active influencers, and better tools for making content. My work came down to one question. How do we get creators to make more of it, and keep coming back to do it again?</p>
+        <nav class="jump-links reveal d2" aria-label="Jump to a section of the case study">
+          <span class="jump-lead">Jump to</span>
+          <div class="jump-pills">
+            <a href="#problem">The problem</a>
+            <a href="#explore">Concept testing</a>
+            <a href="#refine">Final designs</a>
+            <a href="#outcome">Outcome</a>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <figure class="reveal">
+      <div class="devices" role="group" aria-label="The delivered Zappos Influencer Program experience across tablet and mobile screens" data-layout-editor="devices" data-layout-items=".dev">
+        <div class="dev d-review"><img src="uploads/zip/device-review.png" alt="Tablet: content review and approval queue with flagged posts" loading="lazy"></div>
+        <div class="dev d-manage"><img src="uploads/zip/device-manage.png" alt="Tablet: Manage Content dashboard with shoppable content and collections" loading="lazy"></div>
+        <div class="dev d-product"><img src="uploads/zip/device-product.png" alt="Phone: product detail page for the Liverpool trousers" loading="lazy"></div>
+        <div class="dev d-insights"><img src="uploads/zip/device-insights.png" alt="Tablet: Insights dashboard with click metrics" loading="lazy"></div>
+        <div class="dev d-profile"><img src="uploads/zip/device-profile.png" alt="Tablet: public influencer storefront profile" loading="lazy"></div>
+        <div class="dev d-report"><img src="uploads/zip/device-report.png" alt="Phone: influencer performance report with product clicks" loading="lazy"></div>
+      </div>
+      <figcaption>The delivered experience: Storefront, Shoppable Content and Hub working together.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ══ 02 · MY ROLE ══ -->
+<section class="sec-tight" id="role" data-toc="My role">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(02) · My role</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">Leading research-driven UX from problem to handoff.</h2>
+    <div class="grid-cards c2 role-cards" style="margin-top:48px">
+      <div class="card reveal">
+        <div class="rc-head">
+          <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+          <h3 class="sub">User Research</h3>
+        </div>
+        <p class="body">Ran market research, competitive audits, persona work and 1:1 interviews with influencers and customers to ground every decision in evidence.</p>
+      </div>
+      <div class="card reveal d1">
+        <div class="rc-head">
+          <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <h3 class="sub">UX Vision &amp; Strategy</h3>
+        </div>
+        <p class="body">Set the UX vision and product direction: framing the hypotheses, prioritising features, and aligning the team on what would actually move engagement.</p>
+      </div>
+      <div class="card reveal d2">
+        <div class="rc-head">
+          <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></span>
+          <h3 class="sub">Workflows &amp; Prototyping</h3>
+        </div>
+        <p class="body">Created end-to-end UX workflows, information architecture and quick interactive prototypes to make concepts tangible and testable.</p>
+      </div>
+      <div class="card reveal d3">
+        <div class="rc-head">
+          <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <h3 class="sub">Usability Testing</h3>
+        </div>
+        <p class="body">Planned and ran iterative usability sessions, then turned findings into simpler flows, clearer hierarchy and a more confident path to launch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROCESS (cycle) ══ -->
+<section class="sec" id="process-cycle" data-toc="Process">
+  <div class="wrap">
+    <h2 class="h reveal pw-title">Process</h2>
+    <div class="pw reveal d1" role="img" aria-label="A repeating six-phase process: 01 Learn, 02 Analyze, 03 Explore, 04 Develop, 05 Refine, 06 Deliver.">
+      <svg class="pw-ring" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+        <defs>
+          <marker id="pwAh" markerWidth="3.6" markerHeight="3.6" refX="1.6" refY="1.8" orient="auto">
+            <path d="M0 0 L3.6 1.8 L0 3.6 Z" fill="#dcdce2"/>
+          </marker>
+        </defs>
+        <g stroke="#dcdce2" stroke-width="4.5" stroke-linecap="round">
+          <path d="M145 46.4 A70 70 0 0 1 76.1 165.8" marker-end="url(#pwAh)"/>
+          <path d="M55 153.6 A70 70 0 0 1 123.9 34.2" marker-end="url(#pwAh)"/>
+        </g>
+      </svg>
+      <button class="pw-step" type="button" style="--x:50%;--y:10%" data-detail="Ran market research and audited the Amazon Influencer Program, interviewed Zappos creators about how they make and share content, and gathered data on what was holding output back.">01. Learn</button>
+      <button class="pw-step" type="button" style="--x:85%;--y:30%" data-detail="Synthesised the research into creator personas, journey maps, and six testable hypotheses about what would actually get influencers making — and re-sharing — content.">02. Analyze</button>
+      <button class="pw-step" type="button" style="--x:85%;--y:70%" data-detail="Prototyped the Influencer Hub and Storefront concepts and concept-tested them with real influencers and customers to see what drove content creation.">03. Explore</button>
+      <button class="pw-step" type="button" style="--x:50%;--y:90%" data-detail="Built the MVP — information architecture, user flows and wireframes for the reworked Hub and the new shoppable creator Storefront.">04. Develop</button>
+      <button class="pw-step" type="button" style="--x:15%;--y:70%" data-detail="Ran iterative usability sessions, then took it to high fidelity: clearer navigation, prioritised actions, and Zappos brand-led detail.">05. Refine</button>
+      <button class="pw-step" type="button" style="--x:15%;--y:30%" data-detail="Accessibility handoff, success metrics, launch, and a long-term UX strategy for the program. Output went on to grow elevenfold, with engagement up 3.5×.">06. Deliver</button>
+      <div class="pw-detail" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 · THE PROBLEM ══ -->
+<section class="sec" id="problem" data-toc="The problem">
+  <div class="wrap">
+    <div class="grid2 top">
+      <div>
+        <div class="eyebrow reveal"><span>(03) · The problem</span></div>
+        <h2 class="h reveal d1">Engagement was low. Content was the bottleneck.</h2>
+      </div>
+      <div>
+        <p class="lead reveal">Early-2022 data showed a platform people signed up for but rarely used. Output was thin and visits were infrequent. Without a steady stream of content, there was nothing to pull in traffic or sales.</p>
+      </div>
+    </div>
+
+    <div class="statband reveal">
+      <div>
+        <div class="stat accent">1</div>
+        <div class="stat-l">collection created per influencer, on average</div>
+      </div>
+      <div>
+        <div class="stat accent">2</div>
+        <div class="stat-l">logins per influencer per month, on average</div>
+      </div>
+    </div>
+
+    <blockquote class="full reveal">“Influencers are looking for different ways to monetize their content — and they have plenty of choices outside Zappos to earn money.”
+      <cite>Research synthesis, 2022</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ══ USER GROUPS ══ -->
+<section class="sec" id="user-groups" data-toc="User groups">
+  <div class="wrap">
+    <h2 class="h reveal">User Groups</h2>
+    <p class="ug-sub reveal d1">There are 3 main aspects of ZIP. <span class="ug-hint">Hover a badge to bring it forward.</span></p>
+    <div class="ug-stage reveal d2" id="ug-stage">
+      <canvas id="ug-canvas" aria-hidden="true"></canvas>
+      <ul class="ug-legend" aria-label="User groups">
+        <li>Influencer Experience</li>
+        <li>Customer Experience</li>
+        <li>Agent Experience</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROBLEM STATEMENT ══ -->
+<section class="sec" id="problem-statement" data-toc="Problem statement">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow reveal"><span>(04) · Problem statement</span></div>
+      <h2 class="h reveal d1" style="color:var(--accent)">Low Engagement</h2>
+    </div>
+    <p class="lead reveal" style="max-width:76ch">Based on ZIP's data findings in early 2022, the platform was facing low influencer engagement in content output <b>(On average 1 collection per influencer)</b> and usage frequency <b>(On average 2 logins per month)</b>. To kick off the project and to study the usability standards and overall user experience, we conducted market research.</p>
+    <figure class="reveal data-table-card">
+      <div class="dt-scroll">
+        <table class="dt">
+          <caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Collection-page traffic and conversion analytics from early 2022: high visits, but near-zero conversions and no sales.</caption>
+          <thead>
+            <tr>
+              <th scope="col">HTTP Request Path</th>
+              <th scope="col" class="num">Visits</th>
+              <th scope="col" class="num">Page Views</th>
+              <th scope="col" class="num">Page Conversions</th>
+              <th scope="col" class="num">Bounce Rate</th>
+              <th scope="col" class="num">Unique Order ID</th>
+              <th scope="col" class="num">Gross Order Product Sales</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>/collection/ksvuv2r0c2vpiido43q3eno33713tbdu7uh9</td><td class="num">1,909</td><td class="num">2,879</td><td class="num">0</td><td class="num">60.77%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/tus2r5q31i8tm26sr7t2tffpcj43ktf8tbuo</td><td class="num">1,333</td><td class="num">1,675</td><td class="num">0</td><td class="num">81.73%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/tgjua928p8kdmc9b2820jbv0dtoe2cg60m6q</td><td class="num">1,163</td><td class="num">1,516</td><td class="num">1</td><td class="num">74.29%</td><td class="num">1</td><td class="num">$77.97</td></tr>
+            <tr><td>/collection/l85if6kr9r244rkgc5d912rq8oee7ucse92e</td><td class="num">1,161</td><td class="num">1,240</td><td class="num">0</td><td class="num">94.78%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/1nhbm2ij74j3s7pdijgo68fap2hrk0dmcfth</td><td class="num">786</td><td class="num">835</td><td class="num">0</td><td class="num">93.66%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/2cj2vtlhcd4tmv6em36c6s9n549v9pfaulbm</td><td class="num">736</td><td class="num">830</td><td class="num">0</td><td class="num">90.60%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/1tpeu57b43lva1n6pq2ok14bqiqaslbah5pr</td><td class="num">577</td><td class="num">607</td><td class="num">0</td><td class="num">94.88%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/e1dvb3ljoupeon5ttnt3m5u3n2tncna4qm6b</td><td class="num">489</td><td class="num">501</td><td class="num">0</td><td class="num">97.37%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/il5sshos4emuu8hh2ofopnbtait62nboi1kr</td><td class="num">485</td><td class="num">502</td><td class="num">0</td><td class="num">97.11%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/trfkmv14v0nbc2mn3q92n21a358ovhirgc6k</td><td class="num">421</td><td class="num">429</td><td class="num">0</td><td class="num">98.34%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr class="dt-omit"><td colspan="7">⋯  more collections, same pattern: high bounce, near-zero conversions, $0 sales  ⋯</td></tr>
+            <tr><td>/collection/k2qsopinp4rsvrc5o1b8rikrfs3k5lp1e6eq</td><td class="num">12</td><td class="num">15</td><td class="num">0</td><td class="num">84.62%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/briteg4nqvonmfe1lqeb5ogun62i4u8autck</td><td class="num">11</td><td class="num">21</td><td class="num">0</td><td class="num">46.67%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/g55kv3cd8av6egjdnp99kebqop5vvo8cv5sb</td><td class="num">10</td><td class="num">11</td><td class="num">0</td><td class="num">100.00%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/2sfq0qe49eedhe9e3r32mvgh0tk8skeuj4ci</td><td class="num">10</td><td class="num">10</td><td class="num">0</td><td class="num">100.00%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/vco22u3ujd7ccp81dk8cnf8ukda25vmf81q8</td><td class="num">9</td><td class="num">14</td><td class="num">0</td><td class="num">90.00%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/1no4k6oj51b1roq91nhd90lajf09h5lle12l</td><td class="num">9</td><td class="num">15</td><td class="num">0</td><td class="num">77.78%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/52l6aqrhdlrm7erpqhbaglr9u9070nsmd06e</td><td class="num">8</td><td class="num">14</td><td class="num">0</td><td class="num">62.50%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+            <tr><td>/collection/5co22hhq7daeiat60n8kk5nmn1m6439mqr81</td><td class="num">7</td><td class="num">11</td><td class="num">0</td><td class="num">83.33%</td><td class="num">0</td><td class="num">$0.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figcaption class="problem-table-cap">A slice of collection-page analytics from early 2022: heavy traffic, bounce rates near 100%, almost no conversions, and essentially zero sales. The content existed: it just wasn't pulling people in or converting.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ══ 05 · LEARN ══ -->
+<section class="sec" id="learn" data-toc="Learn">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(05) · Learn</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">Understanding how influencers actually behave.</h2>
+    <p class="lead reveal" style="max-width:62ch">I looked at how creators use influencer platforms, what keeps them around, and where Zappos was losing them. That meant behavioural research alongside a close audit of Amazon's own influencer program.</p>
+
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <figure class="figure wordclouds">
+        <div class="wc-labels">
+          <span>Why they want to become influencers</span>
+          <span>Challenges to becoming an influencer</span>
+        </div>
+        <img src="uploads/zip/behaviour-study-1.png" alt="Two word clouds from the influencer behaviour study: reasons for wanting to become an influencer, and the challenges they face" width="978" height="357" loading="lazy">
+      </figure>
+      <div class="pies">
+        <figure class="pie-chart">
+          <figcaption class="pie-title">Age range</figcaption>
+          <span class="pie-n">N = 1,943</span>
+          <svg viewBox="0 0 184 188" role="img" aria-label="Age range: 18–24 33%, 25–34 36%, 35–44 31%">
+            <path d="M92,96 L92.0,18.0 A78,78 0 0 1 160.4,133.6 Z" fill="#6d4aff"/>
+            <path d="M92,96 L160.4,133.6 A78,78 0 0 1 19.5,124.7 Z" fill="#3d2b8c"/>
+            <path d="M92,96 L19.5,124.7 A78,78 0 0 1 92.0,18.0 Z" fill="#9b7dff"/>
+            <text x="132.3" y="72.2" class="pie-pct">33%</text>
+            <text x="89.1" y="142.7" class="pie-pct">36%</text>
+            <text x="53.3" y="69.7" class="pie-pct">31%</text>
+          </svg>
+          <div class="pie-legend">
+            <span style="--c:#6d4aff">18–24</span>
+            <span style="--c:#3d2b8c">25–34</span>
+            <span style="--c:#9b7dff">35–44</span>
+          </div>
+        </figure>
+        <figure class="pie-chart">
+          <figcaption class="pie-title">Use influencer affiliate platforms</figcaption>
+          <span class="pie-n">N = 1,324</span>
+          <svg viewBox="0 0 184 188" role="img" aria-label="Use influencer affiliate platforms: No 59%, Yes 41%">
+            <path d="M92,96 L92.0,18.0 A78,78 0 1 1 50.2,161.9 Z" fill="#6d4aff"/>
+            <path d="M92,96 L50.2,161.9 A78,78 0 0 1 92.0,18.0 Z" fill="#9b7dff"/>
+            <text x="136.9" y="109.1" class="pie-pct">59%</text>
+            <text x="47.1" y="82.9" class="pie-pct">41%</text>
+          </svg>
+          <div class="pie-legend">
+            <span style="--c:#6d4aff">No</span>
+            <span style="--c:#9b7dff">Yes</span>
+          </div>
+        </figure>
+        <figure class="pie-chart">
+          <figcaption class="pie-title">Primary content type</figcaption>
+          <span class="pie-n">N = 1,845</span>
+          <svg viewBox="0 0 184 188" role="img" aria-label="Primary content type: Photos 78%, Videos 18%, Blog posts 4%">
+            <path d="M92,96 L92.0,18.0 A78,78 0 1 1 15.4,81.4 Z" fill="#6d4aff"/>
+            <path d="M92,96 L15.4,81.4 A78,78 0 0 1 72.6,20.5 Z" fill="#9b7dff"/>
+            <path d="M92,96 L72.6,20.5 A78,78 0 0 1 92.0,18.0 Z" fill="#3d2b8c"/>
+            <text x="121.8" y="132.1" class="pie-pct">78%</text>
+            <text x="57.9" y="64.0" class="pie-pct">18%</text>
+            <line x1="82.2" y1="18.6" x2="80.9" y2="7.8" class="pie-lead"/>
+            <text x="80.9" y="5.8" class="pie-pct-sm">4%</text>
+          </svg>
+          <div class="pie-legend">
+            <span style="--c:#6d4aff">Photos</span>
+            <span style="--c:#9b7dff">Videos</span>
+            <span style="--c:#3d2b8c">Blog posts</span>
+          </div>
+        </figure>
+      </div>
+    </div>
+
+    <figure class="market-chart reveal">
+      <figcaption class="mc-title">Global fashion influencer marketing market share, by fashion type (2019)</figcaption>
+      <div class="mc-body">
+        <svg viewBox="0 0 184 184" role="img" aria-label="Pie chart of global fashion influencer marketing market share by fashion type, 2019: Beauty & Cosmetics is the largest share, followed by Apparel, then Jewelry & Accessories.">
+          <path d="M92,92 L92,14 A78,78 0 0 1 129.6,160.4 Z" fill="#6d4aff"/>
+          <path d="M92,92 L129.6,160.4 A78,78 0 0 1 17.8,67.9 Z" fill="#9b7dff"/>
+          <path d="M92,92 L17.8,67.9 A78,78 0 0 1 92,14 Z" fill="#3d2b8c"/>
+        </svg>
+        <ul class="mc-legend">
+          <li><span style="--c:#6d4aff"></span>Beauty &amp; Cosmetics</li>
+          <li><span style="--c:#9b7dff"></span>Apparel</li>
+          <li><span style="--c:#3d2b8c"></span>Jewelry &amp; Accessories</li>
+        </ul>
+      </div>
+    </figure>
+
+    <div class="grid2 top reveal">
+      <div>
+        <h3 class="sub">Amazon Influencer Program audit</h3>
+        <p class="body" style="margin-top:18px">Auditing a mature competitor surfaced exactly the friction we needed to design around:</p>
+        <ul class="ticks">
+          <li>The signup form was overloaded with information and technical jargon.</li>
+          <li>Creators confused their <em>profile</em> with their <em>storefront profile</em>.</li>
+          <li>Verification status was unclear: people didn't know if they were in.</li>
+          <li>No justification for why so much information was required.</li>
+          <li>Creators with fewer than 2k followers wanted a way in, too.</li>
+        </ul>
+      </div>
+      <figure class="figure">
+        <img src="uploads/zip/amazon-audit.png" alt="Annotated audit of the Amazon Influencer Program signup and storefront flow" width="1308" height="1462" loading="lazy">
+      </figure>
+    </div>
+
+    <div class="statement reveal">
+      <h3 class="statement-h">They're eager to monetize and share, but content creation is the barrier.</h3>
+      <p class="body">The behavioural study told one story from two sides. People become influencers to monetize and share their passion: to make money, grow an audience and have a voice. But the challenges they named were all about output: creating content, staying consistent, and gaining a following. Most still leaned on photos (78%) and hadn't adopted an affiliate platform (59% had not), while the mature competitor we audited kept losing creators to a jargon-heavy signup and a confusing profile-versus-storefront model. The opportunity was unmistakable: make content dramatically easier to create, and the path to earning far clearer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 · ANALYZE ══ -->
+<section class="sec" id="analyze" data-toc="Analyze">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(06) · Analyze</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Defining who we design for, and what to test.</h2>
+    <p class="lead reveal" style="max-width:62ch">With the research in hand, I pinned down who we were designing for, then turned what I'd learned into a set of bets worth testing.</p>
+
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Personas</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">A well-defined audience keeps every design, content and functionality decision pointed at the right people. The 2022 target: Gen&nbsp;Z and Millennial female fashion influencers.</p>
+      <ul class="ticks" style="max-width:62ch">
+        <li><b>Primary</b>: micro influencers (1k–100k) and mid-tier influencers (50k–100k).</li>
+        <li><b>Secondary</b>: nano influencers (under 1k) building their audience.</li>
+      </ul>
+    </div>
+
+    <div class="persona reveal" style="margin-top:40px" role="img" aria-label="Persona: Nikki Moreno, 28, a fashion influencer and entrepreneur in the United States with high tech literacy.">
+      <div class="persona-col">
+        <div class="pcard pprofile">
+          <p class="pname">Nikki Moreno</p>
+          <dl class="pmeta">
+            <dt>Age</dt><dd>28</dd>
+            <dt>Education</dt><dd>Bachelor Degree</dd>
+            <dt>Status</dt><dd>Single</dd>
+            <dt>Occupation</dt><dd>Fashion Influencer, entrepreneur</dd>
+            <dt>Location</dt><dd>United States</dd>
+            <dt>Tech literacy</dt><dd>High</dd>
+          </dl>
+        </div>
+        <div class="pcard pquote">
+          <span class="pquote-mark" aria-hidden="true">&ldquo;</span>
+          <p>I am used to online services and I usually do my online shopping from Instagram.</p>
+        </div>
+        <div class="pcard">
+          <h4 class="pcard-title">Personality</h4>
+          <div class="ptags"><span>Introvert</span><span>Adventurous</span><span>Passionate</span><span>Energetic</span></div>
+        </div>
+      </div>
+      <div class="persona-col">
+        <div class="pcard">
+          <h4 class="pcard-title">Bio</h4>
+          <p class="pbody">She currently lives in New York. She's very active on social media and posts every day on different platforms. She also follows other fashion influencers and fashion brands for inspiration or to seek out collaborations. She is an early adopter of technology, and social shopping is no different, especially on Instagram.</p>
+        </div>
+        <div class="pcard">
+          <h4 class="pcard-title">Core needs</h4>
+          <ul>
+            <li>Monetize her time and effort.</li>
+            <li>Able to share her passion and knowledge about fashion with her followers.</li>
+            <li>Scale her reach and grow her audience.</li>
+          </ul>
+        </div>
+        <div class="pcard">
+          <h4 class="pcard-title">Pain points</h4>
+          <ul>
+            <li>Limited ability to customize and organize her affiliate pages.</li>
+            <li>Doesn't have full access to assortments through third-party platforms such as CJ and Upfluence.</li>
+            <li>Not able to get enough data on which products she has recommended are selling the most.</li>
+            <li>Wants to see what's out of stock so she can remove those items from her page.</li>
+          </ul>
+        </div>
+        <div class="pcard">
+          <h4 class="pcard-title">Main social media</h4>
+          <div class="psocial">
+            <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Instagram"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0m0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32M12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8m6.41-10.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="YouTube"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.87.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14c.5-1.88.5-5.81.5-5.81s0-3.93-.5-5.81M9.55 15.57V8.43L15.82 12l-6.27 3.57"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="TikTok"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49A6.47 6.47 0 0 1 7 8.51c1.66-.44 3.4-.06 4.81.59-.06 1.48-.13 2.96-.16 4.44-.74-.51-1.79-.71-2.65-.45-.7.22-1.31.81-1.5 1.52-.17.71-.03 1.53.42 2.13.86 1.21 2.75 1.21 3.55-.04.42-.49.55-1.13.55-1.75.04-3.96-.01-7.9.04-11.86l-.08-.14z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="Pinterest"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.43 7.63 11.17-.11-.95-.2-2.4.04-3.44.22-.94 1.4-5.96 1.4-5.96s-.36-.72-.36-1.78c0-1.67.97-2.91 2.17-2.91 1.02 0 1.52.77 1.52 1.69 0 1.03-.66 2.57-.99 4-.28 1.19.6 2.17 1.77 2.17 2.13 0 3.77-2.25 3.77-5.5 0-2.87-2.06-4.88-5.01-4.88-3.41 0-5.42 2.56-5.42 5.21 0 1.03.4 2.14.89 2.74.1.12.11.23.08.35-.09.38-.29 1.19-.33 1.36-.05.22-.17.27-.4.16-1.5-.7-2.44-2.89-2.44-4.65 0-3.78 2.75-7.26 7.93-7.26 4.16 0 7.4 2.97 7.4 6.93 0 4.14-2.61 7.46-6.23 7.46-1.21 0-2.36-.63-2.75-1.38l-.75 2.85c-.27 1.04-1 2.35-1.49 3.15 1.12.35 2.31.53 3.55.53 6.63 0 12-5.37 12-12S18.63 0 12 0"/></svg>
+          </div>
+        </div>
+        <div class="pcard">
+          <h4 class="pcard-title">Platform</h4>
+          <div class="pplatform">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg>
+            <span>Mobile</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 class="sub">User journey map</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Mapping the content-creation journey end to end surfaced the touchpoints and pain points that mattered most, and showed exactly where creators dropped off.</p>
+      <figure class="figure" style="margin-top:32px;padding-bottom:40px">
+        <img src="uploads/zip/journey-map.png" alt="End-to-end influencer journey map across discovery, content creation, sharing and earning" width="2386" height="1914" loading="lazy">
+      </figure>
+    </div>
+
+    <div class="statement reveal">
+      <h3 class="statement-h">Lack of content is the biggest challenge for 2022</h3>
+      <p class="body">Upon deep diving, we firmly believed that growing content volume and content quality over time will be crucial to driving influencer site traffic and conversion. High-quality content ultimately makes shopping inspiring and engaging for customers (conversion play), improves Zappos brand awareness and makes Zappos top-of-mind destination for everyday fashion (traffic play). Influencers are looking for different ways to monetize their created content and have plenty of choices outside Zappos to earn money. Hence having a variety of content types for monetization will be a table-stakes requirement to attract new influencers to sign up and retain existing influencers.</p>
+    </div>
+
+    <div class="goals reveal">
+      <h3 class="goals-h">Set Goals &amp; Objectives</h3>
+      <div class="goals-grid">
+        <div>
+          <p class="goals-label">2022 target user group</p>
+          <ul class="ticks"><li>Gen&nbsp;Z and Millennial female fashion influencers</li></ul>
+          <p class="goals-label">Primary users</p>
+          <ul class="ticks">
+            <li>Micro influencers (1k–100k)</li>
+            <li>Mid-tier influencers (50k–100k)</li>
+            <li>Zappos customers and influencer followers</li>
+          </ul>
+          <p class="goals-label">Secondary users</p>
+          <ul class="ticks"><li>Nano influencers (under 1k)</li></ul>
+        </div>
+        <div>
+          <p class="goals-label">Business objectives</p>
+          <ul class="ticks">
+            <li>Increase influencer and customer engagement rate.</li>
+            <li>Reduce audience bounce rate.</li>
+            <li>Increase influencer retention rate.</li>
+            <li>Increase content quality and quantity.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ux-focus">
+        <p class="ux-eyebrow">UX focus</p>
+        <p class="ux-title">Influencer experience</p>
+        <p class="ux-body">Provide an integrated solution for ZIP influencers' content-creation and sharing process by applying the latest trends, technologies and the optimal user experience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 · EXPLORE ══ -->
+<section class="sec" id="explore" data-toc="Explore">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(07) · Explore</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Testing concepts with influencers and customers.</h2>
+    <p class="lead reveal" style="max-width:62ch">I prototyped the new feature pages and concept-tested them in moderated, think-aloud sessions: first with influencers on the Hub, then with experienced shoppers on the content.</p>
+
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Six hypotheses to validate</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Synthesis pointed to six bets about what would lift engagement and monetization. Each became something we could prototype and test.</p>
+      <div class="grid-cards c3 hypo" style="margin-top:40px">
+        <div class="card reveal"><div class="num">01</div><h4 class="sub">Content Types</h4><p class="body">Creators need more content types to engage audiences and unlock new monetization options.</p></div>
+        <div class="card reveal d1"><div class="num">02</div><h4 class="sub">Connect with Audience</h4><p class="body">Creators need higher visibility on their content to reach and grow more of their audience.</p></div>
+        <div class="card reveal d2"><div class="num">03</div><h4 class="sub">Content Creation</h4><p class="body">Creators need more autonomy to customise content and make it genuinely theirs.</p></div>
+        <div class="card reveal"><div class="num">04</div><h4 class="sub">Performance Insights</h4><p class="body">Creators need clear performance reports to decide what to promote and spot trends.</p></div>
+        <div class="card reveal d1"><div class="num">05</div><h4 class="sub">Share Options</h4><p class="body">Creators need share options tuned to each platform, Instagram in particular.</p></div>
+        <div class="card reveal d2"><div class="num">06</div><h4 class="sub">Customization</h4><p class="body">Creators need to personalise their pages to be recognisable and serve their followers.</p></div>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Concept validation</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">The Influencer Hub was the first surface we concept-tested, the dashboard where creators manage collections, track performance, and edit their profile.</p>
+      <div class="grid2 top" style="margin-top:32px">
+        <figure>
+          <div class="video">
+            <iframe src="https://www.youtube-nocookie.com/embed/Vn1gLzCTz44?autoplay=1&mute=1&controls=0&loop=1&playlist=Vn1gLzCTz44&rel=0&playsinline=1" title="Influencer Hub optimization prototype walkthrough" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <figcaption class="videocap">Prototype walkthrough: the optimized Influencer Hub.</figcaption>
+        </figure>
+        <div>
+          <p class="goals-label" style="margin-top:0">Research goal</p>
+          <ul class="ticks">
+            <li>Gather feedback on the existing Influencer Hub.</li>
+            <li>Validate new concepts and features.</li>
+          </ul>
+          <p class="goals-label" style="margin-top:34px">Research method</p>
+          <p class="body" style="margin-top:14px"><b>Interview &amp; observation.</b> I interviewed seven influencers who had collaborated with Zappos. Each joined a 45-minute 1:1 remote session, was walked through a series of screens with a survey at the end, and was encouraged to think aloud and ask questions about specific features on the page.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 class="sub">Research findings</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">I validated each assumption against what participants actually did and said: true or false.</p>
+      <div class="rf-pair">
+        <figure>
+          <img src="uploads/zip/research-findings-2.avif" alt="Assumptions validation table (part 1): Collection Page and Report Page assumptions, each marked true or false against participant findings" width="810" height="1045" loading="lazy">
+        </figure>
+        <figure>
+          <img src="uploads/zip/research-findings-1.avif" alt="Assumptions validation table (part 2): Profile Page assumptions and continued findings" width="803" height="624" loading="lazy">
+        </figure>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 class="sub">Influencers mistook the Hub for a Storefront</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Despite a clear scenario, every influencer expected one shareable storefront, a page they could customise and link to. It was the clearest signal of the whole project: a dedicated storefront wasn't a nice-to-have, it was the mental model the product was missing.</p>
+      <ul class="ticks" style="margin-top:28px;max-width:74ch">
+        <li>Influencers need a centralized storefront to display all their content.</li>
+        <li>A storefront is regarded as shareable content.</li>
+        <li>Influencers expect the storefront to be customised and personal.</li>
+        <li>A storefront link is more sustainable than a content link.</li>
+      </ul>
+    </div>
+
+    <div class="reveal">
+      <h3 class="sub">Customer experience with imagery content</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">I tested the shopping side with experienced Zappos customers, comparing a storefront rich with imagery content against one built around collections.</p>
+      <div class="grid2" style="margin-top:32px">
+        <figure>
+          <div class="video">
+            <iframe src="https://www.youtube-nocookie.com/embed/m8FWMup3vbQ?autoplay=1&mute=1&controls=0&loop=1&playlist=m8FWMup3vbQ&rel=0&playsinline=1" title="Customer test: storefront experience with imagery content" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <figcaption class="videocap">Storefront experience with imagery content.</figcaption>
+        </figure>
+        <figure>
+          <div class="video">
+            <iframe src="https://www.youtube-nocookie.com/embed/viVg992iBGM?autoplay=1&mute=1&controls=0&loop=1&playlist=viVg992iBGM&rel=0&playsinline=1" title="Customer test: storefront experience with collections" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <figcaption class="videocap">Storefront experience with collections.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 class="sub">Imagery content influences the customer's decision</h3>
+      <p class="body" style="margin-top:18px;max-width:74ch">Imagery content shaped how customers made decisions. One participant originally wanted the boots in grey, which were out of stock in her size. Seeing the other colours styled revealed their versatility and pointed to a better choice for her.</p>
+    </div>
+
+    <div class="reveal">
+      <h3 class="sub">Where we decided to focus</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Testing narrowed six hypotheses down to three priorities: two new features and one optimization.</p>
+      <div class="grid-cards c3 prio reveal d1" role="list" aria-label="The three priorities we focused on" style="margin-top:40px">
+        <div class="card" role="listitem"><span class="tag-new">New feature</span><h4 class="sub">Influencer Storefront</h4><p class="body">A customisable, shareable home for each creator: collections, performance and bio in one place.</p></div>
+        <div class="card" role="listitem"><span class="tag-new">New feature</span><h4 class="sub">Shoppable Content</h4><p class="body">Lifestyle imagery with tagged products, turning inspiration into a direct path to purchase.</p></div>
+        <div class="card" role="listitem"><span class="tag-new" style="color:#4b4564;background:rgba(255,255,255,.5)">Optimization</span><h4 class="sub">Influencer Hub</h4><p class="body">A reorganised dashboard with clearer navigation and prioritised actions.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 · DEVELOP ══ -->
+<section class="sec" id="develop" data-toc="Develop">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(08) · Develop</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">From scope to structure to wireframes.</h2>
+    <p class="lead reveal" style="max-width:62ch">With priorities locked, I turned the concepts into structure: scope, architecture, and the flows that would carry the MVP.</p>
+
+    <div class="reveal scoping-mvp" style="margin-top:var(--gap-sub)">
+      <div class="scoping-inner grid2 top">
+        <div>
+          <h3 class="sub">Scoping the MVP</h3>
+          <p class="body" style="margin-top:18px">I ran a workshop to define the MVP and align on a longer-term vision, keeping features consistent and shippable within an agile cadence.</p>
+        </div>
+        <figure class="figure">
+          <img src="uploads/zip/workshop.png" alt="MVP scoping workshop board mapping features against priority and effort" width="2009" height="1378" loading="lazy">
+        </figure>
+      </div>
+    </div>
+
+    <div class="reveal diagram-blend">
+      <h3 class="sub">Information architecture</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">I mapped every content piece and how it related, so the Storefront, Shoppable Content and Hub fit into one coherent system.</p>
+      <figure class="figure" style="margin-top:32px">
+        <img src="uploads/zip/information-architecture.png" alt="Information architecture diagram of the ZIP platform's content relationships" width="2400" height="1913" loading="lazy">
+      </figure>
+    </div>
+
+    <div class="reveal diagram-blend">
+      <h3 class="sub">User flows</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">From the architecture, I mapped the end-to-end flows: how a creator builds and publishes content, and how that content moves through review onto the storefront.</p>
+      <figure class="figure" style="margin-top:32px">
+        <img src="uploads/zip/user-flow-creation.avif" alt="Content creation flow: from creating new content through editing photo or video, tagging products and confirming, to submitting for approval" width="1986" height="1188" loading="lazy">
+      </figure>
+      <figure class="figure" style="margin-top:48px">
+        <img src="uploads/zip/user-flow-approval.avif" alt="Content approval flow: draft to pending review, approval review, approved, published on storefront and shared" width="1970" height="598" loading="lazy">
+      </figure>
+    </div>
+
+    <div class="reveal diagram-blend">
+      <h3 class="sub">Wireframes</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Low-to-medium fidelity layouts that reduced steps and surfaced the right information at the right moment.</p>
+      <figure class="figure" style="margin-top:32px">
+        <img src="uploads/zip/wireframe-1.jpg" alt="Wireframe explorations for the influencer storefront and content creation screens" width="2400" height="1797" loading="lazy">
+      </figure>
+      <figure class="figure" style="margin-top:48px">
+        <img src="uploads/zip/wireframe-2.jpg" alt="Wireframe layouts for the shoppable content flow" width="2400" height="957" loading="lazy">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 · REFINE ══ -->
+<section class="sec" id="refine" data-toc="Refine">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(09) · Refine</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Simplifying, polishing, and bringing the brand in.</h2>
+    <p class="lead reveal" style="max-width:62ch">Taking rough layouts to launch-ready screens: simplifying the flows, designing in high fidelity, and letting the Zappos personality through.</p>
+
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Usability testing &amp; simplification</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Iterative testing showed long pages were confusing creators. The fix: streamline the flow and make it mobile-friendly, so creating content felt fast rather than daunting.</p>
+      <figure class="figure bare" style="margin-top:32px">
+        <img src="uploads/zip/usability-findings.png" alt="Before-and-after comparison summarising usability test findings and simplifications" width="2400" height="905" loading="lazy">
+      </figure>
+      <figure style="margin-top:48px">
+        <div class="video">
+          <iframe src="https://www.youtube-nocookie.com/embed/gEaLynIJRc0?autoplay=1&mute=1&controls=0&loop=1&playlist=gEaLynIJRc0&rel=0&playsinline=1" title="Prototype walkthrough of the simplified content-creation flow, tested with creators" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <figcaption class="videocap">Prototype walkthrough: the streamlined, mobile-friendly content-creation flow tested with creators.</figcaption>
+      </figure>
+    </div>
+
+    <div class="reveal released">
+      <h3 class="sub">High-fidelity design</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">The three priorities, fully designed.</p>
+      <figure class="figure" style="margin-top:32px">
+        <img src="uploads/zip/hifi-shoppable.jpg" alt="High-fidelity design of the shoppable content creation interface with tagged products" width="2400" height="1350" loading="lazy">
+        <figcaption>Shoppable Content: tag products within lifestyle imagery to create a direct path to purchase.</figcaption>
+      </figure>
+      <figure class="figure" style="margin-top:48px">
+        <img src="uploads/zip/hifi-storefront.jpg" alt="High-fidelity design of the customisable influencer storefront" width="2400" height="1350" loading="lazy">
+        <figcaption>Influencer Storefront: a customisable home showing collections, metrics and bio.</figcaption>
+      </figure>
+      <figure class="figure" style="margin-top:48px">
+        <img src="uploads/zip/hifi-hub.jpg" alt="High-fidelity design of the reorganised influencer hub dashboard" width="2400" height="1350" loading="lazy">
+        <figcaption>Influencer Hub: reorganised navigation with clearer, prioritised actions.</figcaption>
+      </figure>
+    </div>
+
+    <div class="reveal released">
+      <h3 class="sub">Illustrations &amp; brand</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Zappos is known for a peculiar, fun shopping experience, so I designed custom illustrations and iconography to carry that personality into the product. Participants loved them.</p>
+      <div class="grid-cards c3" style="margin-top:40px;align-items:center">
+        <figure class="figure"><img src="uploads/zip/illustration-1.png" alt="Custom ZIP brand illustration" width="1104" height="576" loading="lazy"></figure>
+        <figure class="figure"><img src="uploads/zip/illustration-2.png" alt="Second custom ZIP brand illustration" width="1104" height="576" loading="lazy"></figure>
+        <figure class="figure"><img src="uploads/zip/illustration-3.jpg" alt="Playful character illustration for the Zappos influencer experience" width="2400" height="1567" loading="lazy"></figure>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ 10 · DELIVER ══ -->
+<section class="sec" id="deliver" data-toc="Deliver">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(10) · Deliver</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Accessible by design, measured for impact.</h2>
+    <p class="lead reveal" style="max-width:62ch">Shipping responsibly: building accessibility into the handoff, and defining how we'd know the work had landed.</p>
+
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Accessibility handoff</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Accessibility wasn't a final check. It shipped with the designs. The handoff documented colour contrast, keyboard navigation and screen-reader behaviour for the build team.</p>
+      <blockquote class="full" style="margin-top:32px">“Users of all abilities should be able to understand, use and enjoy the product.”</blockquote>
+    </div>
+
+    <figure class="figure bare reveal" style="margin-top:48px">
+      <img src="uploads/zip/accessibility-annotations.png" alt="Accessibility annotations marked up across the signup and account-creation flow — heading levels, aria-labels, alt text and copy fixes called out screen by screen for the build team" width="1200" height="816" loading="lazy">
+      <figcaption>Annotating the signup flow for the build team: heading order, aria-labels and alt text, screen by screen.</figcaption>
+    </figure>
+
+    <div class="reveal">
+      <h3 class="sub">UX metrics</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">A shared framework to track whether the work was landing, for both sides of the marketplace.</p>
+      <div class="uxm-grid reveal" style="margin-top:40px">
+        <figure class="figure bare">
+          <img src="uploads/zip/ux-metrics-questions.webp" alt="The live shoppable post annotated with the customer-side questions we set out to measure: how far customers scroll, where they tap first, whether they prefer the dot tags or the product thumbnails, and how many use the post to navigate through to the storefront" width="916" height="1684" loading="lazy">
+          <figcaption>The customer-side questions we wanted the data to answer, mapped onto the live shoppable post.</figcaption>
+        </figure>
+        <div class="uxm-cards">
+          <div class="card">
+            <div class="chip">Customer</div>
+            <ul class="ticks" style="margin-top:18px">
+              <li>Time spent exploring content</li>
+              <li>Customer satisfaction rate</li>
+              <li>Number of outfits explored</li>
+            </ul>
+          </div>
+          <div class="card" style="margin-top:24px">
+            <div class="chip">Influencer</div>
+            <ul class="ticks" style="margin-top:18px">
+              <li>Shoppable content created</li>
+              <li>Frequency of new content creation</li>
+              <li>Task completion &amp; time to create</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ 11 · OUTCOME ══ -->
+<section class="sec" id="outcome" data-toc="Outcome">
+  <div class="oc-track">
+    <div class="oc-stage">
+      <!-- Layer 1: the shipped device collage -->
+      <div class="outcome-bg" aria-hidden="true"></div>
+      <!-- Layer 2: the outcome content (rises up from the bottom over Layer 1) -->
+      <div class="oc-content">
+        <div class="wrap">
+          <div class="eyebrow"><span>(11) · Outcome</span></div>
+          <h2 class="h" style="max-width:18ch">More creators. Far more content.</h2>
+          <div class="o-grid">
+            <div>
+              <div class="stat accent">3.5×</div>
+              <div class="stat-l">increase in active influencer count</div>
+            </div>
+            <div>
+              <div class="stat accent">11×</div>
+              <div class="stat-l">increase in influencer content created</div>
+            </div>
+            <div>
+              <div class="stat accent">↓</div>
+              <div class="stat-l">lower bounce rate and higher average time on site</div>
+            </div>
+            <div>
+              <div class="stat accent">A11y</div>
+              <div class="stat-l">improved overall accessibility and usability</div>
+            </div>
+          </div>
+          <p class="lead" style="max-width:62ch">Give creators a storefront of their own, shoppable content that converts, and a hub that respects their time, and a quiet platform becomes one they come back to. The content followed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 12 · UX STRATEGY 2023 ══ -->
+<section class="sec" id="ux-strategy" data-toc="UX strategy">
+  <!-- full-bleed title band — source band is Zappos blue, recoloured to the page accent -->
+  <div class="uxs-band reveal">
+    <div class="wrap"><h2 class="uxs-h">UX Strategy<br>2023</h2></div>
+  </div>
+
+  <div class="wrap uxs-content">
+    <!-- Post-launch UX Assessment -->
+    <div class="uxs-row reveal">
+      <figure class="figure uxs-img">
+        <img src="uploads/zip/uxs-assessment.png" alt="Annotated post-launch usability assessment of the storefront shopping experience" width="1258" height="1662" loading="lazy">
+      </figure>
+      <div class="uxs-aside">
+        <h3 class="sub">Post-launch UX assessment</h3>
+        <p class="body" style="margin-top:18px;max-width:42ch">Back in the live product, I re-ran the storefront shopping experience against real usage and flagged where it still broke down.</p>
+      </div>
+    </div>
+
+    <!-- UX Proposal -->
+    <div class="uxs-row reveal">
+      <figure class="figure uxs-img">
+        <img src="uploads/zip/uxs-proposal-doc.png" alt="ZIP priority learnings and proposal document" width="1244" height="1574" loading="lazy">
+      </figure>
+      <div class="uxs-aside">
+        <h3 class="sub">UX proposal</h3>
+        <p class="body" style="margin-top:18px;max-width:46ch">Based on the qualitative and quantitative data I gathered across both Amazon and Zappos, I set three UX priorities:</p>
+        <ol class="uxs-list">
+          <li>Customer shopping experience optimization</li>
+          <li>Influencer monetization system</li>
+          <li>Influencer performance report optimization</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Hypothesis Validation -->
+    <div class="reveal">
+      <div class="grid2 top">
+        <h3 class="sub">Hypothesis validation</h3>
+        <p class="lead" style="max-width:54ch">I ran unmoderated concept testing to validate the hypothesis on the customer shopping experience with three defined groups of users.</p>
+      </div>
+      <div class="uxs-validation" style="margin-top:40px">
+        <figure class="figure uxs-img">
+          <img src="uploads/zip/uxs-heatmap.png" alt="Click heatmaps from the unmoderated concept test across two user groups" width="1275" height="956" loading="lazy">
+        </figure>
+        <figure class="uxs-results">
+          <figcaption>Concept 7 results</figcaption>
+          <div class="dt-scroll">
+            <table class="uxs-table">
+              <caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Task success and ease-of-use ratings across five participants for the Concept 7 prototype.</caption>
+              <thead>
+                <tr><th scope="col">Concept 7</th><th scope="col">P1</th><th scope="col">P2</th><th scope="col">P3</th><th scope="col">P4</th><th scope="col">P5</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Open shoppable photo</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td></tr>
+                <tr><td>Navigate to shorts</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td></tr>
+                <tr><td>Click Add to Cart</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td><td class="yes" aria-label="yes">✓</td></tr>
+                <tr><td>Task rating<span aria-hidden="true">*</span></td><td>5</td><td>5</td><td>5</td><td>2</td><td>4</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="uxs-results-note">*Ease of use: 1 = very difficult, 5 = very easy</p>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Demo Videos -->
+    <div class="reveal">
+      <div class="grid2 top">
+        <h3 class="sub">Demo videos</h3>
+        <p class="lead" style="max-width:54ch">Based on the research insights, I recorded these videos to demonstrate the customer-experience-optimization concept to stakeholders. The concept was later included in the team's OP1 file.</p>
+      </div>
+      <div class="grid2" style="margin-top:32px">
+        <figure>
+          <div class="video">
+            <iframe src="https://www.youtube-nocookie.com/embed/OAHXMiP5vUs?autoplay=1&mute=1&controls=0&loop=1&playlist=OAHXMiP5vUs&rel=0&playsinline=1" title="Concept demo: search and badge, part 1" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <figcaption class="videocap">Concept demo: search and badge, part 1.</figcaption>
+        </figure>
+        <figure>
+          <div class="video">
+            <iframe src="https://www.youtube-nocookie.com/embed/8TMVobu9Y9c?autoplay=1&mute=1&controls=0&loop=1&playlist=8TMVobu9Y9c&rel=0&playsinline=1" title="Concept demo: search and badge, part 2" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <figcaption class="videocap">Concept demo: search and badge, part 2.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══ FOOTER / CONTACT ══ -->
+<footer class="ds-footer" id="contact">
+  <div class="wrap">
+    <div class="mono-note" style="color:var(--dark-accent)">Next</div>
+    <a class="big" href="work.html" style="margin-top:18px">More<br>work<span>.</span></a>
+    <div class="row">
+      <a href="mailto:jude.shi.ux@gmail.com">jude.shi.ux@gmail.com</a>
+      <div class="social">
+        <a href="work.html">All work</a>
+        <a href="clientiq.html">ClientIQ</a>
+        <a href="index.html">Home</a>
+      </div>
+    </div>
+    <div class="copy"><span>© 2026 Jude Shi</span><span>Zappos Influencer Program · Amazon</span></div>
+  </div>
+</footer>
+
+<script src="design-system.js" defer></script>
+<script>
+  /* Reveal the project name in the nav once the hero scrolls out of view. */
+  (function(){
+    var hero = document.getElementById('hero'), nav = document.querySelector('[data-nav]');
+    if (hero && nav && 'IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        nav.classList.toggle('show-proj', !es[0].isIntersecting);
+      }, { threshold:0.15 }).observe(hero);
+    }
+  })();
+
+  /* Shop-the-look intro: once the hero figure has settled, spawn the dots,
+     flash all three product cards once as a "here's what's shoppable" demo,
+     then fade them to rest. After that, hover/focus a dot to recall its card. */
+  (function(){
+    var shop = document.querySelector('[data-shop]');
+    if (!shop) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches){
+      shop.classList.add('dots-in','ready');   /* dots visible + hoverable, no auto-flash */
+      return;
+    }
+    setTimeout(function(){ shop.classList.add('dots-in','ready'); }, 300);   /* dots spawn (staggered) right after load + hover live */
+    /* the all-at-once "here's what's shoppable" flash is a cursor moment — on
+       phones the figure is short so the three cards would collide, so there we
+       just leave the dots pulsing and let a tap reveal one clean card at a time. */
+    if (innerWidth > 640){
+      setTimeout(function(){ shop.classList.add('demo'); }, 1050);           /* all cards reveal together */
+      setTimeout(function(){ shop.classList.remove('demo'); }, 3250);        /* cards fade back to rest */
+    }
+
+    /* mirror the open/closed state to AT */
+    function syncAria(){ shop.querySelectorAll('.dot').forEach(function(d){
+      d.setAttribute('aria-expanded', d.closest('.pin').classList.contains('is-open') ? 'true' : 'false'); }); }
+    /* tap support (touch / no-hover): toggle a dot's card open, close the rest */
+    shop.addEventListener('click', function(e){
+      var dot = e.target.closest('.dot'); if (!dot) return;   /* only the dot toggles, not the card */
+      var pin = dot.closest('.pin'); if (!pin) return;
+      var wasOpen = pin.classList.contains('is-open');
+      shop.querySelectorAll('.pin.is-open').forEach(function(p){ p.classList.remove('is-open'); });
+      if (!wasOpen) pin.classList.add('is-open');
+      syncAria();
+    });
+    document.addEventListener('click', function(e){
+      if (!e.target.closest('[data-shop]')){
+        shop.querySelectorAll('.pin.is-open').forEach(function(p){ p.classList.remove('is-open'); });
+        syncAria();
+      }
+    });
+  })();
+
+  /* Process wheel: hover/focus a phase → show its detail in the centred frosted panel. */
+  (function(){
+    var pw = document.querySelector('#process-cycle .pw');
+    if (!pw) return;
+    var panel = pw.querySelector('.pw-detail');
+    pw.querySelectorAll('.pw-step').forEach(function(s){
+      var show = function(){ panel.textContent = s.getAttribute('data-detail'); pw.classList.add('show-detail'); };
+      s.addEventListener('mouseenter', show);
+      s.addEventListener('focus', show);
+      s.addEventListener('blur', function(){ pw.classList.remove('show-detail'); });
+    });
+    pw.addEventListener('mouseleave', function(){ pw.classList.remove('show-detail'); });
+  })();
+
+  /* Outcome — pinned scrollytelling finale: Layer 1 (device collage) alone & sharp →
+     blurs + fades to a soft backdrop while Layer 2 (content) rises from the bottom over it →
+     LOCKS at the end state (no replay on scroll back up/down). Driven in JS because
+     body{overflow-x:hidden} makes <body> the scroller here, which breaks CSS scroll-timelines.
+     On reduced-motion / small screens it falls back to a static composed end state (no pin). */
+  (function(){
+    var sec = document.getElementById('outcome');
+    if (!sec) return;
+    var track = sec.querySelector('.oc-track');
+    var bg = sec.querySelector('.outcome-bg');
+    var content = sec.querySelector('.oc-content');
+    if (!track || !bg || !content) return;
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var clamp01 = function(v){ return v < 0 ? 0 : v > 1 ? 1 : v; };
+    var smooth = function(a, b, x){ var t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+    var locked = false, mode = '', ticking = false;
+    function render(p){
+      // L1: sharp until ~12%, then blur + fade to a soft (still-visible) backdrop
+      var b = smooth(0.12, 0.90, p);
+      bg.style.setProperty('--obg-blur', (b * 18).toFixed(2) + 'px');
+      bg.style.setProperty('--obg-op', (1 - b * 0.42).toFixed(3));
+      // L2: rises from fully below (100%) into place + fades in
+      var r = smooth(0.15, 0.92, p);
+      content.style.transform = 'translateY(' + ((1 - r) * 100).toFixed(2) + '%)';
+      content.style.opacity = smooth(0.16, 0.55, p).toFixed(3);
+    }
+    function pickMode(){
+      var small = window.innerWidth < 760 || window.innerHeight < 640;
+      var want = (reduce || small) ? 'static' : 'anim';
+      if (want === mode) return;
+      mode = want;
+      sec.classList.toggle('oc-static', mode === 'static');
+      sec.classList.toggle('oc-anim', mode === 'anim');
+      if (mode === 'static'){                 // hand styling back to CSS
+        content.style.transform = ''; content.style.opacity = '';
+        bg.style.removeProperty('--obg-blur'); bg.style.removeProperty('--obg-op');
+      } else { locked = false; }
+    }
+    function update(){
+      ticking = false;
+      pickMode();
+      if (mode !== 'anim') return;
+      if (locked){ render(1); return; }       // end state holds once played through
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      var r = track.getBoundingClientRect();
+      var pin = r.height - vh;                 // scroll distance over which the stage is pinned
+      var p = pin > 0 ? clamp01(-r.top / pin) : 1;
+      render(p);
+      if (p >= 0.999) locked = true;
+    }
+    function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+    // capture:true so we still catch scroll when the body (not window) is the scroller
+    addEventListener('scroll', onScroll, { capture:true, passive:true });
+    addEventListener('resize', onScroll);
+    update();
+  })();
+</script>
+
+<!-- ── User Groups: three.js lanyard badges ─────────────────────────────── -->
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+(async function(){
+  const stage = document.getElementById('ug-stage');
+  if(!stage) return;
+  const canvas = document.getElementById('ug-canvas');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let THREE;
+  try { THREE = await import('three'); }
+  catch(e){ stage.classList.add('no3d'); return; }
+  if(!(window.WebGLRenderingContext)){ stage.classList.add('no3d'); return; }
+
+  // ── badge face textures (drawn to canvas, reused as maps) ──────────────
+  function rr(x,a,b,w,h,r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r);
+    x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+
+  function makeBadge(t){
+    const W=512,H=768, c=document.createElement('canvas'); c.width=W; c.height=H;
+    const x=c.getContext('2d');
+    // this canvas is the CONTENT layer (transparent bg) drawn crisply on top of the solid card body.
+    const ax=46, ay=196, aw=W-92, ah=376;            // avatar photo inset
+    // load the avatar photo async; the canvas re-paints (and the texture updates) when it arrives.
+    // a silhouette placeholder shows for the one frame before the cached image decodes.
+    let img=null;
+    if(t.photo){ img=new Image(); img.onload=()=>paint(); img.src=t.photo; }
+    function paint(){
+      x.clearRect(0,0,W,H);
+      // lanyard slot
+      x.fillStyle=t.slot; rr(x,W/2-58,44,116,26,13); x.fill();
+      // header: ZIP wordmark (t.ink rounded chip with a knockout Z in the card colour)
+      x.textAlign='left'; x.textBaseline='alphabetic';
+      x.fillStyle=t.ink; rr(x,46,104,46,46,12); x.fill();
+      x.fillStyle=t.bg; x.font='800 30px system-ui'; x.fillText('Z',58,138);
+      x.fillStyle=t.ink; x.font='700 34px "Schibsted Grotesk",system-ui,sans-serif'; x.fillText('ZIP',104,128);
+      x.fillStyle=t.sub; x.font='500 17px "IBM Plex Mono",monospace'; x.fillText(t.tag,104,150);
+      // avatar inset — real PHOTO, cover-fit inside a rounded clip (face-biased toward the top)
+      x.save(); rr(x,ax,ay,aw,ah,26); x.clip();
+      if(img && img.complete && img.naturalWidth){
+        const s=Math.max(aw/img.naturalWidth, ah/img.naturalHeight);
+        const dw=img.naturalWidth*s, dh=img.naturalHeight*s;
+        x.drawImage(img, ax+(aw-dw)/2, ay+(ah-dh)*0.12, dw, dh);
+        // bottom fade — erase the photo's lower edge to alpha 0 so it melts into the card body
+        // (starts higher up → more of the card colour shows through = bigger purple area)
+        const fade=x.createLinearGradient(0, ay+ah*0.40, 0, ay+ah);
+        fade.addColorStop(0,'rgba(0,0,0,0)'); fade.addColorStop(1,'rgba(0,0,0,1)');
+        x.globalCompositeOperation='destination-out'; x.fillStyle=fade; x.fillRect(ax,ay,aw,ah);
+        x.globalCompositeOperation='source-over';
+      } else {                                         // placeholder until the photo decodes
+        const g=x.createLinearGradient(ax,ay,ax,ay+ah); g.addColorStop(0,t.av0); g.addColorStop(1,t.av1);
+        x.fillStyle=g; x.fillRect(ax,ay,aw,ah);
+        x.fillStyle=t.silh;
+        x.beginPath(); x.arc(W/2, ay+128, 52, 0, Math.PI*2); x.fill();
+        x.beginPath(); x.moveTo(W/2-104, ay+ah); x.quadraticCurveTo(W/2, ay+150, W/2+104, ay+ah); x.fill();
+      }
+      x.restore();
+      // role title + Experience + mono caption — sit near the card bottom
+      x.fillStyle=t.ink; x.font='800 62px "Schibsted Grotesk",system-ui,sans-serif';
+      x.fillText(t.role, 46, 652);
+      x.fillStyle=t.accent; x.font='600 27px "Schibsted Grotesk",system-ui,sans-serif';
+      x.fillText('Experience', 48, 688);
+      x.fillStyle=t.sub; x.font='500 19px "IBM Plex Mono",monospace';
+      x.fillText(t.cap, 48, 724);
+      tex.needsUpdate=true;
+    }
+    const tex=new THREE.CanvasTexture(c); tex.anisotropy=8;
+    // no mipmaps + linear min-filter → the soft alpha edge can't shimmer as the card scales (no LOD transition)
+    tex.generateMipmaps=false; tex.minFilter=THREE.LinearFilter;
+    if('colorSpace' in tex) tex.colorSpace = THREE.SRGBColorSpace;
+    paint();
+    return tex;
+  }
+  function shadowTex(){
+    const W=320,H=460,c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+    x.filter='blur(30px)'; x.fillStyle='rgba(40,33,70,0.30)';
+    rr(x,58,58,W-116,H-116,46); x.fill();
+    const t=new THREE.CanvasTexture(c); return t;
+  }
+  // backdrop "wall" texture — soft out-of-focus colour blobs on the page colour, so the frosted
+  // glass has something to BLUR (over a flat colour, a blur is invisible and reads as solid).
+  // Blobs fade to the page colour before the edges, so the wall is invisible where no card covers it.
+  function wallTex(){
+    const W=1100,H=930,c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+    x.fillStyle='#f1f1f3'; x.fillRect(0,0,W,H);
+    const blob=(cx,cy,r,col)=>{ const g=x.createRadialGradient(cx,cy,0,cx,cy,r);
+      g.addColorStop(0,col); g.addColorStop(1,'rgba(241,241,243,0)'); x.fillStyle=g; x.fillRect(0,0,W,H); };
+    // a colour behind EACH card so the frosted transmission reads vibrant (not washed grey)
+    blob(W*0.50,H*0.42,W*0.46,'rgba(124,92,255,0.62)');   // strong lavender — behind Influencer (centre)
+    blob(W*0.25,H*0.50,W*0.38,'rgba(92,54,224,0.36)');    // deep violet — behind Customer (left)
+    blob(W*0.75,H*0.50,W*0.38,'rgba(150,120,255,0.36)');  // light indigo — behind Agent (right)
+    blob(W*0.50,H*0.74,W*0.34,'rgba(255,255,255,0.20)');  // soft white (low) · gentle lift
+    // feather ALL edges to transparent (blurred inset mask) so the wall has no hard rectangle edge —
+    // its glow fades smoothly into the page; the opaque core still backs the cards for the blur.
+    x.globalCompositeOperation='destination-in';
+    x.filter='blur(95px)'; x.fillStyle='#fff'; x.fillRect(90,80,W-180,H-160);
+    x.filter='none'; x.globalCompositeOperation='source-over';
+    const t=new THREE.CanvasTexture(c); if('colorSpace' in t) t.colorSpace=THREE.SRGBColorSpace; return t;
+  }
+  // rounded-rectangle Shape for the card body (extruded to give the card real thickness)
+  function roundedRectShape(w,h,r){
+    const s=new THREE.Shape(), x=-w/2, y=-h/2;
+    s.moveTo(x+r,y); s.lineTo(x+w-r,y); s.quadraticCurveTo(x+w,y,x+w,y+r);
+    s.lineTo(x+w,y+h-r); s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    s.lineTo(x+r,y+h); s.quadraticCurveTo(x,y+h,x,y+h-r);
+    s.lineTo(x,y+r); s.quadraticCurveTo(x,y,x+r,y);
+    return s;
+  }
+  function strapTex(col){
+    const c=document.createElement('canvas'); c.width=64; c.height=512; const x=c.getContext('2d');
+    x.fillStyle=col; x.fillRect(0,0,64,512);
+    x.save(); x.translate(32,256); x.rotate(-Math.PI/2);
+    x.fillStyle='rgba(255,255,255,.55)'; x.font='700 22px "Schibsted Grotesk",system-ui,sans-serif';
+    x.textAlign='center'; x.textBaseline='middle';
+    x.fillText('ZIP · ZIP · ZIP · ZIP', 0, 1); x.restore();
+    const t=new THREE.CanvasTexture(c); if('colorSpace' in t) t.colorSpace=THREE.SRGBColorSpace; return t;
+  }
+
+  const THEMES=[
+    { role:'Influencer', cap:'Creator-facing', seed:11, tag:'USER GROUP 1', photo:'uploads/zip/avatar-influencer.webp',
+      bg:'#6d4aff', gcol:'#6d4aff',
+      ink:'#ffffff', sub:'rgba(255,255,255,.74)', accent:'#d9cdff',
+      slot:'rgba(0,0,0,.22)', av0:'rgba(255,255,255,.16)', av1:'rgba(255,255,255,.05)', silh:'rgba(255,255,255,.34)', qr:'#ffffff' },
+    { role:'Customer', cap:'Shopper-facing', seed:29, tag:'USER GROUP 2', photo:'uploads/zip/avatar-customer.webp',
+      bg:'#211b33', gcol:'#2e2742',
+      ink:'#ffffff', sub:'rgba(255,255,255,.7)', accent:'#bbaaff',
+      slot:'rgba(255,255,255,.14)', av0:'rgba(255,255,255,.12)', av1:'rgba(255,255,255,.03)', silh:'rgba(255,255,255,.3)', qr:'#bbaaff' },
+    { role:'Agent', cap:'Support-facing', seed:47, tag:'USER GROUP 3', photo:'uploads/zip/avatar-agent.webp',
+      bg:'#f4f3f8', gcol:'#eceaf4',
+      ink:'#211b33', sub:'#655f78', accent:'#6d4aff',
+      slot:'rgba(33,27,51,.16)', av0:'rgba(33,27,51,.12)', av1:'rgba(33,27,51,.03)', silh:'rgba(33,27,51,.26)', qr:'#211b33' }
+  ];
+
+  // ── scene ──────────────────────────────────────────────────────────────
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(36,1,0.1,100); camera.position.set(0,0,8.6);
+  // bright, even GLOBAL light only — NO directional, so the angled cards never darken on one side
+  scene.add(new THREE.AmbientLight(0xffffff,1.25));
+  // page-coloured "wall" behind the cards — gives the frosted glass something (and the cards behind) to blur;
+  // sits within the gaps above/below the cluster and is the page colour, so it never visibly covers section text
+  const wall=new THREE.Mesh(new THREE.PlaneGeometry(13,11),
+    new THREE.MeshBasicMaterial({map:wallTex(), transparent:true}));
+  wall.position.set(0,-0.15,-1.7); scene.add(wall);
+
+  const CW=2.2, CH=3.3, root=new THREE.Group(); scene.add(root);
+  root.scale.setScalar(1.16);   // enlarge the whole fan (bigger rest cards) · keeps the spread + hover ratios
+  const badges=[];
+  // OUTWARD fan (hand-of-cards, like the reference): centre upright + front, left leans LEFT, right leans RIGHT
+  const RX=0.05, RY=0.0;            // gentle shared backward tilt (face-on, not steep)
+  // theme order is [Influencer, Customer, Agent]
+  const LAYOUT=[
+    { x:0,    y: 0.42, z:0.0,  rz: 0.03, s:1.00, order:2 },  // Influencer — centre, upright, front, peak
+    { x:-2.05,y:-0.02, z:-0.5, rz: 0.30, s:0.93, order:1 },  // Customer  — left, leans LEFT (wider spread)
+    { x:2.05, y:-0.40, z:-0.6, rz:-0.30, s:0.90, order:0 }   // Agent     — right, leans RIGHT (wider spread)
+  ];
+
+  const SHADOW=shadowTex();
+  // extruded rounded-rect → each card has real thickness; centre it so the front face sits at +DEPTH/2
+  const DEPTH=0.17;
+  const CARD_GEO=new THREE.ExtrudeGeometry(roundedRectShape(CW,CH,0.2),{depth:DEPTH,bevelEnabled:false,curveSegments:22});
+  CARD_GEO.translate(0,0,-DEPTH/2);
+  THEMES.forEach((t,i)=>{
+    const L=LAYOUT[i];
+    const pivot=new THREE.Group();
+    pivot.position.set(L.x, L.y, L.z);
+    // soft drop shadow
+    const sh=new THREE.Mesh(new THREE.PlaneGeometry(CW*1.22,CH*1.16),
+      new THREE.MeshBasicMaterial({map:SHADOW, transparent:true, depthWrite:false, opacity:.4}));
+    sh.position.set(0.12,-0.16,-0.14); sh.renderOrder=L.order*3; pivot.add(sh);
+    // SOLID extruded card with real thickness: flat bright front/back face (capMat) + a darker
+    // side wall (sideMat) that reads as the card's edge → a physical, dimensional card.
+    const capMat =new THREE.MeshBasicMaterial({ color:new THREE.Color(t.gcol) });
+    const sideMat=new THREE.MeshBasicMaterial({ color:new THREE.Color(t.gcol).multiplyScalar(0.6) });
+    const glass=new THREE.Mesh(CARD_GEO, [capMat, sideMat]);
+    glass.renderOrder=L.order*3+1; pivot.add(glass);
+    // crisp content (logo / avatar / title / QR) on the front face of the card
+    const content=new THREE.Mesh(new THREE.PlaneGeometry(CW,CH),
+      new THREE.MeshBasicMaterial({ map:makeBadge(t), transparent:true, alphaTest:.03,
+        side:THREE.DoubleSide, depthWrite:false }));
+    content.position.z=DEPTH/2+0.012; content.renderOrder=L.order*3+2; pivot.add(content);
+
+    // side: -1 = left card (leans left), +1 = right card, 0 = centre (Influencer)
+    const side = i===1 ? -1 : i===2 ? 1 : 0;
+    const rest ={ x:L.x, rx:RX, ry:RY, rz:L.rz, z:L.z,     s:L.s };
+    const front={ x:L.x, rx:0,  ry:0,  rz:0,    z:L.z+1.9, s:L.s*1.12 };
+    // tilt waypoint (side cards only): cock the card OUTWARD — swing its inner edge back (ry),
+    // push it out (x) and lift it a touch (z) · so it clears the centre card before sliding forward.
+    // the centre card has no waypoint (tilt===front) → it comes straight to the front.
+    const tilt = side===0 ? front
+      : { x:L.x+side*0.5, rx:RX, ry:-side*0.42, rz:L.rz, z:L.z+0.25, s:L.s*1.04 };
+    pivot.rotation.set(rest.rx,rest.ry,rest.rz);
+    root.add(pivot);
+    badges.push({pivot,glass,content,sh,base:L,side,rest,front,tilt, cur:{...rest}, target:rest, phase:'rest'});
+  });
+
+  // ── interaction ──────────────────────────────────────────────────────
+  const ray=new THREE.Raycaster(), ptr=new THREE.Vector2(); let hovered=-1;
+  function pick(e){
+    const r=canvas.getBoundingClientRect();
+    ptr.x=((e.clientX-r.left)/r.width)*2-1; ptr.y=-((e.clientY-r.top)/r.height)*2+1;
+    ray.setFromCamera(ptr,camera);
+    const hit=ray.intersectObjects(badges.map(b=>b.glass),false);
+    hovered = hit.length ? badges.findIndex(b=>b.glass===hit[0].object) : -1;
+    stage.style.cursor = hovered>=0 ? 'pointer' : 'default';
+  }
+  stage.addEventListener('pointermove',pick);
+  stage.addEventListener('pointerleave',()=>{ hovered=-1; });
+
+  // ── resize ────────────────────────────────────────────────────────────
+  function resize(){
+    const w=stage.clientWidth, baseH=stage.clientHeight;
+    // grow the canvas beyond the stage (vertical bleed) so a zoomed card has headroom and isn't clipped
+    const BLEED=Math.round(Math.min(170, baseH*0.45)), h=baseH+BLEED*2;
+    canvas.style.top=(-BLEED)+'px'; canvas.style.height=h+'px';
+    renderer.setSize(w,h,false);
+    const narrow = w<680;
+    // widen the vertical fov in proportion to the bleed so cards keep their on-screen size — only headroom is added
+    camera.fov = 2*Math.atan(Math.tan(36*Math.PI/360)*h/baseH)*180/Math.PI;
+    camera.aspect = w/h;
+    camera.position.z = narrow ? 11.6 : 8.6;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage); resize();
+
+  // ── loop ──────────────────────────────────────────────────────────────
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  // is the card visually settled at a given waypoint? (gate for advancing the phase)
+  const atPose=(c,p)=> Math.abs(c.ry-p.ry)<0.07 && Math.abs(c.z-p.z)<0.16 && Math.abs(c.x-p.x)<0.08;
+  function tick(){
+    const k = reduce ? 1 : 0.12;
+    badges.forEach((b,i)=>{
+      // ── phase machine: side cards tilt OUT first, then come to the front (and reverse on leave);
+      //    the centre card has no waypoint and moves straight in/out ──────────
+      const want = (i===hovered) ? 'front' : 'rest';
+      if (b.side===0){ b.phase=want; }
+      else if (want==='front'){
+        if (b.phase==='rest') b.phase='tilt';
+        else if (b.phase==='tilt' && atPose(b.cur,b.tilt)) b.phase='front';
+      } else {
+        if (b.phase==='front') b.phase='tilt';
+        else if (b.phase==='tilt' && atPose(b.cur,b.tilt)) b.phase='rest';
+      }
+      b.target = b.phase==='front'?b.front : b.phase==='tilt'?b.tilt : b.rest;
+
+      const c=b.cur, t=b.target;
+      c.x=lerp(c.x,t.x,k); c.ry=lerp(c.ry,t.ry,k); c.rz=lerp(c.rz,t.rz,k); c.rx=lerp(c.rx,t.rx,k);
+      c.z=lerp(c.z,t.z,k); c.s=lerp(c.s,t.s,k);
+      b.pivot.rotation.set(c.rx,c.ry,c.rz);
+      b.pivot.position.set(c.x,b.base.y,c.z); b.pivot.scale.setScalar(c.s);
+    });
+    // hovered badge (shadow + glass + content) renders on top, else keep the back-to-front stack
+    badges.forEach((b,i)=>{ const o=(i===hovered)?7:b.base.order;
+      b.sh.renderOrder=o*3; b.glass.renderOrder=o*3+1; b.content.renderOrder=o*3+2; });
+    renderer.render(scene,camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+
+
+<!-- Reusable Figma-style layout editor (inert unless the URL has ?edit). See layout-editor.js -->
+<script src="layout-editor.js" defer></script>
+</body>
+</html>
