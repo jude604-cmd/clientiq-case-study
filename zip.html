@@ -283,13 +283,32 @@
   .decision-note .dn-why{margin:16px 0 0; font-size:clamp(15px,1.3vw,17px); line-height:1.5; color:var(--ink-3); max-width:64ch}
   .decision-note .dn-why b{color:var(--ink-2)}
 
-  /* ── marketplace growth loop — lightweight text chips joined by arrows ──── */
-  .growth-loop{list-style:none; margin:24px 0 0; padding:0; display:flex; flex-wrap:wrap;
-    align-items:center; gap:12px 0}
-  .growth-loop li{font-family:var(--mono); font-size:clamp(12.5px,1.1vw,14px); letter-spacing:.01em;
-    color:var(--ink-2); background:var(--accent-tint); border-radius:var(--pill); padding:9px 16px}
-  .growth-loop li:not(:last-child)::after{content:"→"; color:var(--accent); margin:0 12px 0 16px; font-weight:600}
-  @media(max-width:560px){ .growth-loop li:not(:last-child)::after{margin:0 8px 0 10px} }
+  /* ── marketplace growth loop — numbered nodes floating on the page's purple-glow card motif.
+     mono number badges echo the page's label system; sans-semibold labels replace the timid mono;
+     the final step is FILLED to mark the loop's payoff, where it feeds back into step 01. ──── */
+  .growth-loop{list-style:none; margin:44px 0 0; padding:0; display:flex; flex-wrap:wrap;
+    align-items:center; gap:20px 16px; counter-reset:loop}
+  .growth-loop li{counter-increment:loop; display:inline-flex; align-items:center; gap:12px;
+    font-family:var(--sans); font-weight:600; font-size:clamp(14px,1.15vw,16.5px); letter-spacing:-.01em;
+    line-height:1.1; color:var(--ink); background:var(--card); border-radius:var(--pill);
+    padding:11px 20px 11px 11px;
+    box-shadow:0 13px 30px -14px rgba(109,74,255,.42), 0 2px 7px -3px rgba(109,74,255,.16);
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease); will-change:transform}
+  .growth-loop li:hover{transform:translateY(-3px);
+    box-shadow:0 20px 42px -14px rgba(109,74,255,.52), 0 3px 11px -3px rgba(109,74,255,.22)}
+  .growth-loop li::before{content:counter(loop,decimal-leading-zero); flex:none;
+    font-family:var(--mono); font-size:11.5px; font-weight:500; letter-spacing:.02em; color:#fff;
+    width:26px; height:26px; border-radius:50%; background:var(--accent);
+    display:inline-flex; align-items:center; justify-content:center}
+  .growth-loop li:not(:last-child)::after{content:"→"; color:var(--accent); font-weight:700;
+    font-size:18px; line-height:1; margin-left:6px}
+  /* the loop's return: the final step is the payoff, filled, feeding back into step 01 */
+  .growth-loop li:last-child{background:var(--accent); color:#fff;
+    box-shadow:0 17px 40px -12px rgba(109,74,255,.6), 0 3px 11px -3px rgba(109,74,255,.3)}
+  .growth-loop li:last-child::before{background:#fff; color:var(--accent)}
+  @media (prefers-reduced-motion:reduce){ .growth-loop li{transition:none} .growth-loop li:hover{transform:none} }
+  @media(max-width:560px){ .growth-loop{gap:14px 12px} .growth-loop li{font-size:13.5px; padding:9px 16px 9px 9px}
+    .growth-loop li::before{width:23px; height:23px; font-size:11px} }
 
   /* research findings — two table images side by side in equal-size white boxes */
   /* two parts of one validation table at different aspect ratios — size each card to its own image and
