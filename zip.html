@@ -154,19 +154,25 @@
   #user-groups .h{text-align:center; max-width:none}
   /* subtitle hugs the title + stage sits a normal gap below — override the DS `.wrap > * + *` 128px (it's !important) */
   #user-groups .ug-sub{text-align:center; color:var(--ink-4); font-size:clamp(16px,1.5vw,20px); margin-top:18px!important}
-  #user-groups .ug-hint{color:var(--ink-5); font-size:.86em}
   #user-groups .ug-stage{position:relative; max-width:1100px; margin:46px auto 0!important; height:clamp(380px,46vw,560px); touch-action:pan-y; overflow:visible}
   /* canvas bleeds above/below the stage box so a hovered (zoomed) card can grow past it without clipping;
      pointer-events:none so the overflow doesn't block the text it overlaps — events are bound to the stage */
   #user-groups #ug-canvas{display:block; position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none}
-  /* legend = accessible labels + graceful fallback if WebGL/JS is unavailable */
-  #user-groups .ug-legend{list-style:none; margin:0; padding:0; position:absolute; inset:0;
-    display:grid; grid-template-columns:repeat(3,1fr); align-items:end; gap:40px;
-    pointer-events:none; opacity:0; clip:rect(0 0 0 0); clip-path:inset(50%)}
-  #user-groups .ug-stage.no3d .ug-legend{position:static; opacity:1; clip:auto; clip-path:none;
-    align-items:center; text-align:center; color:var(--ink-2); font-size:clamp(17px,1.5vw,21px); font-weight:500}
-  #user-groups .ug-stage.no3d #ug-canvas{display:none}
-  @media (max-width:680px){ #user-groups .ug-stage{height:clamp(420px,118vw,560px)} }
+  #user-groups .ug-stage.no3d{display:none}   /* no WebGL → drop the empty stage; the real buttons below carry the content */
+  /* accessible control: real buttons that select a group (click / tap / keyboard / screen-reader) */
+  #user-groups .ug-controls{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:32px auto 0; max-width:740px}
+  #user-groups .ug-btn{flex:1 1 200px; min-width:178px; display:flex; flex-direction:column; gap:5px; text-align:left;
+    background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:16px 20px; cursor:pointer;
+    transition:border-color .2s, box-shadow .25s var(--ease), transform .25s var(--ease)}
+  #user-groups .ug-btn:hover{transform:translateY(-3px); box-shadow:0 12px 26px -12px rgba(109,74,255,.32)}
+  #user-groups .ug-btn[aria-pressed="true"]{border-color:var(--accent);
+    box-shadow:0 0 0 1px var(--accent), 0 16px 32px -14px rgba(109,74,255,.45)}
+  #user-groups .ug-btn-role{font-family:var(--sans); font-weight:700; font-size:17px; color:var(--ink)}
+  #user-groups .ug-btn-cap{font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-4)}
+  #user-groups .ug-desc{text-align:center; max-width:56ch; margin:22px auto 0; color:var(--ink-2);
+    font-size:clamp(16px,1.4vw,19px); line-height:1.5; min-height:1.5em}
+  @media (max-width:680px){ #user-groups .ug-stage{height:clamp(420px,118vw,560px)}
+    #user-groups .ug-btn{flex:1 1 100%} }
 
   /* ── persona card (teal, two columns of white cards) ─────────────────────── */
   .persona{--p-ink:#16243f; --p-body:#363957; --p-bullet:#7c6cf0;
@@ -269,6 +275,17 @@
   .signal-points dt{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
   .signal-points dd{margin:0; font-size:clamp(15px,1.3vw,17px); line-height:1.5; color:var(--ink-2)}
   @media(max-width:760px){ .signal-points{grid-template-columns:1fr} }
+
+  /* ── decision callout — elevates the strategic turning points above the artifacts ──── */
+  .decision-note{background:var(--accent-soft); border:1px solid var(--line-soft); border-radius:var(--r-lg);
+    padding:clamp(24px,2.8vw,36px)}
+  .decision-note .dn-k{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 12px}
+  .decision-note .dn-h{font-family:var(--sans); font-weight:700; font-size:clamp(20px,2vw,27px); line-height:1.18;
+    letter-spacing:-.01em; color:var(--ink); margin:0; max-width:34ch}
+  .decision-note .dn-b{margin:14px 0 0; font-size:clamp(16px,1.4vw,18px); line-height:1.5; color:var(--ink-2); max-width:64ch}
+  .decision-note .dn-why{margin:16px 0 0; font-size:clamp(15px,1.3vw,17px); line-height:1.5; color:var(--ink-3); max-width:64ch}
+  .decision-note .dn-why b{color:var(--ink-2)}
 
   /* ── marketplace growth loop — lightweight text chips joined by arrows ──── */
   .growth-loop{list-style:none; margin:24px 0 0; padding:0; display:flex; flex-wrap:wrap;
@@ -470,6 +487,10 @@
   /* ── UX Strategy 2023 — recreated part (source title band is Zappos blue → recoloured to accent) ── */
   #ux-strategy{padding-top:0}
   #ux-strategy .uxs-band{background:var(--accent); padding:clamp(60px,11vh,140px) 0; color:#fff}
+  /* eyebrow sits on the solid accent band → soft white halo behind white text (the page's accent chip would vanish here) */
+  #ux-strategy .uxs-band .eyebrow{margin-bottom:28px}
+  #ux-strategy .uxs-band .eyebrow span{color:#fff}
+  #ux-strategy .uxs-band .eyebrow span::before{background:rgba(255,255,255,.34)}
   #ux-strategy .uxs-h{font-family:'Thunder',var(--sans); font-weight:900; font-synthesis:none;
     text-transform:uppercase; letter-spacing:-.01em; line-height:.84; color:#fff;
     font-size:clamp(60px,12vw,176px); margin:0}
@@ -986,36 +1007,49 @@
 <section class="sec" id="user-groups" data-toc="User groups">
   <div class="wrap">
     <h2 class="h reveal">User Groups</h2>
-    <p class="ug-sub reveal d1">There are 3 main aspects of ZIP. <span class="ug-hint">Hover a badge to bring it forward.</span></p>
+    <p class="ug-sub reveal d1">ZIP served three sides of one marketplace. <span class="ug-hint">Select a group to see how ZIP served each side of the marketplace.</span></p>
     <div class="ug-stage reveal d2" id="ug-stage">
       <canvas id="ug-canvas" aria-hidden="true"></canvas>
-      <ul class="ug-legend" aria-label="User groups">
-        <li>Influencer Experience</li>
-        <li>Customer Experience</li>
-        <li>Agent Experience</li>
-      </ul>
     </div>
+    <div class="ug-controls reveal d2" role="group" aria-label="ZIP user groups — select one">
+      <button type="button" class="ug-btn" data-ug="0" aria-pressed="true" aria-describedby="ug-desc">
+        <span class="ug-btn-role">Influencer</span><span class="ug-btn-cap">Creator-facing</span>
+      </button>
+      <button type="button" class="ug-btn" data-ug="1" aria-pressed="false" aria-describedby="ug-desc">
+        <span class="ug-btn-role">Customer</span><span class="ug-btn-cap">Shopper-facing</span>
+      </button>
+      <button type="button" class="ug-btn" data-ug="2" aria-pressed="false" aria-describedby="ug-desc">
+        <span class="ug-btn-role">Agent</span><span class="ug-btn-cap">Support-facing</span>
+      </button>
+    </div>
+    <p class="ug-desc reveal" id="ug-desc" aria-live="polite">Where creators build, organise, and share shoppable content, the input the whole growth loop depends on.</p>
   </div>
 </section>
 
 <!-- ══ PROBLEM STATEMENT ══ -->
-<section class="sec" id="problem-statement" data-toc="Problem statement">
+<section class="sec" id="problem-statement" data-toc="Reading the data">
   <div class="wrap">
     <div>
-      <div class="eyebrow reveal"><span>(04) · Problem statement</span></div>
-      <h2 class="h reveal d1" style="color:var(--accent)">Low Engagement</h2>
+      <div class="eyebrow reveal"><span>(04) · Reading the data</span></div>
+      <h2 class="h reveal d1" style="color:var(--accent)">The data pointed past traffic.</h2>
     </div>
-    <p class="lead reveal" style="max-width:76ch">Based on ZIP's data findings in early 2022, the platform was facing low influencer engagement in content output <b>(On average 1 collection per influencer)</b> and usage frequency <b>(On average 2 logins per month)</b>. To kick off the project and to study the usability standards and overall user experience, we conducted market research.</p>
+    <p class="lead reveal" style="max-width:74ch">The early-2022 numbers ruled out the obvious explanation. Creators' collection pages were pulling real visits but almost no sales, so the question wasn't how to drive more traffic. It was why the traffic we already had went nowhere.</p>
     <div class="signal-block reveal" role="group" aria-label="What the early-2022 analytics told us">
       <div class="signal-row">
         <div class="signal-metric"><span class="sm-n">80–90%+</span><span class="sm-l">bounce on high-visit collection pages</span></div>
         <div class="signal-metric"><span class="sm-n">$0</span><span class="sm-l">sales on several of the most-visited pages</span></div>
       </div>
       <dl class="signal-points">
-        <div><dt>The signal</dt><dd>High traffic was not converting into meaningful shopping behavior. Several high-visit collection pages had zero sales, and bounce rates were frequently above 80–90%.</dd></div>
-        <div><dt>What it told us</dt><dd>The issue was not just discoverability. Shoppers were arriving, but the experience was not giving them enough confidence, context, or product inspiration to continue.</dd></div>
+        <div><dt>The signal</dt><dd>High-traffic collection pages were not converting into meaningful shopping behavior. Several high-visit pages had zero sales, and bounce rates were frequently above 80–90%.</dd></div>
+        <div><dt>What it told us</dt><dd>The issue was not traffic alone. Shoppers were arriving, but the content experience was not giving them enough confidence, context, or product inspiration to continue.</dd></div>
         <div><dt>Product implication</dt><dd>We needed to improve the quality of the creator-to-shopper journey, not simply drive more traffic to the same surfaces.</dd></div>
       </dl>
+    </div>
+
+    <div class="decision-note reveal" style="margin-top:48px">
+      <p class="dn-k">Decision unlocked</p>
+      <p class="dn-h">Treat ZIP as a marketplace, not an affiliate-link tool.</p>
+      <p class="dn-b">We stopped treating ZIP as a basic affiliate-content tool and focused on the parts of the system that could increase repeat content creation, the input the whole loop depended on.</p>
     </div>
 
     <div class="loop-block reveal" style="margin-top:var(--gap-sub)">
@@ -1229,8 +1263,8 @@
     </div>
 
     <div class="statement reveal">
-      <h3 class="statement-h">Lack of content is the biggest challenge for 2022</h3>
-      <p class="body">Upon deep diving, we firmly believed that growing content volume and content quality over time will be crucial to driving influencer site traffic and conversion. High-quality content ultimately makes shopping inspiring and engaging for customers (conversion play), improves Zappos brand awareness and makes Zappos top-of-mind destination for everyday fashion (traffic play). Influencers are looking for different ways to monetize their created content and have plenty of choices outside Zappos to earn money. Hence having a variety of content types for monetization will be a table-stakes requirement to attract new influencers to sign up and retain existing influencers.</p>
+      <h3 class="statement-h">So content volume became the number we designed against.</h3>
+      <p class="body">The journey map made the leverage point concrete: every downstream metric, customer conversion, Zappos brand recall, influencer retention, traced back to how much shoppable content creators actually published. Influencers had plenty of other places to earn, so matching that wasn't enough; ZIP had to make creating the next post the path of least resistance. That reframed the brief from "lift engagement" to a measurable goal: more content, created more often, by more creators.</p>
     </div>
 
     <div class="goals reveal">
@@ -1261,7 +1295,7 @@
       <div class="ux-focus">
         <p class="ux-eyebrow">UX focus</p>
         <p class="ux-title">Influencer experience</p>
-        <p class="ux-body">Provide an integrated solution for ZIP influencers' content-creation and sharing process by applying the latest trends, technologies and the optimal user experience.</p>
+        <p class="ux-body">Give ZIP influencers one integrated place to create, organise, and share shoppable content, so publishing the next post is fast enough to become a habit.</p>
       </div>
     </div>
   </div>
@@ -1331,6 +1365,11 @@
         <li>Influencers expect the storefront to be customised and personal.</li>
         <li>A storefront link is more sustainable than a content link.</li>
       </ul>
+      <div class="decision-note" style="margin-top:32px">
+        <p class="dn-k">Decision unlocked</p>
+        <p class="dn-h">Build a Storefront, not just a better Hub.</p>
+        <p class="dn-why"><b>Why it mattered:</b> creators wouldn't keep publishing into a dashboard they couldn't share. A storefront gave every post a permanent, personal home worth linking to, which is what makes the next post worth creating.</p>
+      </div>
     </div>
 
     <div class="reveal">
@@ -1355,6 +1394,11 @@
     <div class="reveal">
       <h3 class="sub">Imagery content influences the customer's decision</h3>
       <p class="body" style="margin-top:18px;max-width:74ch">Imagery content shaped how customers made decisions. One participant originally wanted the boots in grey, which were out of stock in her size. Seeing the other colours styled revealed their versatility and pointed to a better choice for her.</p>
+      <div class="decision-note" style="margin-top:32px">
+        <p class="dn-k">Decision unlocked</p>
+        <p class="dn-h">Make shoppable imagery the core, not a garnish.</p>
+        <p class="dn-why"><b>Why it mattered:</b> styled imagery changed what shoppers bought, turning a generic collection page into credible product discovery. That made Shoppable Content the second new-feature bet, directly addressing the zero-sales signal from the data.</p>
+      </div>
     </div>
 
     <div class="reveal">
@@ -1528,51 +1572,18 @@
   </div>
 </section>
 
-<!-- ══ 11 · OUTCOME ══ -->
-<section class="sec" id="outcome" data-toc="Outcome">
-  <div class="oc-track">
-    <div class="oc-stage">
-      <!-- Layer 1: the shipped device collage -->
-      <div class="outcome-bg" aria-hidden="true"></div>
-      <!-- Layer 2: the outcome content (rises up from the bottom over Layer 1) -->
-      <div class="oc-content">
-        <div class="wrap">
-          <div class="eyebrow"><span>(11) · Outcome</span></div>
-          <h2 class="h" style="max-width:18ch">More creators. Far more content.</h2>
-          <p class="lead" style="max-width:62ch">Following the launch period, the redesigned creator experience was associated with:</p>
-          <div class="o-grid">
-            <div>
-              <div class="stat accent">3.5×</div>
-              <div class="stat-l">increase in active influencer count</div>
-            </div>
-            <div>
-              <div class="stat accent">11×</div>
-              <div class="stat-l">increase in influencer content created</div>
-            </div>
-            <div>
-              <div class="stat accent">↓</div>
-              <div class="stat-l">lower bounce rate and higher average time on site</div>
-            </div>
-            <div>
-              <div class="stat accent">A11y</div>
-              <div class="stat-l">improved overall accessibility and usability</div>
-            </div>
-          </div>
-          <p class="lead" style="max-width:64ch">These metrics mattered because they mapped directly to the original product problem. ZIP did not need a more polished creator interface for its own sake; it needed a system that made influencers more likely to return, create, and publish content that shoppers could act on.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ 12 · UX STRATEGY 2023 ══ -->
-<section class="sec" id="ux-strategy" data-toc="UX strategy">
+<!-- ══ 11 · AFTER LAUNCH — extending the strategy ══ -->
+<section class="sec" id="ux-strategy" data-toc="After launch">
   <!-- full-bleed title band — source band is Zappos blue, recoloured to the page accent -->
   <div class="uxs-band reveal">
-    <div class="wrap"><h2 class="uxs-h">UX Strategy<br>2023</h2></div>
+    <div class="wrap">
+      <div class="eyebrow"><span>(11) · After launch</span></div>
+      <h2 class="uxs-h">Extending<br>the strategy</h2>
+    </div>
   </div>
 
   <div class="wrap uxs-content">
+    <p class="lead reveal" style="max-width:66ch">Shipping the MVP wasn't the end of the strategy. In 2023 I took the same thesis back into the live product, re-assessing the storefront against real usage and proposing where to invest next to keep the growth loop turning.</p>
     <!-- Post-launch UX Assessment -->
     <div class="uxs-row reveal">
       <figure class="figure uxs-img">
@@ -1650,6 +1661,43 @@
           </div>
           <figcaption class="videocap">Concept demo: search and badge, part 2.</figcaption>
         </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 12 · OUTCOME ══ -->
+<section class="sec" id="outcome" data-toc="Outcome">
+  <div class="oc-track">
+    <div class="oc-stage">
+      <!-- Layer 1: the shipped device collage -->
+      <div class="outcome-bg" aria-hidden="true"></div>
+      <!-- Layer 2: the outcome content (rises up from the bottom over Layer 1) -->
+      <div class="oc-content">
+        <div class="wrap">
+          <div class="eyebrow"><span>(12) · Outcome</span></div>
+          <h2 class="h" style="max-width:18ch">More creators. Far more content.</h2>
+          <p class="lead" style="max-width:62ch">Following the launch period, the redesigned creator experience was associated with:</p>
+          <div class="o-grid">
+            <div>
+              <div class="stat accent">3.5×</div>
+              <div class="stat-l">increase in active influencer count</div>
+            </div>
+            <div>
+              <div class="stat accent">11×</div>
+              <div class="stat-l">increase in influencer content created</div>
+            </div>
+            <div>
+              <div class="stat accent">↓</div>
+              <div class="stat-l">lower bounce rate and higher average time on site</div>
+            </div>
+            <div>
+              <div class="stat accent">A11y</div>
+              <div class="stat-l">improved overall accessibility and usability</div>
+            </div>
+          </div>
+          <p class="lead" style="max-width:64ch">These metrics mattered because they mapped directly to the original product problem. ZIP did not need a more polished creator interface for its own sake; it needed a system that made influencers more likely to return, create, and publish content that shoppers could act on.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -1795,6 +1843,34 @@
     addEventListener('resize', onScroll);
     update();
   })();
+</script>
+
+<!-- ── User Groups: accessible selection controller (always on; drives the 3D scene + the live description) ── -->
+<script>
+(function(){
+  const btns=[...document.querySelectorAll('#user-groups .ug-btn')];
+  const desc=document.getElementById('ug-desc');
+  if(!btns.length) return;
+  const DESC=[
+    'Where creators build, organise, and share shoppable content, the input the whole growth loop depends on.',
+    'Where shoppers turn creator content into credible product discovery, then into purchases.',
+    'Where support reviews and approves creator content before it goes live on the storefront.'
+  ];
+  function applyUI(i){
+    btns.forEach((b,bi)=>b.setAttribute('aria-pressed', bi===i?'true':'false'));
+    if(desc) desc.textContent=DESC[i]||'';
+  }
+  // single source of truth: any selector (button, keyboard, or a tapped 3D card) emits 'ug-select'
+  document.addEventListener('ug-select', e=>applyUI(e.detail));
+  const emit=i=>document.dispatchEvent(new CustomEvent('ug-select',{detail:i}));
+  btns.forEach((b,i)=>{
+    b.addEventListener('click',()=>emit(i));
+    b.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();emit((i+1)%btns.length);btns[(i+1)%btns.length].focus();}
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();const p=(i-1+btns.length)%btns.length;emit(p);btns[p].focus();}
+    });
+  });
+})();
 </script>
 
 <!-- ── User Groups: three.js lanyard badges ─────────────────────────────── -->
@@ -1998,16 +2074,27 @@
 
   // ── interaction ──────────────────────────────────────────────────────
   const ray=new THREE.Raycaster(), ptr=new THREE.Vector2(); let hovered=-1;
-  function pick(e){
+  // `selected` is the persistent choice (driven by the accessible buttons / a tapped card); hover is a
+  // transient enhancement that overrides it only while the pointer is actually over a card.
+  let selected=0;
+  document.addEventListener('ug-select', e=>{ if(typeof e.detail==='number') selected=e.detail; });
+  function hitTest(e){
     const r=canvas.getBoundingClientRect();
     ptr.x=((e.clientX-r.left)/r.width)*2-1; ptr.y=-((e.clientY-r.top)/r.height)*2+1;
     ray.setFromCamera(ptr,camera);
     const hit=ray.intersectObjects(badges.map(b=>b.glass),false);
-    hovered = hit.length ? badges.findIndex(b=>b.glass===hit[0].object) : -1;
+    return hit.length ? badges.findIndex(b=>b.glass===hit[0].object) : -1;
+  }
+  function pick(e){
+    hovered = hitTest(e);
     stage.style.cursor = hovered>=0 ? 'pointer' : 'default';
   }
   stage.addEventListener('pointermove',pick);
   stage.addEventListener('pointerleave',()=>{ hovered=-1; });
+  // tap / click a card → make it the persistent selection (emits the same event the buttons use, so the
+  // button states + live description stay in sync). Works for touch (no hover needed).
+  stage.style.pointerEvents='auto';
+  stage.addEventListener('click', e=>{ const i=hitTest(e); if(i>=0) document.dispatchEvent(new CustomEvent('ug-select',{detail:i})); });
 
   // ── resize ────────────────────────────────────────────────────────────
   function resize(){
@@ -2034,7 +2121,8 @@
     badges.forEach((b,i)=>{
       // ── phase machine: side cards tilt OUT first, then come to the front (and reverse on leave);
       //    the centre card has no waypoint and moves straight in/out ──────────
-      const want = (i===hovered) ? 'front' : 'rest';
+      const active = hovered>=0 ? hovered : selected;   // hover overrides the persistent selection while present
+      const want = (i===active) ? 'front' : 'rest';
       if (b.side===0){ b.phase=want; }
       else if (want==='front'){
         if (b.phase==='rest') b.phase='tilt';
@@ -2051,8 +2139,9 @@
       b.pivot.rotation.set(c.rx,c.ry,c.rz);
       b.pivot.position.set(c.x,b.base.y,c.z); b.pivot.scale.setScalar(c.s);
     });
-    // hovered badge (shadow + glass + content) renders on top, else keep the back-to-front stack
-    badges.forEach((b,i)=>{ const o=(i===hovered)?7:b.base.order;
+    // the active badge (selected, or hovered) renders on top, else keep the back-to-front stack
+    const activeTop = hovered>=0 ? hovered : selected;
+    badges.forEach((b,i)=>{ const o=(i===activeTop)?7:b.base.order;
       b.sh.renderOrder=o*3; b.glass.renderOrder=o*3+1; b.content.renderOrder=o*3+2; });
     renderer.render(scene,camera);
     requestAnimationFrame(tick);
