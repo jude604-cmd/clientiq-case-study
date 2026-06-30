@@ -255,21 +255,28 @@
   .market-chart .mc-legend li{display:flex; align-items:center; gap:12px; font-weight:500; font-size:16px; color:var(--ink-2)}
   .market-chart .mc-legend li span{width:16px; height:16px; border-radius:4px; background:var(--c); flex:none}
 
-  /* ── problem-statement analytics table (the "low engagement" evidence) ──── */
-  .data-table-card{background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; overflow:hidden; padding:0}
-  .dt-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
-  .dt{width:100%; min-width:860px; border-collapse:collapse; font-size:13px}
-  .dt thead th{position:sticky; top:0; background:#7c769f; color:#fff;
-    font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:600; font-size:12px; letter-spacing:.01em;
-    text-align:left; padding:13px 13px; white-space:nowrap; vertical-align:bottom}
-  .dt th.num,.dt td.num{text-align:right; font-variant-numeric:tabular-nums}
-  .dt tbody td{padding:10px 13px; border-bottom:1px solid rgba(58,40,110,.07); color:var(--ink-2); white-space:nowrap}
-  .dt tbody td:first-child{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink)}
-  .dt tbody tr:nth-child(even) td{background:rgba(124,108,240,.035)}
-  .dt tbody tr:last-child td{border-bottom:none}
-  .dt .dt-omit td{text-align:center; color:var(--ink-4); font-family:"IBM Plex Mono",monospace;
-    font-size:11px; letter-spacing:.04em; background:rgba(124,108,240,.06)}
-  .problem-table-cap{margin-top:16px; font-size:14px; color:var(--ink-3); max-width:70ch}
+  /* ── problem-statement evidence callout (summarised — raw path-level analytics redacted) ──── */
+  .signal-block{margin-top:var(--gap-sub); background:#fff; border:1px solid rgba(58,40,110,.086);
+    border-radius:18px; padding:clamp(28px,3.4vw,46px)}
+  .signal-row{display:flex; flex-wrap:wrap; gap:clamp(20px,4vw,56px); padding-bottom:clamp(26px,3vw,38px);
+    margin-bottom:clamp(26px,3vw,38px); border-bottom:1px solid var(--line-soft)}
+  .signal-metric{display:flex; flex-direction:column; gap:8px; min-width:200px}
+  .signal-metric .sm-n{font-family:'Thunder',var(--sans); font-weight:900; font-synthesis:none;
+    font-size:clamp(46px,6vw,82px); line-height:.86; letter-spacing:-.01em; color:var(--accent)}
+  .signal-metric .sm-l{font-size:clamp(14px,1.2vw,16px); line-height:1.35; color:var(--ink-3); max-width:24ch}
+  .signal-points{display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(24px,3vw,40px); margin:0}
+  .signal-points > div{display:flex; flex-direction:column; gap:10px}
+  .signal-points dt{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+  .signal-points dd{margin:0; font-size:clamp(15px,1.3vw,17px); line-height:1.5; color:var(--ink-2)}
+  @media(max-width:760px){ .signal-points{grid-template-columns:1fr} }
+
+  /* ── marketplace growth loop — lightweight text chips joined by arrows ──── */
+  .growth-loop{list-style:none; margin:24px 0 0; padding:0; display:flex; flex-wrap:wrap;
+    align-items:center; gap:12px 0}
+  .growth-loop li{font-family:var(--mono); font-size:clamp(12.5px,1.1vw,14px); letter-spacing:.01em;
+    color:var(--ink-2); background:var(--accent-tint); border-radius:var(--pill); padding:9px 16px}
+  .growth-loop li:not(:last-child)::after{content:"→"; color:var(--accent); margin:0 12px 0 16px; font-weight:600}
+  @media(max-width:560px){ .growth-loop li:not(:last-child)::after{margin:0 8px 0 10px} }
 
   /* research findings — two table images side by side in equal-size white boxes */
   .rf-pair{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2vw,28px); margin-top:32px}
@@ -449,10 +456,11 @@
   #outcome .oc-content .h{text-shadow:0 1px 20px rgba(255,255,255,.5)}   /* original editorial size; halo for legibility over the collage */
   #outcome .o-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(11px,1.7vh,32px) 48px}
   #outcome .oc-content .stat{line-height:.9}                            /* original editorial font-size; tight leading so the 2×2 fits */
-  #outcome .oc-content .lead{max-width:62ch}
+  #outcome .oc-content .lead{max-width:62ch; font-size:clamp(15px,1.45vw,18px); line-height:1.42}
   /* very short viewports only: tighten spacing further (NOT the type) so the big stats still fit */
-  @media (max-height:720px){ #outcome .oc-content .wrap > * + *{margin-top:12px!important}
-    #outcome .o-grid{gap:8px 48px} }
+  @media (max-height:720px){ #outcome .oc-content .wrap > * + *{margin-top:7px!important}
+    #outcome .o-grid{gap:6px 48px}
+    #outcome .oc-content .lead{font-size:13.5px; line-height:1.3} }
   /* reduced motion / small screens: no pin, no scrub — composed end state, static + readable */
   #outcome.oc-static .oc-track{height:auto}
   #outcome.oc-static .oc-stage{position:static; height:auto; overflow:visible; padding:var(--sec-y-tight) 0}
@@ -829,7 +837,7 @@
       </div>
       <p class="tag">Redesigning the creator experience for Zappos' affiliate program so influencers actually made and shared content. Output grew elevenfold.</p>
       <div class="metaRow">
-        <div class="item"><div class="k">Role</div><div class="v">Senior UX Designer</div></div>
+        <div class="item"><div class="k">Role</div><div class="v">UX Designer II · Design lead for ZIP</div></div>
         <div class="item"><div class="k">Company</div><div class="v">Amazon · Zappos</div></div>
         <div class="item"><div class="k">Timeline</div><div class="v">2021 – 2022</div></div>
         <div class="item"><div class="k">Focus</div><div class="v">Research, content tools, design strategy</div></div>
@@ -998,46 +1006,30 @@
       <h2 class="h reveal d1" style="color:var(--accent)">Low Engagement</h2>
     </div>
     <p class="lead reveal" style="max-width:76ch">Based on ZIP's data findings in early 2022, the platform was facing low influencer engagement in content output <b>(On average 1 collection per influencer)</b> and usage frequency <b>(On average 2 logins per month)</b>. To kick off the project and to study the usability standards and overall user experience, we conducted market research.</p>
-    <figure class="reveal data-table-card">
-      <div class="dt-scroll">
-        <table class="dt">
-          <caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">Collection-page traffic and conversion analytics from early 2022: high visits, but near-zero conversions and no sales.</caption>
-          <thead>
-            <tr>
-              <th scope="col">HTTP Request Path</th>
-              <th scope="col" class="num">Visits</th>
-              <th scope="col" class="num">Page Views</th>
-              <th scope="col" class="num">Page Conversions</th>
-              <th scope="col" class="num">Bounce Rate</th>
-              <th scope="col" class="num">Unique Order ID</th>
-              <th scope="col" class="num">Gross Order Product Sales</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>/collection/ksvuv2r0c2vpiido43q3eno33713tbdu7uh9</td><td class="num">1,909</td><td class="num">2,879</td><td class="num">0</td><td class="num">60.77%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/tus2r5q31i8tm26sr7t2tffpcj43ktf8tbuo</td><td class="num">1,333</td><td class="num">1,675</td><td class="num">0</td><td class="num">81.73%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/tgjua928p8kdmc9b2820jbv0dtoe2cg60m6q</td><td class="num">1,163</td><td class="num">1,516</td><td class="num">1</td><td class="num">74.29%</td><td class="num">1</td><td class="num">$77.97</td></tr>
-            <tr><td>/collection/l85if6kr9r244rkgc5d912rq8oee7ucse92e</td><td class="num">1,161</td><td class="num">1,240</td><td class="num">0</td><td class="num">94.78%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/1nhbm2ij74j3s7pdijgo68fap2hrk0dmcfth</td><td class="num">786</td><td class="num">835</td><td class="num">0</td><td class="num">93.66%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/2cj2vtlhcd4tmv6em36c6s9n549v9pfaulbm</td><td class="num">736</td><td class="num">830</td><td class="num">0</td><td class="num">90.60%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/1tpeu57b43lva1n6pq2ok14bqiqaslbah5pr</td><td class="num">577</td><td class="num">607</td><td class="num">0</td><td class="num">94.88%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/e1dvb3ljoupeon5ttnt3m5u3n2tncna4qm6b</td><td class="num">489</td><td class="num">501</td><td class="num">0</td><td class="num">97.37%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/il5sshos4emuu8hh2ofopnbtait62nboi1kr</td><td class="num">485</td><td class="num">502</td><td class="num">0</td><td class="num">97.11%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/trfkmv14v0nbc2mn3q92n21a358ovhirgc6k</td><td class="num">421</td><td class="num">429</td><td class="num">0</td><td class="num">98.34%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr class="dt-omit"><td colspan="7">⋯  more collections, same pattern: high bounce, near-zero conversions, $0 sales  ⋯</td></tr>
-            <tr><td>/collection/k2qsopinp4rsvrc5o1b8rikrfs3k5lp1e6eq</td><td class="num">12</td><td class="num">15</td><td class="num">0</td><td class="num">84.62%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/briteg4nqvonmfe1lqeb5ogun62i4u8autck</td><td class="num">11</td><td class="num">21</td><td class="num">0</td><td class="num">46.67%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/g55kv3cd8av6egjdnp99kebqop5vvo8cv5sb</td><td class="num">10</td><td class="num">11</td><td class="num">0</td><td class="num">100.00%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/2sfq0qe49eedhe9e3r32mvgh0tk8skeuj4ci</td><td class="num">10</td><td class="num">10</td><td class="num">0</td><td class="num">100.00%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/vco22u3ujd7ccp81dk8cnf8ukda25vmf81q8</td><td class="num">9</td><td class="num">14</td><td class="num">0</td><td class="num">90.00%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/1no4k6oj51b1roq91nhd90lajf09h5lle12l</td><td class="num">9</td><td class="num">15</td><td class="num">0</td><td class="num">77.78%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/52l6aqrhdlrm7erpqhbaglr9u9070nsmd06e</td><td class="num">8</td><td class="num">14</td><td class="num">0</td><td class="num">62.50%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-            <tr><td>/collection/5co22hhq7daeiat60n8kk5nmn1m6439mqr81</td><td class="num">7</td><td class="num">11</td><td class="num">0</td><td class="num">83.33%</td><td class="num">0</td><td class="num">$0.00</td></tr>
-          </tbody>
-        </table>
+    <div class="signal-block reveal" role="group" aria-label="What the early-2022 analytics told us">
+      <div class="signal-row">
+        <div class="signal-metric"><span class="sm-n">80–90%+</span><span class="sm-l">bounce on high-visit collection pages</span></div>
+        <div class="signal-metric"><span class="sm-n">$0</span><span class="sm-l">sales on several of the most-visited pages</span></div>
       </div>
-      <figcaption class="problem-table-cap">A slice of collection-page analytics from early 2022: heavy traffic, bounce rates near 100%, almost no conversions, and essentially zero sales. The content existed: it just wasn't pulling people in or converting.</figcaption>
-    </figure>
+      <dl class="signal-points">
+        <div><dt>The signal</dt><dd>High traffic was not converting into meaningful shopping behavior. Several high-visit collection pages had zero sales, and bounce rates were frequently above 80–90%.</dd></div>
+        <div><dt>What it told us</dt><dd>The issue was not just discoverability. Shoppers were arriving, but the experience was not giving them enough confidence, context, or product inspiration to continue.</dd></div>
+        <div><dt>Product implication</dt><dd>We needed to improve the quality of the creator-to-shopper journey, not simply drive more traffic to the same surfaces.</dd></div>
+      </dl>
+    </div>
+
+    <div class="loop-block reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">The growth loop we needed to strengthen</h3>
+      <ol class="growth-loop" aria-label="Marketplace growth loop">
+        <li>Creator content output</li>
+        <li>Shopper inspiration</li>
+        <li>Product discovery</li>
+        <li>Purchases</li>
+        <li>Creator incentive</li>
+        <li>Repeat content creation</li>
+      </ol>
+      <p class="body" style="margin-top:28px;max-width:66ch">The experience had to serve both sides of the marketplace. For creators, the product needed to make content creation feel useful, repeatable, and worth the effort. For shoppers, it needed to turn influencer content into credible product discovery instead of another generic shopping page.</p>
+    </div>
   </div>
 </section>
 
@@ -1374,6 +1366,13 @@
         <div class="card" role="listitem"><span class="tag-new" style="color:#4b4564;background:rgba(255,255,255,.5)">Optimization</span><h4 class="sub">Influencer Hub</h4><p class="body">A reorganised dashboard with clearer navigation and prioritised actions.</p></div>
       </div>
     </div>
+
+    <div class="reveal bets" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Why these bets</h3>
+      <p class="body" style="margin-top:18px;max-width:66ch">The research pointed to several possible directions: better onboarding, deeper creator analytics, more monetization tools, social sharing, storefront improvements, and faster content creation.</p>
+      <p class="body" style="margin-top:20px;max-width:66ch">We prioritized the surfaces most likely to increase content production and reuse: a clearer creator destination, a faster way to build shoppable content, and a simpler hub for managing work. These were the highest-leverage points in the creator workflow because they reduced effort before asking influencers to optimize performance.</p>
+      <p class="body" style="margin-top:20px;max-width:66ch">We intentionally deprioritized deeper reporting and advanced monetization features for this phase. The core problem was not yet optimization. Creators first needed a reason and a path to create content consistently.</p>
+    </div>
   </div>
 </section>
 
@@ -1540,6 +1539,7 @@
         <div class="wrap">
           <div class="eyebrow"><span>(11) · Outcome</span></div>
           <h2 class="h" style="max-width:18ch">More creators. Far more content.</h2>
+          <p class="lead" style="max-width:62ch">Following the launch period, the redesigned creator experience was associated with:</p>
           <div class="o-grid">
             <div>
               <div class="stat accent">3.5×</div>
@@ -1558,7 +1558,7 @@
               <div class="stat-l">improved overall accessibility and usability</div>
             </div>
           </div>
-          <p class="lead" style="max-width:62ch">Give creators a storefront of their own, shoppable content that converts, and a hub that respects their time, and a quiet platform becomes one they come back to. The content followed.</p>
+          <p class="lead" style="max-width:64ch">These metrics mattered because they mapped directly to the original product problem. ZIP did not need a more polished creator interface for its own sake; it needed a system that made influencers more likely to return, create, and publish content that shoppers could act on.</p>
         </div>
       </div>
     </div>
