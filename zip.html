@@ -127,12 +127,15 @@
   /* pull the wheel up close to the lead (overrides the DS `.wrap > * + *` 128px gap, which is !important) */
   #approach .pw{position:relative; width:min(560px,90%); margin:48px auto 8px!important; aspect-ratio:1}
   #approach .pw-ring{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; filter:blur(7px)}   /* soften + lighten the cycle arrows */
-  /* phase labels are now short phrases (not single words), so allow a 2-line wrap, centred on the point */
+  /* each phase label is two explicit lines: a big verb, then the rest smaller. width:max-content sizes
+     the button to its widest line so it isn't squeezed by its --x left offset. */
   #approach .pw-step{position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%);
-    font-family:var(--sans); font-weight:700; font-size:clamp(13px,1.45vw,19px); letter-spacing:-.012em;
-    color:var(--accent); white-space:normal; text-align:center; width:8.5em;   /* explicit width (not max-width) so labels keep a fixed 2-line box at any --x position, not squeezed by their left offset */
-    border:0; background:none; margin:0; padding:6px 8px; line-height:1.12; cursor:pointer;
+    display:block; width:max-content; text-align:center;
+    font-family:var(--sans); letter-spacing:-.012em; color:var(--accent);
+    border:0; background:none; margin:0; padding:6px 8px; cursor:pointer;
     transition:transform .3s var(--ease), opacity .25s var(--ease)}
+  #approach .pw-verb{display:block; font-weight:700; font-size:clamp(16px,1.95vw,25px); line-height:1.0; white-space:nowrap}
+  #approach .pw-rest{display:block; font-weight:600; font-size:clamp(11px,1.2vw,14.5px); line-height:1.1; white-space:nowrap; margin-top:3px}
   #approach .pw-step:hover,#approach .pw-step:focus-visible{transform:translate(-50%,-50%) scale(1.07); outline:none}
   #approach .pw.show-detail .pw-step:not(:hover):not(:focus-visible){opacity:.4}   /* dim the others while one is active */
   /* frosted-glass detail panel, centred in the wheel */
@@ -147,7 +150,7 @@
     opacity:0; visibility:hidden; pointer-events:none;
     transition:opacity .3s var(--ease), transform .35s var(--ease), visibility .3s}
   #approach .pw.show-detail .pw-detail{opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1)}
-  @media (max-width:560px){ #approach .pw{width:98%} #approach .pw-step{font-size:12px;width:7.5em} #approach .pw-detail{width:72%;padding:16px 18px} }
+  @media (max-width:560px){ #approach .pw{width:98%} #approach .pw-verb{font-size:15px} #approach .pw-rest{font-size:11px} #approach .pw-detail{width:72%;padding:16px 18px} }
 
   /* ── User groups: three lanyard badges in a 3D (three.js) scene ── */
   /* heading + caption sit ABOVE the canvas (which bleeds upward over this area) so the purple
@@ -955,12 +958,12 @@
           <path d="M55 153.6 A70 70 0 0 1 123.9 34.2" marker-end="url(#pwAh)"/>
         </g>
       </svg>
-      <button class="pw-step" type="button" style="--x:50%;--y:10%" data-detail="Mapped the creator-commerce marketplace and how ZIP's three sides connect, through analytics, a competitive audit of Amazon's program, and interviews with creators and shoppers.">Understand the system</button>
-      <button class="pw-step" type="button" style="--x:80%;--y:30%" data-detail="Read past traffic to the real bottleneck: thin creator content was breaking the marketplace growth loop from both sides.">Diagnose the constraint</button>
-      <button class="pw-step" type="button" style="--x:80%;--y:70%" data-detail="Turned the diagnosis into testable bets about what would make content creation feel useful, repeatable, and worth coming back to.">Explore product bets</button>
-      <button class="pw-step" type="button" style="--x:50%;--y:90%" data-detail="Concept-tested with influencers and shoppers; the storefront signal and the shoppable-imagery evidence narrowed the direction to three bets.">Validate direction</button>
-      <button class="pw-step" type="button" style="--x:20%;--y:70%" data-detail="Designed the response across Storefront, Shoppable Content, and Hub, from information architecture and flows to high-fidelity screens.">Shape the experience</button>
-      <button class="pw-step" type="button" style="--x:20%;--y:30%" data-detail="Shipped with accessibility built into the handoff, defined success metrics, and used the same growth-loop lens to plan what came next.">Deliver and extend</button>
+      <button class="pw-step" type="button" style="--x:50%;--y:10%" data-detail="Mapped the creator-commerce marketplace and how ZIP's three sides connect, through analytics, a competitive audit of Amazon's program, and interviews with creators and shoppers."><span class="pw-verb">Understand</span> <span class="pw-rest">the system</span></button>
+      <button class="pw-step" type="button" style="--x:80%;--y:30%" data-detail="Read past traffic to the real bottleneck: thin creator content was breaking the marketplace growth loop from both sides."><span class="pw-verb">Diagnose</span> <span class="pw-rest">the constraint</span></button>
+      <button class="pw-step" type="button" style="--x:80%;--y:70%" data-detail="Turned the diagnosis into testable bets about what would make content creation feel useful, repeatable, and worth coming back to."><span class="pw-verb">Explore</span> <span class="pw-rest">product bets</span></button>
+      <button class="pw-step" type="button" style="--x:50%;--y:90%" data-detail="Concept-tested with influencers and shoppers; the storefront signal and the shoppable-imagery evidence narrowed the direction to three bets."><span class="pw-verb">Validate</span> <span class="pw-rest">direction</span></button>
+      <button class="pw-step" type="button" style="--x:20%;--y:70%" data-detail="Designed the response across Storefront, Shoppable Content, and Hub, from information architecture and flows to high-fidelity screens."><span class="pw-verb">Shape</span> <span class="pw-rest">the experience</span></button>
+      <button class="pw-step" type="button" style="--x:20%;--y:30%" data-detail="Shipped with accessibility built into the handoff, defined success metrics, and used the same growth-loop lens to plan what came next."><span class="pw-verb">Deliver</span> <span class="pw-rest">and extend</span></button>
       <div class="pw-detail" aria-live="polite"></div>
     </div>
     <p class="body reveal" style="margin-top:40px!important;max-width:74ch">A design-thinking process helped turn a broad engagement problem into a focused creator-commerce strategy: understand the marketplace system, diagnose the content constraint, test product bets, and ship the experiences most likely to change creator behavior.</p>
@@ -1047,17 +1050,6 @@
         <li>Customer Experience</li>
         <li>Agent Experience</li>
       </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ══ WHAT THIS MEANT — the diagnosis-to-strategy bridge ══ -->
-<section class="sec-tight" id="strategy-transition">
-  <div class="wrap">
-    <div class="decision-note reveal">
-      <p class="dn-k">What this meant for the product</p>
-      <p class="dn-b">The opportunity was not to add more features around the existing workflow. It was to reshape the creator journey around three behaviors: giving creators a destination worth sharing, making content faster to produce, and helping shoppers act on inspiration.</p>
-      <p class="dn-b">That set up the three bets the rest of the project tested and built: Storefront, Shoppable Content, and Hub.</p>
     </div>
   </div>
 </section>
@@ -1312,6 +1304,13 @@
         <div class="card reveal d1"><div class="num">05</div><h4 class="sub">Share Options</h4><p class="body">Creators need share options tuned to each platform, Instagram in particular.</p></div>
         <div class="card reveal d2"><div class="num">06</div><h4 class="sub">Customization</h4><p class="body">Creators need to personalise their pages to be recognisable and serve their followers.</p></div>
       </div>
+    </div>
+
+    <!-- What this meant for the product (moved under the hypotheses) -->
+    <div class="decision-note reveal" style="margin-top:var(--gap-sub)">
+      <p class="dn-k">What this meant for the product</p>
+      <p class="dn-b">The opportunity was not to add more features around the existing workflow. It was to reshape the creator journey around three behaviors: giving creators a destination worth sharing, making content faster to produce, and helping shoppers act on inspiration.</p>
+      <p class="dn-b">That set up the three bets the rest of the project tested and built: Storefront, Shoppable Content, and Hub.</p>
     </div>
 
     <div class="reveal" style="margin-top:var(--gap-sub)">
