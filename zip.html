@@ -477,16 +477,12 @@
   #outcome .o-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:clamp(11px,1.7vh,32px) 48px}
   #outcome .oc-content .stat{line-height:.9}                            /* original editorial font-size; tight leading so the 2×2 fits */
   #outcome .oc-content .lead{max-width:62ch; font-size:clamp(15px,1.45vw,18px); line-height:1.42}
-  /* shorter viewports: tighten the RHYTHM + the supporting lead (never the big stats) so the
-     2×2 of stats plus the two supporting paragraphs still fit one pinned viewport. Two tiers. */
-  @media (max-height:940px){
-    #outcome .oc-content .wrap > * + *{margin-top:clamp(8px,1.3vh,18px)!important}
-    #outcome .o-grid{gap:clamp(6px,1vh,14px) 48px}
-    #outcome .oc-content .lead{font-size:14px; line-height:1.3} }
-  @media (max-height:760px){
-    #outcome .oc-content .wrap > * + *{margin-top:4px!important}
-    #outcome .o-grid{gap:4px 48px}
-    #outcome .oc-content .lead{font-size:12px; line-height:1.22} }
+  /* only short viewports need a nudge now (two hero stats, not four): mildly tighten the rhythm
+     + supporting lead so the stats and the two supporting paragraphs hold one pinned viewport.
+     Never the big stats. */
+  @media (max-height:720px){
+    #outcome .oc-content .wrap > * + *{margin-top:clamp(10px,1.7vh,20px)!important}
+    #outcome .oc-content .lead{font-size:14.5px; line-height:1.32} }
   /* reduced motion / small screens: no pin, no scrub — composed end state, static + readable */
   #outcome.oc-static .oc-track{height:auto}
   #outcome.oc-static .oc-stage{position:static; height:auto; overflow:visible; padding:var(--sec-y-tight) 0}
@@ -1485,7 +1481,7 @@
     <!-- Bet 3 · Hub -->
     <div class="reveal" style="margin-top:var(--gap-sub)">
       <h3 class="sub">Hub: making repeat creation easier</h3>
-      <p class="body" style="margin-top:18px;max-width:64ch">The Hub became the operational center for repeat creation: a simpler place to manage content, track status, review performance signals, and return to the next publishing task. Iterative testing showed long pages were confusing creators, so the flow was streamlined and made mobile-friendly.</p>
+      <p class="body" style="margin-top:18px;max-width:64ch">The Hub became the operational center for repeat creation: a simpler place to manage content, track status, review performance signals, and return to the next publishing task.</p>
     </div>
     <div class="reveal" style="margin-top:32px!important">
       <figure class="figure bare">
@@ -1641,17 +1637,9 @@
               <div class="stat accent">11×</div>
               <div class="stat-l">increase in influencer content created</div>
             </div>
-            <div>
-              <div class="stat accent">↓</div>
-              <div class="stat-l">lower bounce rate and higher average time on site</div>
-            </div>
-            <div>
-              <div class="stat accent">A11y</div>
-              <div class="stat-l">improved overall accessibility and usability</div>
-            </div>
           </div>
-          <p class="lead" style="max-width:66ch">Directionally, the shopper side moved with it: the bounce-rate and time-on-site shifts shown above. Accessibility improvements were designed into the handoff so the experience could scale with a stronger baseline for keyboard, screen-reader, and responsive behavior.</p>
-          <p class="lead" style="max-width:64ch">These metrics mattered because they mapped directly to the original product problem. ZIP did not need a more polished creator interface for its own sake; it needed a system that made influencers more likely to return, create, and publish content that shoppers could act on.</p>
+          <p class="lead" style="max-width:66ch">Directionally, we also saw stronger shopper engagement signals, including lower bounce rate and higher average time on site. Accessibility improvements were designed into the handoff so the experience could scale with a stronger baseline for keyboard, screen-reader, and responsive behavior.</p>
+          <p class="lead" style="max-width:64ch">These metrics mattered because they mapped directly to the original product problem. ZIP did not need a more polished creator interface for its own sake; it needed a system that made influencers more likely to return, create, and publish content shoppers could act on.</p>
         </div>
       </div>
     </div>
