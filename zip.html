@@ -296,10 +296,12 @@
   @media(max-width:560px){ .growth-loop li:not(:last-child)::after{margin:0 8px 0 10px} }
 
   /* research findings — two table images side by side in equal-size white boxes */
-  .rf-pair{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2vw,28px); margin-top:32px}
+  /* two parts of one validation table at different aspect ratios — size each card to its own image and
+     top-align them, so the landscape part fills its column instead of floating tiny in a forced portrait box */
+  .rf-pair{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2vw,28px); margin-top:32px; align-items:start}
   .rf-pair figure{margin:0; background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px;
-    aspect-ratio:4/5; overflow:hidden; padding:clamp(12px,1.6vw,22px); display:flex}
-  .rf-pair img{width:100%; height:100%; object-fit:contain; display:block; margin:auto}
+    overflow:hidden; padding:clamp(14px,1.6vw,22px)}
+  .rf-pair img{width:100%; height:auto; object-fit:contain; display:block; margin:0}
   @media(max-width:760px){ .rf-pair{grid-template-columns:1fr} }
 
   /* labels above the two word clouds (one per half) */
@@ -466,7 +468,11 @@
     filter:blur(var(--obg-blur,0px)); opacity:var(--obg-op,1);
     transform:translateZ(0); will-change:filter,opacity}
   #outcome .oc-content{position:absolute; inset:0; z-index:1;
-    display:flex; flex-direction:column; justify-content:center; will-change:transform,opacity}
+    display:flex; flex-direction:column; justify-content:center; align-items:stretch; will-change:transform,opacity}
+  /* the inner .wrap is a flex item in a column flex: without an explicit width its auto side-margins
+     collapse it to content width (~837px) and centre it ~170px off the page grid. width:100% gives it a
+     definite cross-size so max-width:1180 + margin:auto land it on the SAME grid as every other section. */
+  #outcome .oc-content .wrap{width:100%}
   /* compact the RHYTHM only (overrides the DS 128px `> * + *` rule) so the block fits one
      viewport — the ORIGINAL big type is kept; never shrink the type to make it fit. */
   #outcome .oc-content .wrap > * + *{margin-top:clamp(15px,2.3vh,46px)!important}
