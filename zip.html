@@ -153,26 +153,19 @@
   /* ── User groups: three lanyard badges in a 3D (three.js) scene ── */
   #user-groups .h{text-align:center; max-width:none}
   /* subtitle hugs the title + stage sits a normal gap below — override the DS `.wrap > * + *` 128px (it's !important) */
-  #user-groups .ug-sub{text-align:center; color:var(--ink-4); font-size:clamp(16px,1.5vw,20px); margin-top:18px!important}
-  #user-groups .ug-stage{position:relative; max-width:1100px; margin:46px auto 0!important; height:clamp(380px,46vw,560px); touch-action:pan-y; overflow:visible}
+  #user-groups .ug-sub{text-align:center; color:var(--ink-3); font-size:clamp(16px,1.5vw,20px);
+    max-width:74ch; margin:18px auto 0!important; line-height:1.5}
+  #user-groups .ug-hint{display:block; margin-top:10px; color:var(--ink-5); font-size:.82em}
+  #user-groups .ug-stage{position:relative; max-width:1100px; margin:40px auto 0!important; height:clamp(380px,46vw,560px); touch-action:pan-y; overflow:visible}
   /* canvas bleeds above/below the stage box so a hovered (zoomed) card can grow past it without clipping;
      pointer-events:none so the overflow doesn't block the text it overlaps — events are bound to the stage */
   #user-groups #ug-canvas{display:block; position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none}
-  #user-groups .ug-stage.no3d{display:none}   /* no WebGL → drop the empty stage; the real buttons below carry the content */
-  /* accessible control: real buttons that select a group (click / tap / keyboard / screen-reader) */
-  #user-groups .ug-controls{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:32px auto 0; max-width:740px}
-  #user-groups .ug-btn{flex:1 1 200px; min-width:178px; display:flex; flex-direction:column; gap:5px; text-align:left;
-    background:#fff; border:1px solid var(--line); border-radius:var(--r-md); padding:16px 20px; cursor:pointer;
-    transition:border-color .2s, box-shadow .25s var(--ease), transform .25s var(--ease)}
-  #user-groups .ug-btn:hover{transform:translateY(-3px); box-shadow:0 12px 26px -12px rgba(109,74,255,.32)}
-  #user-groups .ug-btn[aria-pressed="true"]{border-color:var(--accent);
-    box-shadow:0 0 0 1px var(--accent), 0 16px 32px -14px rgba(109,74,255,.45)}
-  #user-groups .ug-btn-role{font-family:var(--sans); font-weight:700; font-size:17px; color:var(--ink)}
-  #user-groups .ug-btn-cap{font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-4)}
-  #user-groups .ug-desc{text-align:center; max-width:56ch; margin:22px auto 0; color:var(--ink-2);
-    font-size:clamp(16px,1.4vw,19px); line-height:1.5; min-height:1.5em}
-  @media (max-width:680px){ #user-groups .ug-stage{height:clamp(420px,118vw,560px)}
-    #user-groups .ug-btn{flex:1 1 100%} }
+  /* legend = screen-reader labels + graceful fallback if WebGL/JS is unavailable (the caption carries the
+     visible explanation; the 3D cards are a decorative enhancement of it) */
+  #user-groups .ug-legend{list-style:none; margin:0; padding:0; position:absolute; width:1px; height:1px;
+    overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%)}
+  #user-groups .ug-stage.no3d{display:none}   /* no WebGL → drop the empty stage; the caption above still names all three groups */
+  @media (max-width:680px){ #user-groups .ug-stage{height:clamp(420px,118vw,560px)} }
 
   /* ── persona card (teal, two columns of white cards) ─────────────────────── */
   .persona{--p-ink:#16243f; --p-body:#363957; --p-bullet:#7c6cf0;
@@ -985,12 +978,43 @@
     <div class="grid2 top">
       <div>
         <div class="eyebrow reveal"><span>(03) · The problem</span></div>
-        <h2 class="h reveal d1">Engagement was low. Content was the bottleneck.</h2>
+        <h2 class="h reveal d1">ZIP had a participation problem.</h2>
       </div>
       <div>
-        <p class="lead reveal">Early-2022 data showed a platform people signed up for but rarely used. Output was thin and visits were infrequent. Without a steady stream of content, there was nothing to pull in traffic or sales.</p>
+        <p class="lead reveal">Influencers were enrolled, but they weren't returning often enough or creating enough content to make the marketplace useful for shoppers. The business needed more than a cleaner creator tool; it needed a system that made content creation feel repeatable, valuable, and worth coming back to.</p>
       </div>
     </div>
+
+    <blockquote class="full reveal">“Influencers are looking for different ways to monetize their content, and they have plenty of choices outside Zappos to earn money.”
+      <cite>Research synthesis, 2022</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ══ USER GROUPS ══ -->
+<section class="sec" id="user-groups" data-toc="User groups">
+  <div class="wrap">
+    <h2 class="h reveal">User Groups</h2>
+    <p class="ug-sub reveal d1">ZIP is a marketplace with three sides: influencers who create the content, customers who shop it, and agents who keep it running. This case study focuses on the influencer experience, the side that sets the whole loop in motion. <span class="ug-hint">Hover a badge to bring it forward.</span></p>
+    <div class="ug-stage reveal d2" id="ug-stage">
+      <canvas id="ug-canvas" aria-hidden="true"></canvas>
+      <ul class="ug-legend" aria-label="ZIP user groups">
+        <li>Influencer Experience</li>
+        <li>Customer Experience</li>
+        <li>Agent Experience</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROBLEM STATEMENT ══ -->
+<section class="sec" id="problem-statement" data-toc="What the data showed">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow reveal"><span>(04) · What the data showed</span></div>
+      <h2 class="h reveal d1" style="color:var(--accent)">The data pointed past traffic.</h2>
+    </div>
+    <p class="lead reveal" style="max-width:74ch">Creator activity was thin: influencers created roughly one collection on average and logged in only a few times a month. On the shopper side, high-traffic collection pages weren't consistently converting, which told us traffic alone wasn't the constraint.</p>
 
     <div class="statband reveal">
       <div>
@@ -1003,43 +1027,6 @@
       </div>
     </div>
 
-    <blockquote class="full reveal">“Influencers are looking for different ways to monetize their content — and they have plenty of choices outside Zappos to earn money.”
-      <cite>Research synthesis, 2022</cite>
-    </blockquote>
-  </div>
-</section>
-
-<!-- ══ USER GROUPS ══ -->
-<section class="sec" id="user-groups" data-toc="User groups">
-  <div class="wrap">
-    <h2 class="h reveal">User Groups</h2>
-    <p class="ug-sub reveal d1">ZIP served three sides of one marketplace. <span class="ug-hint">Select a group to see how ZIP served each side of the marketplace.</span></p>
-    <div class="ug-stage reveal d2" id="ug-stage">
-      <canvas id="ug-canvas" aria-hidden="true"></canvas>
-    </div>
-    <div class="ug-controls reveal d2" role="group" aria-label="ZIP user groups — select one">
-      <button type="button" class="ug-btn" data-ug="0" aria-pressed="true" aria-describedby="ug-desc">
-        <span class="ug-btn-role">Influencer</span><span class="ug-btn-cap">Creator-facing</span>
-      </button>
-      <button type="button" class="ug-btn" data-ug="1" aria-pressed="false" aria-describedby="ug-desc">
-        <span class="ug-btn-role">Customer</span><span class="ug-btn-cap">Shopper-facing</span>
-      </button>
-      <button type="button" class="ug-btn" data-ug="2" aria-pressed="false" aria-describedby="ug-desc">
-        <span class="ug-btn-role">Agent</span><span class="ug-btn-cap">Support-facing</span>
-      </button>
-    </div>
-    <p class="ug-desc reveal" id="ug-desc" aria-live="polite">Where creators build, organise, and share shoppable content, the input the whole growth loop depends on.</p>
-  </div>
-</section>
-
-<!-- ══ PROBLEM STATEMENT ══ -->
-<section class="sec" id="problem-statement" data-toc="Reading the data">
-  <div class="wrap">
-    <div>
-      <div class="eyebrow reveal"><span>(04) · Reading the data</span></div>
-      <h2 class="h reveal d1" style="color:var(--accent)">The data pointed past traffic.</h2>
-    </div>
-    <p class="lead reveal" style="max-width:74ch">The early-2022 numbers ruled out the obvious explanation. Creators' collection pages were pulling real visits but almost no sales, so the question wasn't how to drive more traffic. It was why the traffic we already had went nowhere.</p>
     <div class="signal-block reveal" role="group" aria-label="What the early-2022 analytics told us">
       <div class="signal-row">
         <div class="signal-metric"><span class="sm-n">80–90%+</span><span class="sm-l">bounce on high-visit collection pages</span></div>
@@ -1047,20 +1034,15 @@
       </div>
       <dl class="signal-points">
         <div><dt>The signal</dt><dd>High-traffic collection pages were not converting into meaningful shopping behavior. Several high-visit pages had zero sales, and bounce rates were frequently above 80–90%.</dd></div>
-        <div><dt>What it told us</dt><dd>The issue was not traffic alone. Shoppers were arriving, but the content experience was not giving them enough confidence, context, or product inspiration to continue.</dd></div>
+        <div><dt>What it told us</dt><dd>Shoppers were arriving, but the content experience wasn't giving them enough confidence, context, or product inspiration to continue.</dd></div>
         <div><dt>Product implication</dt><dd>We needed to improve the quality of the creator-to-shopper journey, not simply drive more traffic to the same surfaces.</dd></div>
       </dl>
     </div>
 
-    <div class="decision-note reveal" style="margin-top:48px">
-      <p class="dn-k">Decision unlocked</p>
-      <p class="dn-h">Treat ZIP as a marketplace, not an affiliate-link tool.</p>
-      <p class="dn-b">We stopped treating ZIP as a basic affiliate-content tool and focused on the parts of the system that could increase repeat content creation, the input the whole loop depended on.</p>
-    </div>
-
     <div class="loop-block reveal" style="margin-top:var(--gap-sub)">
-      <h3 class="sub">The growth loop we needed to strengthen</h3>
-      <ol class="growth-loop" aria-label="Marketplace growth loop">
+      <h3 class="sub">Why content quality mattered</h3>
+      <p class="body" style="margin-top:18px;max-width:66ch">In creator commerce, content isn't just inventory. It's the bridge between creator trust and shopper decision-making. If influencers didn't create enough useful content, shoppers had fewer reasons to explore products, and creators had fewer reasons to return. That weakened the growth loop on both sides of the marketplace.</p>
+      <ol class="growth-loop" aria-label="Marketplace growth loop" style="margin-top:28px">
         <li>Creator content output</li>
         <li>Shopper inspiration</li>
         <li>Product discovery</li>
@@ -1068,7 +1050,12 @@
         <li>Creator incentive</li>
         <li>Repeat content creation</li>
       </ol>
-      <p class="body" style="margin-top:28px;max-width:66ch">The experience had to serve both sides of the marketplace. For creators, the product needed to make content creation feel useful, repeatable, and worth the effort. For shoppers, it needed to turn influencer content into credible product discovery instead of another generic shopping page.</p>
+    </div>
+
+    <div class="decision-note reveal" style="margin-top:48px">
+      <p class="dn-k">What this meant for the product</p>
+      <p class="dn-h">Reshape the creator journey around repeat content creation.</p>
+      <p class="dn-b">The opportunity wasn't to add features around the existing workflow. It was to reshape the creator journey around repeat content creation: a clearer destination to share, a faster way to build shoppable content, and a simpler hub to manage work over time.</p>
     </div>
   </div>
 </section>
@@ -1175,8 +1162,8 @@
     </div>
 
     <div class="statement reveal">
-      <h3 class="statement-h">They're eager to monetize and share, but content creation is the barrier.</h3>
-      <p class="body">The behavioural study told one story from two sides. People become influencers to monetize and share their passion: to make money, grow an audience and have a voice. But the challenges they named were all about output: creating content, staying consistent, and gaining a following. Most still leaned on photos (78%) and hadn't adopted an affiliate platform (59% had not), while the mature competitor we audited kept losing creators to a jargon-heavy signup and a confusing profile-versus-storefront model. The opportunity was unmistakable: make content dramatically easier to create, and the path to earning far clearer.</p>
+      <h3 class="statement-h">Eager to create, underserved by the tools.</h3>
+      <p class="body">The behavioural study told one story from two sides. People become influencers to monetize and share their passion: to make money, grow an audience and have a voice. The challenges they named, though, were all about the making: staying consistent, and getting their work in front of an audience. Most still leaned on photos (78%) and hadn't adopted an affiliate platform (59% had not), while the mature competitor we audited kept losing creators to a jargon-heavy signup and a confusing profile-versus-storefront model. The opening was clear: make the work dramatically easier to produce, and the path to earning far clearer.</p>
     </div>
   </div>
 </section>
@@ -1269,8 +1256,8 @@
     </div>
 
     <div class="statement reveal">
-      <h3 class="statement-h">So content volume became the number we designed against.</h3>
-      <p class="body">The journey map made the leverage point concrete: every downstream metric, customer conversion, Zappos brand recall, influencer retention, traced back to how much shoppable content creators actually published. Influencers had plenty of other places to earn, so matching that wasn't enough; ZIP had to make creating the next post the path of least resistance. That reframed the brief from "lift engagement" to a measurable goal: more content, created more often, by more creators.</p>
+      <h3 class="statement-h">From insight to measurable objectives.</h3>
+      <p class="body">With the audience and the journey mapped, I turned the research into targets the team could hold itself to: how many creators stay active, how much they publish, and how often shoppers act on it. Success would mean a measurable shift in creator behaviour, not just a redesigned interface.</p>
     </div>
 
     <div class="goals reveal">
@@ -1851,34 +1838,6 @@
   })();
 </script>
 
-<!-- ── User Groups: accessible selection controller (always on; drives the 3D scene + the live description) ── -->
-<script>
-(function(){
-  const btns=[...document.querySelectorAll('#user-groups .ug-btn')];
-  const desc=document.getElementById('ug-desc');
-  if(!btns.length) return;
-  const DESC=[
-    'Where creators build, organise, and share shoppable content, the input the whole growth loop depends on.',
-    'Where shoppers turn creator content into credible product discovery, then into purchases.',
-    'Where support reviews and approves creator content before it goes live on the storefront.'
-  ];
-  function applyUI(i){
-    btns.forEach((b,bi)=>b.setAttribute('aria-pressed', bi===i?'true':'false'));
-    if(desc) desc.textContent=DESC[i]||'';
-  }
-  // single source of truth: any selector (button, keyboard, or a tapped 3D card) emits 'ug-select'
-  document.addEventListener('ug-select', e=>applyUI(e.detail));
-  const emit=i=>document.dispatchEvent(new CustomEvent('ug-select',{detail:i}));
-  btns.forEach((b,i)=>{
-    b.addEventListener('click',()=>emit(i));
-    b.addEventListener('keydown',e=>{
-      if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();emit((i+1)%btns.length);btns[(i+1)%btns.length].focus();}
-      else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();const p=(i-1+btns.length)%btns.length;emit(p);btns[p].focus();}
-    });
-  });
-})();
-</script>
-
 <!-- ── User Groups: three.js lanyard badges ─────────────────────────────── -->
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -2080,27 +2039,16 @@
 
   // ── interaction ──────────────────────────────────────────────────────
   const ray=new THREE.Raycaster(), ptr=new THREE.Vector2(); let hovered=-1;
-  // `selected` is the persistent choice (driven by the accessible buttons / a tapped card); hover is a
-  // transient enhancement that overrides it only while the pointer is actually over a card.
-  let selected=0;
-  document.addEventListener('ug-select', e=>{ if(typeof e.detail==='number') selected=e.detail; });
-  function hitTest(e){
+  function pick(e){
     const r=canvas.getBoundingClientRect();
     ptr.x=((e.clientX-r.left)/r.width)*2-1; ptr.y=-((e.clientY-r.top)/r.height)*2+1;
     ray.setFromCamera(ptr,camera);
     const hit=ray.intersectObjects(badges.map(b=>b.glass),false);
-    return hit.length ? badges.findIndex(b=>b.glass===hit[0].object) : -1;
-  }
-  function pick(e){
-    hovered = hitTest(e);
+    hovered = hit.length ? badges.findIndex(b=>b.glass===hit[0].object) : -1;
     stage.style.cursor = hovered>=0 ? 'pointer' : 'default';
   }
   stage.addEventListener('pointermove',pick);
   stage.addEventListener('pointerleave',()=>{ hovered=-1; });
-  // tap / click a card → make it the persistent selection (emits the same event the buttons use, so the
-  // button states + live description stay in sync). Works for touch (no hover needed).
-  stage.style.pointerEvents='auto';
-  stage.addEventListener('click', e=>{ const i=hitTest(e); if(i>=0) document.dispatchEvent(new CustomEvent('ug-select',{detail:i})); });
 
   // ── resize ────────────────────────────────────────────────────────────
   function resize(){
@@ -2127,8 +2075,7 @@
     badges.forEach((b,i)=>{
       // ── phase machine: side cards tilt OUT first, then come to the front (and reverse on leave);
       //    the centre card has no waypoint and moves straight in/out ──────────
-      const active = hovered>=0 ? hovered : selected;   // hover overrides the persistent selection while present
-      const want = (i===active) ? 'front' : 'rest';
+      const want = (i===hovered) ? 'front' : 'rest';
       if (b.side===0){ b.phase=want; }
       else if (want==='front'){
         if (b.phase==='rest') b.phase='tilt';
@@ -2145,9 +2092,8 @@
       b.pivot.rotation.set(c.rx,c.ry,c.rz);
       b.pivot.position.set(c.x,b.base.y,c.z); b.pivot.scale.setScalar(c.s);
     });
-    // the active badge (selected, or hovered) renders on top, else keep the back-to-front stack
-    const activeTop = hovered>=0 ? hovered : selected;
-    badges.forEach((b,i)=>{ const o=(i===activeTop)?7:b.base.order;
+    // hovered badge (shadow + glass + content) renders on top, else keep the back-to-front stack
+    badges.forEach((b,i)=>{ const o=(i===hovered)?7:b.base.order;
       b.sh.renderOrder=o*3; b.glass.renderOrder=o*3+1; b.content.renderOrder=o*3+2; });
     renderer.render(scene,camera);
     requestAnimationFrame(tick);
