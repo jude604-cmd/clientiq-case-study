@@ -318,9 +318,9 @@
   /* research findings — two table images side by side in equal-size white boxes */
   /* two parts of one validation table at different aspect ratios — size each card to its own image and
      top-align them, so the landscape part fills its column instead of floating tiny in a forced portrait box */
-  .rf-pair{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2vw,28px); margin-top:32px; align-items:start}
+  .rf-pair{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,2vw,28px); margin-top:32px; align-items:stretch}
   .rf-pair figure{margin:0; background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px;
-    overflow:hidden; padding:clamp(14px,1.6vw,22px)}
+    overflow:hidden; padding:clamp(14px,1.6vw,22px); display:flex; flex-direction:column; justify-content:center}
   .rf-pair img{width:100%; height:auto; object-fit:contain; display:block; margin:0}
   @media(max-width:760px){ .rf-pair{grid-template-columns:1fr} }
 
@@ -538,8 +538,10 @@
   #ux-strategy .uxs-img img{display:block; width:100%}   /* keep the white ground (no darken blend) */
   #ux-strategy .uxs-img:hover img{transform:none}
   /* hypothesis validation: heatmap + recreated results table side by side */
-  #ux-strategy .uxs-validation{display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,3vw,44px); align-items:start}
-  #ux-strategy .uxs-results{background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; overflow:hidden; padding:0; margin:0}
+  #ux-strategy .uxs-validation{display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,3vw,44px); align-items:stretch}
+  /* the heatmap gets the same white 18px card as the results table, so the pair matches height + radius */
+  #ux-strategy .uxs-validation .uxs-img{background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; overflow:hidden; padding:clamp(14px,1.6vw,22px); display:flex; flex-direction:column; justify-content:center}
+  #ux-strategy .uxs-results{background:#fff; border:1px solid rgba(58,40,110,.086); border-radius:18px; overflow:hidden; padding:0; margin:0; display:flex; flex-direction:column; justify-content:center}
   #ux-strategy .uxs-results figcaption{font-family:"Schibsted Grotesk",system-ui,sans-serif; font-weight:700;
     font-size:clamp(16px,1.6vw,20px); color:var(--ink); padding:22px 24px 0}
   #ux-strategy .uxs-table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:16px}
