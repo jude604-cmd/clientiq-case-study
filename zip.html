@@ -427,7 +427,9 @@
   /* ── video embeds (YouTube) ───────────────────────────────────────────── */
   .video{position:relative;border-radius:var(--r-md);overflow:hidden;background:#100f1a;
     box-shadow:var(--shadow-fig);aspect-ratio:4/3}   /* the source recordings are 4:3; 16/9 pillarboxed them with black side bars */
-  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  /* muted autoplay demo loops: block interaction so YouTube's hover/pause chrome (title, controls,
+     next/prev, share) never appears on hover or loop-restart */
+  .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;pointer-events:none}
   .videocap{font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--ink-4);margin-top:14px}
 
   /* ── priorities (3 outcome cards) ─────────────────────────────────────── */
@@ -1353,7 +1355,7 @@
       <div class="grid2 top" style="margin-top:32px">
         <figure>
           <div class="video">
-            <iframe src="https://www.youtube-nocookie.com/embed/Vn1gLzCTz44?autoplay=1&mute=1&controls=0&loop=1&playlist=Vn1gLzCTz44&rel=0&playsinline=1" title="Influencer Hub optimization prototype walkthrough" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube-nocookie.com/embed/Vn1gLzCTz44?autoplay=1&mute=1&controls=0&loop=1&playlist=Vn1gLzCTz44&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0" title="Influencer Hub optimization prototype walkthrough" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
           </div>
           <figcaption class="videocap">Prototype walkthrough: the optimized Influencer Hub.</figcaption>
         </figure>
@@ -1404,13 +1406,13 @@
       <div class="grid2" style="margin-top:32px">
         <figure>
           <div class="video">
-            <iframe src="https://www.youtube-nocookie.com/embed/m8FWMup3vbQ?autoplay=1&mute=1&controls=0&loop=1&playlist=m8FWMup3vbQ&rel=0&playsinline=1" title="Customer test: storefront experience with imagery content" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube-nocookie.com/embed/m8FWMup3vbQ?autoplay=1&mute=1&controls=0&loop=1&playlist=m8FWMup3vbQ&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0" title="Customer test: storefront experience with imagery content" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
           </div>
           <figcaption class="videocap">Storefront experience with imagery content.</figcaption>
         </figure>
         <figure>
           <div class="video">
-            <iframe src="https://www.youtube-nocookie.com/embed/viVg992iBGM?autoplay=1&mute=1&controls=0&loop=1&playlist=viVg992iBGM&rel=0&playsinline=1" title="Customer test: storefront experience with collections" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube-nocookie.com/embed/viVg992iBGM?autoplay=1&mute=1&controls=0&loop=1&playlist=viVg992iBGM&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0" title="Customer test: storefront experience with collections" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
           </div>
           <figcaption class="videocap">Storefront experience with collections.</figcaption>
         </figure>
@@ -1532,7 +1534,7 @@
       </figure>
       <figure style="margin-top:48px">
         <div class="video">
-          <iframe src="https://www.youtube-nocookie.com/embed/gEaLynIJRc0?autoplay=1&mute=1&controls=0&loop=1&playlist=gEaLynIJRc0&rel=0&playsinline=1" title="Prototype walkthrough of the simplified content-creation flow, tested with creators" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          <iframe src="https://www.youtube-nocookie.com/embed/gEaLynIJRc0?autoplay=1&mute=1&controls=0&loop=1&playlist=gEaLynIJRc0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0" title="Prototype walkthrough of the simplified content-creation flow, tested with creators" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
         </div>
         <figcaption class="videocap">Prototype walkthrough: the streamlined, mobile-friendly content-creation flow tested with creators.</figcaption>
       </figure>
