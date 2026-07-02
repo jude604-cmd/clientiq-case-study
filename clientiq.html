@@ -555,8 +555,8 @@
   #v2 .trust-row .resp{color:var(--dark-ink);font-weight:600;font-size:15.5px;line-height:1.42}
   /* feature grid */
   #v2 .v2-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  #v2 .feat{background:rgba(255,255,255,.04);border:1px solid transparent;border-radius:16px;padding:24px 24px 26px;transition:transform .25s ease,background .25s ease}
-  #v2 .feat:hover{transform:translateY(-3px);background:rgba(255,255,255,.06)}
+  #v2 .feat{background:rgba(255,255,255,.04);border:1px solid transparent;border-radius:16px;padding:24px 24px 26px;transition:transform .25s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease}
+  #v2 .feat:hover{transform:translateY(-3px);background:rgba(255,255,255,.06);border-color:hsl(var(--g-hue,180) 90% 62% / .55);box-shadow:0 0 22px -4px hsl(var(--g-hue,180) 90% 55% / .3)}
   #v2 .feat h3{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--dark-ink);margin:0}
   #v2 .feat h3::before{content:'';flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.16)}
   #v2 .feat p{margin:12px 0 0;font-size:14px;line-height:1.5;color:var(--dark-ink-3)}
