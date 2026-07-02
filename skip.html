@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bulk Update Tool — Jude Shi · Case Study</title>
+<meta name="description" content="Bulk Update Tool — a UX case study by Jude Shi: redesigning Skip's promotion-update workflow on the Live Ops platform, cutting a 1–2 day, error-prone task down to a single minute.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+<style>
+  /* ════════════════════════════════════════════════════════════════════════
+     SKIP — Bulk Update Tool case study.
+     PAGE-SCOPED ONLY. Tokens + shared components live in design-system.css.
+     Theme: CORAL + LAVENDER. Overriding :root here recolours THIS PAGE ONLY —
+     the shared stylesheet (and clientiq's blue, zip's lavender) is untouched.
+     ════════════════════════════════════════════════════════════════════════ */
+
+  :root{
+    /* Deep coral #c5331a → 5.0:1 on the warm-white wash → WCAG AA for small text.
+       Bright coral is decoration + LARGE text only (≥24px bold clears AA at 3:1). */
+    --accent:#c5331a;
+    --accent-bright:#fb4622;
+    --accent-soft:rgba(197,51,26,.055);
+    --accent-tint:rgba(255,90,60,.10);
+    /* SkipTheDishes brand orange (Just Eat Takeaway rebrand, 2020) — logo only */
+    --skip-orange:#ff8000;
+    /* lavender — the secondary accent from the reference boards.
+       --lav (deep) is for TEXT: #5d43cc clears AA (4.5:1) for the small
+       hypothesis-card labels on --lav-tint. --lav-line is the soft periwinkle
+       from the reference, used DECORATIVELY only (borders, orbs) — no contrast req. */
+    --lav:#5d43cc;
+    --lav-line:#9684f0;
+    --lav-soft:rgba(93,67,204,.08);
+    --lav-tint:rgba(93,67,204,.12);
+    /* bright, airy surfaces: white cards on a warm coral-tinted wash */
+    --card:#ffffff; --card-2:#ffffff;
+    --line:rgba(74,42,30,.12); --line-soft:rgba(74,42,30,.08); --line-strong:rgba(74,42,30,.19);
+    /* warm-neutral ink ramp; --ink-4 (#6b5b51) clears AA (4.5:1) for 11–13px labels on the wash */
+    --ink:#241a15; --ink-2:#3e332c; --ink-3:#574a42; --ink-4:#6b5b51; --ink-5:#8c7c72;
+    /* dark surface (footer) → warm coral glow */
+    --dark-accent:#ff8366;
+    --glow-color:rgba(255,90,60,.5); --glow-color-active:rgba(255,120,85,.72);
+    /* generous, airy rhythm — extra breathing room between sections */
+    --sec-y:168px; --sec-y-tight:112px; --gap-sub:132px;
+  }
+  /* Page background is clean white; the hero keeps its own gradient via .hero-bg. */
+  html{background:#ffffff}
+  body{background:#ffffff}
+
+  /* breathing room on the shared primitives (scoped to this page) */
+  .grid2{gap:52px}
+  .grid-cards{gap:28px}
+  .card{padding:34px 36px}
+  ol.steps{gap:24px;margin-top:36px}
+  ul.ticks{gap:17px}
+  /* Images sit directly on the bare white bg — no container box, border, radius,
+     or shadow, and no hover lift/scale (shadows to be defined later). */
+  .figure{margin-top:8px;background:none;border:0;border-radius:0;overflow:visible;box-shadow:none}
+  .figure:hover{transform:none;box-shadow:none}
+  .figure img{transition:none}
+  .figure:hover img{transform:none}
+
+  /* Accessibility: visible skip link + a consistent focus ring everywhere */
+  .skip-link{position:absolute;left:16px;top:-60px;z-index:100;background:var(--accent);color:#fff;
+    font-family:var(--mono);font-size:13px;padding:11px 18px;border-radius:var(--pill);text-decoration:none;
+    transition:top .2s var(--ease)}
+  .skip-link:focus{top:16px}
+  a:focus-visible,button:focus-visible,iframe:focus-visible,[tabindex]:focus-visible{
+    outline:2.5px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+  /* Section eyebrow chip — coral label (mirrors the site's case-study convention) */
+  :is(.sec,.sec-tight) .eyebrow span{background:var(--skip-orange);color:#fff;padding:2px 10px 3px;border-radius:5px}
+
+  /* anchors clear the fixed nav */
+  section[id]{scroll-margin-top:88px}
+
+  /* ── HERO (light + airy, typographic) ─────────────────────────────────── */
+  #hero{min-height:90svh;display:flex;align-items:stretch;position:relative;overflow:hidden}
+  #hero .orb{position:absolute;z-index:0;pointer-events:none;filter:blur(8px);
+    border-radius:42% 58% 63% 37%/45% 38% 62% 55%;animation:meshWarp 20s ease-in-out infinite}
+  #hero .orb.a{top:-16%;right:-8%;width:52vw;height:52vw;
+    background:radial-gradient(circle at 42% 40%,rgba(255,90,60,.26),rgba(255,90,60,0) 68%)}
+  #hero .orb.b{bottom:-22%;left:-10%;width:44vw;height:44vw;animation-duration:26s;
+    background:radial-gradient(circle at 50% 50%,rgba(150,132,240,.20),rgba(150,132,240,0) 70%)}
+  @keyframes meshWarp{0%,100%{border-radius:42% 58% 63% 37%/45% 38% 62% 55%;transform:translate(0,0) rotate(0) scale(1)}
+    25%{border-radius:58% 42% 38% 62%/55% 60% 40% 45%;transform:translate(-1.4%,1.1%) rotate(2deg) scale(1.05)}
+    50%{border-radius:48% 52% 55% 45%/62% 45% 55% 38%;transform:translate(1.2%,-1.3%) rotate(-1.5deg) scale(.97)}
+    75%{border-radius:55% 45% 42% 58%/40% 58% 42% 60%;transform:translate(-.8%,-.6%) rotate(1deg) scale(1.03)}}
+  /* Hero background — Bitron-style vertical "column / blinds" gradient in the coral
+     theme. Light + readable up top (behind the title), deepening into lit coral
+     columns lower down; a soft mask fades it into the page wash at the bottom. */
+  #hero .hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+  /* Symmetric vertical wash: light at top AND bottom, most saturated in the
+     middle (where the device card sits) — mirrors the top into the bottom. */
+  #hero .hero-bg::before{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,#fff7f3 0%,#ffe2d2 22%,#ff8f5e 50%,#ffe2d2 78%,#fff7f3 100%)}
+  /* Columns peak in the centre and fade out at both ends, matching the wash. */
+  #hero .hero-bg::after{content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg,
+      rgba(74,16,6,.22) 0px,
+      rgba(255,255,255,.46) 28px,
+      rgba(74,16,6,.22) 56px);
+    mix-blend-mode:overlay;
+    -webkit-mask:linear-gradient(180deg,transparent 6%,#000 30%,#000 72%,transparent 96%);
+    mask:linear-gradient(180deg,transparent 6%,#000 30%,#000 72%,transparent 96%)}
+  #hero .inner{position:relative;z-index:3;width:100%;display:flex}
+  #hero .inner .wrap{display:flex;flex-direction:column;justify-content:flex-start;padding-top:150px;padding-bottom:104px;position:relative}
+  /* Column-gradient band behind the hero content — rich coral "blinds" behind the
+     title, extending DOWN and fading out by ~60% of the device image height. One
+     layer covers the whole wrap; a vertical mask shapes where the band is visible. */
+  #hero .inner .wrap::before{
+    content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;
+    background-image:
+      repeating-linear-gradient(90deg,
+        rgba(60,12,4,.24) 0px,
+        rgba(255,255,255,.44) 46px,
+        rgba(60,12,4,.24) 92px),
+      linear-gradient(180deg,#ffe6da 0%,#ffb87a 18%,#ffaa63 30%,#ffc99c 55%,#ffe6da 82%);
+    background-blend-mode:overlay,normal;
+    -webkit-mask:linear-gradient(180deg,transparent 5%,#000 13%,#000 34%,transparent 69%);
+    mask:linear-gradient(180deg,transparent 5%,#000 13%,#000 34%,transparent 69%);
+  }
+  /* Framed-device hero: 2-col title block up top, product in the gradient card below. */
+  .hero-top{display:grid;grid-template-columns:1.06fr .94fr;gap:48px;align-items:end;width:100%}
+  .hero-lead{display:flex;flex-direction:column}
+  .hero-aside{display:flex;flex-direction:column}
+  .hero-aside .tag{margin-top:0}
+  /* SkipTheDishes brand logo above the title — the white source PNG is recoloured
+     to the brand orange via an alpha mask, so it reads on the light hero. */
+  /* SkipTheDishes brand logo above the title — the white source PNG is recoloured
+     to the brand orange via an alpha mask, so it reads on the light hero. */
+  #hero .hero-logo{display:block;width:clamp(132px,15vw,176px);aspect-ratio:2560/751;
+    background:var(--ink);
+    -webkit-mask:url(uploads/skip/skip-logo.png) left center/contain no-repeat;
+    mask:url(uploads/skip/skip-logo.png) left center/contain no-repeat}
+  #hero h1{font-weight:800;font-size:clamp(58px,8.8vw,132px);line-height:.9;letter-spacing:-.045em;margin:26px 0 0;color:var(--ink)}
+  #hero h1 .accent{color:var(--ink)}
+  #hero .tag{margin-top:28px;font-size:clamp(19px,2.1vw,26px);font-weight:500;line-height:1.32;letter-spacing:-.015em;color:var(--ink-2);max-width:34ch}
+  .metaRow{display:flex;flex-wrap:wrap;gap:16px 44px;margin-top:50px;border-top:1px solid var(--line);padding-top:30px}
+  .metaRow .item{min-width:120px}
+  .metaRow .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4)}
+  .metaRow .v{font-size:16px;font-weight:500;margin-top:7px;color:var(--ink)}
+  /* hero entrance — blur-up + rise, staggered */
+  @keyframes heroRise{from{opacity:0;filter:blur(7px);transform:translateY(14px)}to{opacity:1;filter:blur(0);transform:none}}
+  #hero .hero-logo,#hero h1,#hero .tag,#hero .metaRow,#hero .showpanel{opacity:0;animation:heroRise .9s var(--ease) both}
+  #hero h1{animation-delay:.08s}#hero .tag{animation-delay:.18s}#hero .metaRow{animation-delay:.28s}#hero .showpanel{animation-delay:.4s}
+  #hero .showpanel{margin-top:clamp(56px,7vw,92px)}
+
+  /* ── SHOWCASE panel — bare; the transparent device mockup sits directly on the
+     white hero. The column gradient now lives behind the hero TITLE (above). ── */
+  .showpanel{position:relative}
+  .showpanel .device{display:block}
+  .showpanel .device img{width:100%;height:auto;display:block}
+  .showpanel .cap{position:relative;margin-top:22px;color:var(--ink-3);
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em;max-width:46ch}
+
+  /* ── jump links (light frosted pills) ─────────────────────────────────── */
+  .jump-links{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-top:30px}
+  .jump-links .jump-lead{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}
+  .jump-links .jump-pills{display:flex;flex-wrap:wrap;gap:12px}
+  .jump-links a{font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:var(--accent);text-decoration:none;
+    padding:10px 20px;border:1px solid var(--line-strong);border-radius:var(--pill);background:rgba(255,255,255,.6);
+    transition:color .2s,border-color .2s,background .2s,transform .2s}
+  .jump-links a:hover,.jump-links a:focus-visible{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+
+  /* ── role cards (light coral frosted, icon + title) ───────────────────── */
+  .role-cards .card{display:flex;flex-direction:column;min-height:0}
+  .rc-head{display:flex;align-items:center;gap:14px}
+  .rc-icon{flex:none;width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    background:var(--accent-tint);color:var(--accent)}
+  .rc-icon svg{width:23px;height:23px;display:block}
+  .rc-head .sub{margin:0;font-size:clamp(18px,1.8vw,21px);line-height:1.15}
+  .role-cards .card .body{margin-top:18px}
+
+  /* ── 3D card groups (three.js) — WebGL planes with the card faces baked to
+     textures. The real HTML cards stay in the DOM as the no-JS / a11y fallback;
+     once the canvas is live they're moved off-screen but kept for screen readers. */
+  .cards3d{position:relative;width:100%}
+  .cards3d canvas{display:block;width:100%;height:100%;outline:none;touch-action:pan-y}
+  .cards3d.is-3d .cards3d-fallback{position:absolute!important;width:1px;height:1px;
+    padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0}
+
+  /* ── numbers / stat band ──────────────────────────────────────────────── */
+  .statband{background:var(--accent-tint);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+    padding:54px 48px;display:grid;grid-template-columns:repeat(2,1fr);gap:40px}
+  .statband.three{grid-template-columns:repeat(3,1fr)}
+  .statband .stat-l{max-width:30ch}
+  .stat.accent{color:var(--accent-bright)}
+
+  /* ── phase ladder (long-term scope) — coral/lavender alternating accents ── */
+  .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
+  .phase{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-md);
+    padding:28px 26px;border-top:3px solid var(--accent);position:relative}
+  .phase:nth-child(2){border-top-color:var(--lav-line)}
+  .phase:nth-child(3){border-top-color:var(--accent)}
+  .phase:nth-child(4){border-top-color:var(--lav-line)}
+  .phase .pk{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-4)}
+  .phase .pt{font-weight:700;font-size:18px;letter-spacing:-.02em;line-height:1.18;margin-top:12px;color:var(--ink)}
+  .phase.now .pk{color:var(--accent)}
+  .phase.now::after{content:"In focus";position:absolute;top:20px;right:22px;font-family:var(--mono);
+    font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);
+    background:var(--accent-soft);border-radius:var(--pill);padding:4px 9px}
+
+  /* ── hypothesis card (believe / so if / we will see) ──────────────────── */
+  .hypocard{background:var(--lav-tint);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+    padding:clamp(30px,4vw,52px);display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
+  .hypocard .hx .k{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--lav);margin-bottom:12px}
+  .hypocard .hx .v{font-size:clamp(16px,1.5vw,19px);line-height:1.5;color:var(--ink-2);font-weight:500}
+
+  /* ── method / research cards ──────────────────────────────────────────── */
+  .hypo .card{position:relative}
+  .hypo .num{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid var(--line);
+    border-radius:var(--pill);width:38px;height:38px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .hypo .sub{font-size:19px}
+  .hypo .body{margin-top:12px}
+
+  /* ── priorities / approaches (top-accent cards) ───────────────────────── */
+  .prio .card{border-top:3px solid var(--accent)}
+  .prio .tag-new{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--accent);background:var(--accent-soft);border-radius:var(--pill);padding:5px 11px;margin-bottom:14px}
+
+  /* ── recreated SkipTheDishes restaurant-list cards (legacy free-delivery UI) ──
+     Food photos + logos are cropped from the original screenshot; the card chrome,
+     type, divider and rating pill are rebuilt as crisp HTML. */
+  .resto-list{display:flex;flex-direction:column;gap:18px;margin-top:8px}
+  .resto-card{display:grid;grid-template-columns:31% 1fr auto auto;align-items:center;
+    background:#fff;border-radius:18px;overflow:hidden;
+    box-shadow:0 1px 0 rgba(74,42,30,.05), 0 22px 50px -34px rgba(20,30,60,.32);
+    border:1px solid var(--line-soft)}
+  .resto-photo{position:relative;align-self:stretch;min-height:128px}
+  .resto-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .resto-tag{position:absolute;top:0;left:0;display:inline-flex;align-items:flex-start;gap:9px;
+    background:#fbead7;color:var(--ink);border-radius:0 0 14px 0;
+    padding:13px 18px 14px 16px;max-width:74%;
+    font-size:clamp(13px,1.15vw,16px);font-weight:600;line-height:1.22;letter-spacing:-.01em}
+  .resto-tag svg{flex:0 0 auto;margin-top:1px}
+  .resto-body{display:flex;align-items:center;gap:22px;padding:20px 26px}
+  .resto-logo{flex:0 0 auto;width:62px;height:62px;border-radius:14px;overflow:hidden;
+    box-shadow:0 0 0 1px rgba(74,42,30,.06)}
+  .resto-logo img{width:100%;height:100%;object-fit:cover;display:block}
+  .resto-name{font-size:clamp(19px,1.9vw,25px);font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+  .resto-meta{display:flex;flex-direction:column;gap:7px;padding:20px 30px;
+    border-left:1px solid var(--line);align-self:stretch;justify-content:center;min-width:max-content}
+  .resto-meta span{font-size:clamp(14px,1.25vw,17px);font-weight:500;line-height:1.1;color:#5b6571}
+  .resto-meta .free{color:#e2752d;font-weight:600}
+  .resto-rating{flex:0 0 auto;margin-right:26px;
+    background:#e2752d;color:#fff;font-weight:700;font-size:clamp(15px,1.35vw,18px);
+    border-radius:8px;padding:7px 12px;letter-spacing:-.01em}
+  @media(max-width:760px){
+    .resto-card{grid-template-columns:38% 1fr}
+    .resto-meta{grid-column:1 / -1;border-left:0;border-top:1px solid var(--line);
+      flex-direction:row;flex-wrap:wrap;gap:6px 20px;padding:14px 26px}
+    .resto-rating{position:absolute;top:14px;right:14px;margin:0}
+    .resto-body{position:relative;flex-wrap:wrap}
+  }
+  @media(max-width:760px){.resto-card{position:relative}}
+
+  /* composite: Markham banner on top, cards below, delivery-info callout floating over the right edge */
+  /* §03 two-beat narrative: visual + copy side by side, vertically centred */
+  .problem-beat{align-items:center}
+  .problem-beat .beat-copy{max-width:46ch}
+  .fd-composite{max-width:1000px;margin-left:auto;margin-right:auto}
+  .fd-banner{margin:0}
+  .fd-banner img{width:100%;height:auto;display:block;border-radius:16px}
+  .fd-stack{position:relative;margin-top:40px}
+  /* compact cards for the side-by-side beat — the callout carries the delivery info,
+     so the in-card meta/rating is hidden to give the restaurant names full room */
+  .fd-stack .resto-list{width:64%}
+  .fd-stack .resto-card{grid-template-columns:30% 1fr}
+  .fd-stack .resto-meta,.fd-stack .resto-rating{display:none}
+  .fd-stack .resto-logo{width:48px;height:48px}
+  .fd-stack .resto-body{gap:15px;padding:15px 18px}
+  .fd-stack .resto-name{white-space:nowrap;font-size:clamp(14px,1.45vw,19px)}
+  .fd-stack .resto-tag{font-size:11px;padding:8px 12px 9px;max-width:112%}
+  .resto-callout{position:absolute;top:15%;right:-3%;width:44%;min-width:0;
+    background:#fff;border-radius:20px;padding:26px 30px;
+    display:flex;flex-direction:column;gap:12px;
+    border:1px solid var(--line-soft);
+    box-shadow:0 30px 64px -30px rgba(20,30,60,.42), 0 2px 0 rgba(74,42,30,.04)}
+  .resto-callout span{font-size:clamp(16px,1.7vw,26px);font-weight:500;line-height:1.13;
+    letter-spacing:-.01em;color:#5b6571}
+  .resto-callout .free{color:#e2752d;font-weight:600}
+  @media(max-width:760px){
+    .fd-stack .resto-list{width:100%}
+    .resto-callout{position:static;width:auto;min-width:0;margin-top:22px}
+  }
+
+  /* ── outcome band (light coral, big vivid numbers) ────────────────────── */
+  #outcome{background:
+    radial-gradient(ellipse 70% 60% at 50% -10%, rgba(255,90,60,.16), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 6% 110%, rgba(111,85,230,.10), transparent 58%),
+    linear-gradient(180deg,#fff1ec,#fbe7df)}
+  #outcome .o-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:56px 48px;margin-top:var(--gap-sub)}
+  #outcome .stat{font-size:clamp(54px,8vw,100px)}
+
+  /* ── footer dark surface → warm coral glow ────────────────────────────── */
+  footer.ds-footer .copy{color:var(--dark-ink-3)}
+  footer.ds-footer{background:
+    radial-gradient(ellipse 90% 55% at 50% -8%, rgba(255,90,60,.34) 0%, transparent 56%),
+    radial-gradient(ellipse 55% 42% at 105% 105%, rgba(255,120,80,.22) 0%, transparent 52%),
+    radial-gradient(ellipse 48% 38% at -5% 95%, rgba(111,85,230,.18) 0%, transparent 50%),
+    var(--dark)}
+
+  /* ── responsive ───────────────────────────────────────────────────────── */
+  @media (max-width:860px){
+    .ds-nav__proj{display:none}
+    .statband,.statband.three{grid-template-columns:1fr;gap:30px;padding:38px 30px}
+    .phases{grid-template-columns:1fr 1fr;gap:14px}
+    .hypocard{grid-template-columns:1fr;gap:24px}
+    #outcome .o-grid{grid-template-columns:1fr;gap:40px}
+    #hero .inner .wrap{padding-top:120px;padding-bottom:64px}
+    .hero-top{grid-template-columns:1fr;gap:28px}
+    #hero .showpanel{margin-top:40px}
+    .metaRow .item{min-width:calc(50% - 22px)}
+  }
+  @media (max-width:520px){
+    .phases{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #hero .orb{animation:none}
+    #hero .hero-logo,#hero h1,#hero .tag,#hero .metaRow,#hero .showpanel{opacity:1;filter:none;transform:none;animation:none}
+  }
+</style>
+</head>
+<body data-cursor-glow>
+<a class="skip-link" href="#overview">Skip to content</a>
+<div id="progress"></div>
+
+<nav class="ds-nav" data-nav aria-label="Primary">
+  <a class="brand" href="index.html">Jude Shi<span>.</span></a>
+  <span class="ds-nav__proj" aria-hidden="true">Skip · Bulk Update Tool</span>
+  <div class="links">
+    <a href="work.html">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#visual">Visual</a>
+    <a class="pill" href="index.html#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- dot index -->
+<div id="sideToc"></div>
+
+<!-- ══ HERO ══ -->
+<header id="hero" data-hero>
+  <div class="inner">
+    <div class="wrap">
+      <div class="hero-top">
+        <div class="hero-lead">
+          <span class="hero-logo" role="img" aria-label="SkipTheDishes"></span>
+          <h1>Bulk<br>Update<br><span class="accent">Tool.</span></h1>
+        </div>
+        <div class="hero-aside">
+          <p class="tag">Turning a slow, error-prone promotion workflow into a one-minute task — and an internal tool account managers actually choose.</p>
+          <div class="metaRow">
+            <div class="item"><div class="k">Role</div><div class="v">Product Designer</div></div>
+            <div class="item"><div class="k">Company</div><div class="v">Skip · Just Eat</div></div>
+            <div class="item"><div class="k">Timeline</div><div class="v">2020 – 2021</div></div>
+            <div class="item"><div class="k">Focus</div><div class="v">Internal tools, research, UX strategy</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="showpanel">
+        <picture class="device">
+          <source srcset="uploads/skip/skip-header.webp" type="image/webp">
+          <img src="uploads/skip/skip-header.png" alt="The Bulk Update Tool shown on a desktop and a laptop — the redesigned interface for updating free-delivery promotions across thousands of restaurant locations at once" width="1710" height="1020" loading="eager" fetchpriority="high">
+        </picture>
+        <p class="cap">The Bulk Update Tool — update free-delivery promotions across thousands of restaurant locations in a single pass.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══ 01 · OVERVIEW ══ -->
+<section class="sec" id="overview" data-toc="Overview">
+  <div class="wrap">
+    <div class="grid2 top">
+      <div>
+        <div class="eyebrow reveal"><span>(01) — Overview</span></div>
+        <h2 class="h reveal d1">Making restaurant promotions a one-minute job.</h2>
+      </div>
+      <div>
+        <p class="lead reveal">Skip is Canada's biggest food-delivery platform, part of the global Just Eat Takeaway organization. Free delivery is one of its most powerful growth levers — but keeping those promotions up to date across thousands of restaurant locations was painfully slow.</p>
+        <p class="body reveal d1" style="margin-top:20px">The Bulk Update Tool lets Skip's account managers update free-delivery promotions for thousands of locations at once. My work centred on one question: how do we make a high-stakes, high-volume task fast, accurate, and trustworthy — so the people who rely on it actually reach for it first?</p>
+        <nav class="jump-links reveal d2" aria-label="Jump to a section of the case study">
+          <span class="jump-lead">Jump to</span>
+          <div class="jump-pills">
+            <a href="#problem">The problem</a>
+            <a href="#research">Research</a>
+            <a href="#simplify">The breakthrough</a>
+            <a href="#outcome">Outcome</a>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 · MY ROLE ══ -->
+<section class="sec-tight" id="role" data-toc="My role">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(02) — My role</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">Leading the work from research through validated handoff.</h2>
+    <div class="cards3d reveal" id="role3d" style="margin-top:48px">
+      <div class="grid-cards c2 role-cards cards3d-fallback">
+        <div class="card">
+          <div class="rc-head">
+            <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+            <h3 class="sub">User Research</h3>
+          </div>
+          <p class="body">Ran a knowledge-alignment workshop, discovery interviews and live observation with the account-management teams to ground every decision in how the work really happens.</p>
+        </div>
+        <div class="card">
+          <div class="rc-head">
+            <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></span>
+            <h3 class="sub">UX Strategy</h3>
+          </div>
+          <p class="body">Framed the problem, set a hypothesis-driven approach and shaped a phased long-term vision aligned to an ongoing business objective — reducing manual effort.</p>
+        </div>
+        <div class="card">
+          <div class="rc-head">
+            <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></span>
+            <h3 class="sub">Prototyping</h3>
+          </div>
+          <p class="body">Built interactive prototypes to make concepts tangible for engineering and leadership, and to put real flows in front of the Restaurant Success team.</p>
+        </div>
+        <div class="card">
+          <div class="rc-head">
+            <span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <h3 class="sub">Validation</h3>
+          </div>
+          <p class="body">Turned assumptions into ranked hypotheses, tested them with users, and let the evidence decide what shipped — and what got simpler.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 · THE PROBLEM ══ -->
+<section class="sec" id="problem" data-toc="The problem">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(03) — The problem</span></div>
+
+    <!-- Beat 1 · why free delivery matters → the customer-facing promo -->
+    <div class="grid2 problem-beat reveal">
+      <figure class="figure fd-composite" style="background:none;border:0;border-radius:0;box-shadow:none;overflow:visible;margin:0">
+      <div class="fd-banner">
+        <img src="uploads/skip/free-delivery-1.png" alt="A SkipTheDishes 'Help keep Markham cooking with free delivery' campaign banner — the kind of free-delivery promotion account managers had to roll out across many restaurants at once." width="1950" height="1020" loading="lazy">
+      </div>
+      <div class="fd-stack">
+      <div class="resto-list" role="img" aria-label="Two restaurant listings as they appeared in the legacy free-delivery promotion: Crystal Thani (33–43 mins, $5.49 delivery fee, free delivery over $30, rated 9.3) and Poutine Delight (32–42 mins, $5.99 delivery fee, free delivery over $30, rated 9.6), each carrying a separate 'Free item with orders $25+' promotion that had to be set one restaurant at a time.">
+        <div class="resto-card">
+          <div class="resto-photo">
+            <img src="uploads/skip/resto-food-1.png" alt="" aria-hidden="true">
+            <span class="resto-tag" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e2752d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.4" fill="#e2752d" stroke="none"/></svg>
+              Free item with orders $25+
+            </span>
+          </div>
+          <div class="resto-body">
+            <div class="resto-logo"><img src="uploads/skip/resto-logo-1.png" alt="" aria-hidden="true"></div>
+            <div class="resto-name">Crystal Thani</div>
+          </div>
+          <div class="resto-meta">
+            <span>33 – 43 mins</span>
+            <span>$5.49 Delivery Fee</span>
+            <span class="free">Free Delivery Over $30</span>
+          </div>
+          <div class="resto-rating">9.3</div>
+        </div>
+        <div class="resto-card">
+          <div class="resto-photo">
+            <img src="uploads/skip/resto-food-2.png" alt="" aria-hidden="true">
+            <span class="resto-tag" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e2752d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.4" fill="#e2752d" stroke="none"/></svg>
+              Free item with orders $25+
+            </span>
+          </div>
+          <div class="resto-body">
+            <div class="resto-logo"><img src="uploads/skip/resto-logo-2.png" alt="" aria-hidden="true"></div>
+            <div class="resto-name">Poutine Delight</div>
+          </div>
+          <div class="resto-meta">
+            <span>32 – 42 mins</span>
+            <span>$5.99 Delivery Fee</span>
+            <span class="free">Free Delivery Over $30</span>
+          </div>
+          <div class="resto-rating">9.6</div>
+        </div>
+      </div>
+        <div class="resto-callout" aria-hidden="true">
+          <span>33 - 43 mins</span>
+          <span>$5.49 Delivery Fee</span>
+          <span class="free">Free Delivery Over $30</span>
+        </div>
+      </div>
+      </figure>
+      <div class="beat-copy">
+        <h2 class="h d1">Free delivery is central to Skip's business model.</h2>
+        <p class="lead" style="margin-top:24px">One of the things that keeps Skip in a leading market position is its competitive delivery fees — it constantly gives customers free deliveries.</p>
+      </div>
+    </div>
+
+    <!-- Beat 2 · the manual cost → the legacy admin tool -->
+    <div class="grid2 problem-beat reveal" style="margin-top:var(--gap-sub)">
+      <div class="beat-copy">
+        <h2 class="h d1">Updating it, though, was painfully time-consuming.</h2>
+        <p class="lead" style="margin-top:24px">It took an experienced account manager about 2 minutes to update free delivery for a single McDonald's location — and there were over 1,100 McDonald's locations on the platform. Putting them all on promotion tied up the entire team for 1–2 days, with about another day to take them back off.</p>
+      </div>
+      <figure class="figure">
+        <img src="uploads/skip/resto-profile.png" alt="The legacy Live Ops restaurant admin — the Delivery / Fee Zone settings screen where each location's free-delivery promotion had to be edited by hand, one restaurant at a time." width="2400" height="1762" loading="lazy">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 04 · THE EXISTING TOOL ══ -->
+<section class="sec" id="tool" data-toc="The tool">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(04) — The existing tool</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">A bulk tool already existed — but it wasn't the first choice.</h2>
+    <p class="lead reveal" style="max-width:62ch">A Bulk Update Tool had been built to simplify the free-delivery update process. Yet account managers kept defaulting to the slow, location-by-location route through the restaurant profile. The tool wasn't winning their trust — and that became the real design problem.</p>
+
+    <div class="grid2 top reveal" style="margin-top:var(--gap-sub)">
+      <figure class="figure">
+        <img src="uploads/skip/resto-profile.png" alt="The restaurant profile page where account managers manually edited a single location's promotion — the familiar but slow path they kept defaulting to" width="2400" height="1762" loading="lazy">
+        <figcaption>Restaurant profile — the familiar, manual path.</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="uploads/skip/bulk-tool.png" alt="The original Bulk Update Tool interface — capable of multi-location edits but under-adopted by account managers" width="2400" height="1979" loading="lazy">
+        <figcaption>The original Bulk Update Tool — powerful, but under-used.</figcaption>
+      </figure>
+    </div>
+
+    <blockquote class="full reveal">“The Bulk Update Tool wasn't account managers' first choice — so the time savings it promised never landed.”
+      <cite>Problem framing — 2020</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ══ 05 · STRATEGIC CONTEXT ══ -->
+<section class="sec" id="strategy" data-toc="Strategy">
+  <div class="wrap">
+    <div class="grid2 top">
+      <div>
+        <div class="eyebrow reveal"><span>(05) — Strategic context</span></div>
+        <h2 class="h reveal d1">A first step toward a much bigger goal.</h2>
+      </div>
+      <div>
+        <p class="lead reveal">Reducing manual effort — FTE — is an ongoing business objective at Skip. The Bulk Update Tool was phase one of a long-term vision: a single, automated system for every large-number management scenario across the platform.</p>
+      </div>
+    </div>
+
+    <div class="cards3d reveal" id="phase3d" data-cards="phase" style="margin-top:40px">
+      <div class="phases cards3d-fallback">
+        <div class="phase now">
+          <div class="pk">Phase 1</div>
+          <div class="pt">Fundamental experience optimization</div>
+        </div>
+        <div class="phase">
+          <div class="pk">Phase 2</div>
+          <div class="pt">Increase automation features</div>
+        </div>
+        <div class="phase">
+          <div class="pk">Phase 3</div>
+          <div class="pt">Expand use cases</div>
+        </div>
+        <div class="phase">
+          <div class="pk">Phase 4</div>
+          <div class="pt">Centralized system for all large-number management scenarios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 06 · PROCESS ══ -->
+<section class="sec-tight" id="process" data-toc="Process">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(06) — Approach</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">A six-stage, research-led optimization process.</h2>
+    <ol class="steps reveal" style="margin-top:44px;max-width:760px">
+      <li><b>Knowledge Alignment</b><span>Get everyone on the same page about the tool, the teams and the constraints.</span></li>
+      <li><b>Discovery</b><span>Interview and observe account managers to learn how the work really happens.</span></li>
+      <li><b>Hypothesis</b><span>Turn assumptions into ranked, testable bets about what would help.</span></li>
+      <li><b>Validation</b><span>Put prototypes in front of users and let the evidence decide.</span></li>
+      <li><b>Design</b><span>Design the flows in detail, simplifying wherever the research allowed.</span></li>
+      <li><b>Usability Testing</b><span>Confirm the experience held up before handoff and launch.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══ 07 · RESEARCH ══ -->
+<section class="sec" id="research" data-toc="Research">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(07) — Discovery</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">Learning how account managers actually work.</h2>
+    <p class="lead reveal" style="max-width:62ch">I aligned with two key user groups, then ran discovery interviews and live observation to understand their day-to-day reality — what they update, how often, and where the friction really bites.</p>
+
+    <div class="reveal" style="margin-top:var(--gap-sub)">
+      <h3 class="sub">Who we design for</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Two teams own this work: the Restaurant Success team and the NPM (National Partnership Management) team. Their needs overlap but aren't identical — so I mapped both before designing.</p>
+
+      <figure class="figure" style="margin-top:40px">
+        <svg class="usergroups-bubbles" viewBox="0 0 1000 600" role="img" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+          <title>The two user groups and the restaurants they manage</title>
+          <desc>The Restaurant Success team manages independent restaurants — 58 percent of the work — and the NPM team manages corporate franchisees — 42 percent.</desc>
+          <defs>
+            <linearGradient id="skipBigBubble" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ff801c"/>
+              <stop offset="0.6" stop-color="#f9562f"/>
+              <stop offset="1" stop-color="#f4474d"/>
+            </linearGradient>
+            <linearGradient id="skipSmallBubble" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffc509"/>
+              <stop offset="1" stop-color="#fa981e"/>
+            </linearGradient>
+          </defs>
+
+          <circle cx="290" cy="295" r="285" fill="url(#skipBigBubble)"/>
+          <g fill="#ffffff" font-family="'Schibsted Grotesk', system-ui, sans-serif" text-anchor="middle">
+            <text x="268" y="350" font-size="170" font-weight="800" letter-spacing="-0.02em">58</text>
+            <text x="372" y="330" font-size="48" font-weight="800" text-anchor="start">%</text>
+            <text x="290" y="408" font-size="19" font-weight="500" word-spacing="0.1em">Restaurant Success Team</text>
+            <text x="290" y="438" font-size="26" font-weight="600" word-spacing="0.06em" letter-spacing="-0.01em">Independent Restaurant</text>
+          </g>
+
+          <circle cx="705" cy="330" r="235" fill="url(#skipSmallBubble)"/>
+          <g fill="#ffffff" font-family="'Schibsted Grotesk', system-ui, sans-serif" text-anchor="middle">
+            <text x="685" y="378" font-size="152" font-weight="800" letter-spacing="-0.02em">42</text>
+            <text x="778" y="360" font-size="44" font-weight="800" text-anchor="start">%</text>
+            <text x="705" y="430" font-size="19" font-weight="500" word-spacing="0.1em">NPM Team</text>
+            <text x="705" y="460" font-size="23" font-weight="600" word-spacing="0.06em" letter-spacing="-0.01em">Corporate Franchisees</text>
+          </g>
+        </svg>
+        <figcaption>The split we design for — Restaurant Success owns independent restaurants, NPM owns corporate franchisees.</figcaption>
+      </figure>
+    </div>
+
+    <div class="grid2 top reveal">
+      <div>
+        <h3 class="sub">Interview &amp; observation</h3>
+        <p class="body" style="margin-top:18px">Watching the work happen surfaced the friction interviews alone would miss — where people hesitated, double-checked, and quietly fell back to the manual path.</p>
+        <ul class="ticks">
+          <li>A knowledge-alignment workshop set shared language across teams.</li>
+          <li>Discovery interviews uncovered each group's real update patterns.</li>
+          <li>Live observation showed where confidence — not capability — broke down.</li>
+        </ul>
+      </div>
+      <figure class="figure">
+        <img src="uploads/skip/observation.png" alt="Observation session notes capturing an account manager working through a real promotion update, step by step" width="2400" height="1332" loading="lazy">
+      </figure>
+    </div>
+
+    <div class="reveal">
+      <h3 class="sub">What the research surfaced</h3>
+      <p class="body" style="margin-top:18px;max-width:62ch">Synthesis pointed to a clear pattern: users needed visibility and control throughout the update — not just at the end — to trust a bulk action with thousands of locations.</p>
+      <div class="grid2" style="margin-top:32px">
+        <figure class="figure">
+          <img src="uploads/skip/research-finding-1.png" alt="Research synthesis chart summarising the first set of findings from interviews and observation" width="1187" height="846" loading="lazy">
+        </figure>
+        <figure class="figure">
+          <img src="uploads/skip/research-finding-2.png" alt="Second research synthesis board grouping pain points and opportunities across the two user groups" width="1867" height="1047" loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 08 · FRAMING ══ -->
+<section class="sec" id="framing" data-toc="Framing">
+  <div class="wrap">
+    <div class="grid2 top">
+      <div>
+        <div class="eyebrow reveal"><span>(08) — Framing</span></div>
+        <h2 class="h reveal d1">One question to design against.</h2>
+      </div>
+      <div>
+        <blockquote class="full reveal">“How might we create an intuitive experience that increases efficiency and accuracy when users update restaurants' promotions?”</blockquote>
+      </div>
+    </div>
+
+    <div class="grid2 top reveal" style="margin-top:var(--gap-sub)">
+      <div>
+        <h3 class="sub">Prioritizing the work</h3>
+        <p class="body" style="margin-top:18px">With the problem framed, I prioritized what to tackle first — balancing user impact against effort, so the team could ship meaningful improvements within an agile cadence.</p>
+      </div>
+      <figure class="figure">
+        <img src="uploads/skip/prioritization.png" alt="Prioritization matrix mapping potential improvements against user impact and implementation effort" width="961" height="845" loading="lazy">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 09 · HYPOTHESES ══ -->
+<section class="sec" id="hypotheses" data-toc="Hypotheses">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(09) — Approach</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">A hypothesis-driven way to ride the uncertainty.</h2>
+    <p class="lead reveal" style="max-width:64ch">By introducing hypothesis-driven validation into my process, I could ride the uncertainty inherent in the work toward much more favourable odds — making bets explicit, ranking them, and testing the riskiest ones first.</p>
+
+    <ol class="steps reveal" style="margin-top:44px;max-width:760px">
+      <li><b>Identify assumptions</b><span>Surface them during sprint planning, out in the open.</span></li>
+      <li><b>Reframe as hypotheses</b><span>Rewrite each assumption as something testable.</span></li>
+      <li><b>Rank by importance</b><span>Order them so the riskiest, highest-value bets go first.</span></li>
+      <li><b>Create a prototype</b><span>Build just enough to put the hypothesis in front of users.</span></li>
+      <li><b>Validate</b><span>Test, learn, and let the result steer the next iteration.</span></li>
+    </ol>
+
+    <div class="grid2 top reveal">
+      <div>
+        <h3 class="sub">The sprint's focus</h3>
+        <p class="body" style="margin-top:18px">Each sprint took a single question. This one: <em>how might we align the tool's credibility with users' expectations?</em> — targeted at the Restaurant Success and NPM teams.</p>
+      </div>
+      <div>
+        <h3 class="sub">Key research questions</h3>
+        <ul class="ticks" style="margin-top:18px">
+          <li>What information do users need to see when they update locations?</li>
+          <li>How many locations do users update each time?</li>
+          <li>What modifications do they need to make?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 10 · TESTING ══ -->
+<section class="sec" id="testing" data-toc="Testing">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(10) — First hypothesis</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">Give users visibility, and confidence follows.</h2>
+
+    <div class="hypocard reveal" style="margin-top:48px">
+      <div class="hx">
+        <div class="k">We believe that</div>
+        <div class="v">users need to review and modify restaurant selections throughout the entire update process.</div>
+      </div>
+      <div class="hx">
+        <div class="k">So if we</div>
+        <div class="v">give users visibility of both the update selection and the update result,</div>
+      </div>
+      <div class="hx">
+        <div class="k">we will see</div>
+        <div class="v">users who are conscious and confident about what to do next.</div>
+      </div>
+    </div>
+
+    <div class="grid2 top reveal">
+      <div>
+        <h3 class="sub">Update selection &amp; result</h3>
+        <p class="body" style="margin-top:18px">I prototyped a flow that kept the selection and the resulting changes visible at every step — so a bulk action never felt like a leap of faith. Then I validated it with the Restaurant Success team.</p>
+      </div>
+      <figure class="figure">
+        <img src="uploads/skip/validation.png" alt="Validation session output showing the prototype's update-selection and result views being tested with the Restaurant Success team" width="2400" height="1272" loading="lazy">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 11 · SIMPLIFY ══ -->
+<section class="sec" id="simplify" data-toc="The breakthrough">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(11) — The breakthrough</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">Simplifying the core feature: just drop the file.</h2>
+    <p class="lead reveal" style="max-width:64ch">From interviews, I discovered the name-search feature didn't save Restaurant Success as much effort as expected. I tested approaches to improve it — but the real insight was that search itself was only one way to solve the problem.</p>
+
+    <div class="grid2 reveal" style="margin-top:var(--gap-sub)">
+      <figure class="figure">
+        <img src="uploads/skip/approach-1.png" alt="First approach explored for improving restaurant selection by name search" width="1038" height="769" loading="lazy">
+        <figcaption>Approach 1 — improving name search.</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="uploads/skip/approach-2.png" alt="Second approach explored for the restaurant selection experience" width="1084" height="732" loading="lazy">
+        <figcaption>Approach 2 — an alternative selection model.</figcaption>
+      </figure>
+    </div>
+
+    <div class="grid2 top reveal">
+      <div>
+        <h3 class="sub">The insight</h3>
+        <p class="body" style="margin-top:18px">The users' real need was to build a list of restaurants with different names — and selecting them from multiple searches was just one route there. In interviews I noticed they already had every location they needed sitting in a CSV from the marketing team. So I designed a solution where users simply drop that CSV into the search area to generate the list.</p>
+      </div>
+      <figure class="figure">
+        <img src="uploads/skip/file-drop.png" alt="The file-drop prototype — users drag a CSV of restaurant locations into the search area and the tool generates the full update list automatically" width="1292" height="655" loading="lazy">
+        <figcaption>File drop — paste a list the team already has, and skip the search entirely.</figcaption>
+      </figure>
+    </div>
+
+    <p class="body reveal" style="max-width:64ch">The prototype demonstrated the file-drop feature to engineering and leadership, and was used to validate the experience with the Restaurant Success team.</p>
+  </div>
+</section>
+
+<!-- ══ 12 · FINAL DELIVERY ══ -->
+<section class="sec" id="delivery" data-toc="Delivery">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(12) — Final delivery</span></div>
+    <h2 class="h reveal d1" style="max-width:20ch">The shipped Bulk Update Tool.</h2>
+    <p class="lead reveal" style="max-width:62ch">The delivered experience kept selection and results visible end to end, and made the file-drop the fastest path to a thousand-location update.</p>
+
+    <figure class="figure reveal" style="margin-top:var(--gap-sub)">
+      <img src="uploads/skip/final-mockup.jpg" alt="The final delivered Bulk Update Tool shown in context — a clear, single-screen flow for updating free-delivery promotions across many locations at once" width="1920" height="1080" loading="lazy">
+      <figcaption>The redesigned Bulk Update Tool — selection, file-drop and live results in one place.</figcaption>
+    </figure>
+
+    <div class="grid2 top reveal" style="align-items:start">
+      <figure class="figure">
+        <img src="uploads/skip/final-secondary.png" alt="A detail view of the final Bulk Update Tool, showing the update list and confirmation state" width="846" height="1035" loading="lazy">
+      </figure>
+      <div>
+        <h3 class="sub">Designed to be trusted</h3>
+        <p class="body" style="margin-top:18px">Every screen answers the question that kept users on the manual path: <em>what exactly am I about to change, and did it work?</em> Selection, modification and result stay visible throughout — so a bulk action feels deliberate, not risky.</p>
+        <ul class="ticks">
+          <li>Drop a CSV to build the location list in seconds.</li>
+          <li>Review and modify the selection before committing.</li>
+          <li>See the result of the update, confirmed at a glance.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 13 · OUTCOME ══ -->
+<section class="sec" id="outcome" data-toc="Outcome">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(13) — Outcome</span></div>
+    <h2 class="h reveal d1" style="max-width:18ch">Hours of work, down to a single minute.</h2>
+    <div class="o-grid">
+      <div class="reveal">
+        <div class="stat accent">99.7%</div>
+        <div class="stat-l">less time to create a promotion per 1,000 locations — 3–4 hours down to one minute</div>
+      </div>
+      <div class="reveal d1">
+        <div class="stat accent">0</div>
+        <div class="stat-l">human errors reported, down from 2–3 every month</div>
+      </div>
+      <div class="reveal d2">
+        <div class="stat accent">#1</div>
+        <div class="stat-l">file-dropping rated account managers' favourite feature</div>
+      </div>
+      <div class="reveal d3">
+        <div class="stat accent">Q2&nbsp;’21</div>
+        <div class="stat-l">shipped to production — named a top project in the org's H1 review</div>
+      </div>
+    </div>
+
+    <figure class="figure reveal" style="margin-top:var(--gap-sub)">
+      <img src="uploads/skip/outcome.png" alt="Outcome summary showing the measured impact of the Bulk Update Tool after launch, including the dramatic reduction in update time and errors" width="2057" height="1695" loading="lazy">
+    </figure>
+
+    <p class="lead reveal" style="max-width:62ch">By making the tool fast and trustworthy — and meeting users where they already worked, in a spreadsheet — the Bulk Update Tool stopped being the second choice and became the way the work gets done.</p>
+  </div>
+</section>
+
+<!-- ══ 14 · WHAT'S NEXT ══ -->
+<section class="sec-tight" id="next" data-toc="What's next">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span>(14) — Looking ahead</span></div>
+    <h2 class="h reveal d1" style="max-width:22ch">Phase 3: expanding beyond free delivery.</h2>
+    <p class="lead reveal" style="max-width:62ch">With the fundamentals proven, the roadmap pushes toward more automation and new use cases — extending the same bulk, file-driven model to every large-number management scenario across the platform.</p>
+    <figure class="figure reveal" style="margin-top:var(--gap-sub)">
+      <img src="uploads/skip/phase3.png" alt="Phase 3 concept — extending the Bulk Update Tool's model to additional management scenarios beyond free-delivery promotions" width="2006" height="1353" loading="lazy">
+    </figure>
+  </div>
+</section>
+
+</main>
+
+<!-- ══ FOOTER / CONTACT ══ -->
+<footer class="ds-footer" id="contact">
+  <div class="wrap">
+    <div class="mono-note" style="color:var(--dark-accent)">— Next</div>
+    <a class="big" href="work.html" style="margin-top:18px">More<br>work<span>.</span></a>
+    <div class="row">
+      <a href="mailto:jude.shi.ux@gmail.com">jude.shi.ux@gmail.com</a>
+      <div class="social">
+        <a href="work.html">All work</a>
+        <a href="clientiq.html">ClientIQ</a>
+        <a href="zip.html">Zappos</a>
+        <a href="index.html">Home</a>
+      </div>
+    </div>
+    <div class="copy"><span>© 2026 Jude Shi</span><span>Bulk Update Tool · Skip · Just Eat</span></div>
+  </div>
+</footer>
+
+<script src="design-system.js" defer></script>
+<script>
+  /* Reveal the project name in the nav once the hero scrolls out of view. */
+  (function(){
+    var hero = document.getElementById('hero'), nav = document.querySelector('[data-nav]');
+    if (hero && nav && 'IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        nav.classList.toggle('show-proj', !es[0].isIntersecting);
+      }, { threshold:0.15 }).observe(hero);
+    }
+  })();
+</script>
+
+<!-- ══ 3D card groups — three.js (role cards, glass stat band, phase ladder) ══ -->
+<script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+  // ── palette (page tokens) ──
+  const INK='#241a15', INK3='#574a42', INK4='#6b5b51', ACCENT='#c5331a',
+        ACCENTB='#fb4622', LAV='#9684f0', TINT='rgba(255,90,60,0.10)', BORDER='rgba(74,42,30,0.10)';
+
+  // ── shared canvas helpers ──
+  const roundRect=(c,x,y,w,h,r)=>{c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);
+    c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();};
+  const wrapLines=(c,t,maxW)=>{const ws=t.split(' ');let ln='';const out=[];
+    for(const w of ws){const test=ln?ln+' '+w:w;
+      if(c.measureText(test).width>maxW&&ln){out.push(ln);ln=w;}else ln=test;} if(ln)out.push(ln);return out;};
+  const wrapText=(c,t,x,y,maxW,lh)=>wrapLines(c,t,maxW).forEach((l,k)=>c.fillText(l,x,y+k*lh));
+  const cardWhite=(c,W,H,r)=>{roundRect(c,2,2,W-4,H-4,r);c.save();c.clip();c.fillStyle='#fbfbfa';c.fillRect(0,0,W,H);c.restore();};
+
+  const ROLE_ICONS=[
+    c=>{c.beginPath();c.arc(11,11,7,0,7);c.stroke();c.beginPath();c.moveTo(20,20);c.lineTo(16.5,16.5);c.stroke();},
+    c=>{c.beginPath();c.arc(12,12,9,0,7);c.stroke();c.beginPath();c.moveTo(12,3);c.lineTo(12,21);c.moveTo(3,12);c.lineTo(21,12);c.stroke();},
+    c=>{roundRect(c,3,4,18,14,2);c.stroke();c.beginPath();c.moveTo(8,21);c.lineTo(16,21);c.moveTo(12,18);c.lineTo(12,21);c.stroke();},
+    c=>{c.beginPath();c.moveTo(20,6);c.lineTo(9,17);c.lineTo(4,12);c.stroke();}
+  ];
+
+  // ── per-group face painters ──
+  function bakeRole(item,i,c,W,H){
+    const r=46,pad=80,chip=132; cardWhite(c,W,H,r);
+    c.beginPath(); c.arc(pad+chip/2,pad+chip/2,chip/2,0,Math.PI*2); c.fillStyle='rgba(255,122,0,0.13)'; c.fill();
+    c.save(); const z=66; c.translate(pad+(chip-z)/2,pad+(chip-z)/2); c.scale(z/24,z/24);
+    c.strokeStyle='#ff7a00'; c.lineWidth=2; c.lineCap='round'; c.lineJoin='round'; (ROLE_ICONS[item.icon]||ROLE_ICONS[0])(c); c.restore();
+    c.fillStyle=INK; c.textBaseline='middle'; c.font="800 56px 'Schibsted Grotesk',system-ui,sans-serif";
+    c.fillText(item.title,pad+chip+30,pad+chip/2+2);
+    // body copy is pinned to the bottom of the card (big gap under the title)
+    c.fillStyle=INK3; c.textBaseline='alphabetic'; c.font="400 38px 'Schibsted Grotesk',system-ui,sans-serif";
+    const lines=wrapLines(c,item.body,W-pad*2), lh=52, bottom=H-64;
+    lines.forEach((l,k)=>c.fillText(l, pad, bottom-(lines.length-1-k)*lh));
+  }
+
+  function bakeStat(item,i,c,W,H){
+    const r=40,pad=86;
+    // frosted glass body
+    roundRect(c,2,2,W-4,H-4,r); c.save(); c.clip();
+    c.fillStyle='rgba(255,243,239,0.55)'; c.fillRect(0,0,W,H);
+    const g=c.createLinearGradient(0,0,W*0.7,H);
+    g.addColorStop(0,'rgba(255,255,255,0.4)'); g.addColorStop(0.55,'rgba(255,255,255,0)');
+    c.fillStyle=g; c.fillRect(0,0,W,H); c.restore();
+    roundRect(c,2,2,W-4,H-4,r); c.lineWidth=2.5; c.strokeStyle='rgba(255,255,255,0.7)'; c.stroke();
+    roundRect(c,4,4,W-8,H-8,r-2); c.lineWidth=1; c.strokeStyle='rgba(251,70,34,0.14)'; c.stroke();
+    // number + unit
+    c.fillStyle=ACCENTB; c.textBaseline='middle';
+    c.font="800 120px 'Schibsted Grotesk',system-ui,sans-serif";
+    const numW=c.measureText(item.num).width; c.fillText(item.num,pad,H/2);
+    c.font="700 47px 'Schibsted Grotesk',system-ui,sans-serif";
+    const unitW=c.measureText(item.unit).width; c.fillText(item.unit,pad+numW+12,H/2+26);
+    // label, vertically centred to the right
+    const lx=pad+numW+unitW+76;
+    c.fillStyle=INK3; c.font="500 29px 'Schibsted Grotesk',system-ui,sans-serif"; c.letterSpacing='1.2px';
+    const lines=wrapLines(c,item.label.toUpperCase(),W-lx-pad), lh=41, y0=H/2-((lines.length-1)*lh)/2;
+    lines.forEach((l,k)=>c.fillText(l,lx,y0+k*lh)); c.letterSpacing='0px';
+  }
+
+  function bakePhase(item,i,c,W,H){
+    const r=40,pad=72; cardWhite(c,W,H,r);
+    c.save(); roundRect(c,2,2,W-4,H-4,r); c.clip(); c.fillStyle=item.accent; c.fillRect(0,0,W,9); c.restore();
+    c.textBaseline='alphabetic'; c.font="500 27px 'IBM Plex Mono',monospace"; c.letterSpacing='2px';
+    c.fillStyle=item.focus?ACCENT:INK4; c.fillText(item.pk.toUpperCase(),pad,pad+34); c.letterSpacing='0px';
+    if(item.focus){
+      c.font="500 22px 'IBM Plex Mono',monospace"; c.letterSpacing='1.5px';
+      const tw=c.measureText('IN FOCUS').width, bw=tw+44, bh=48, bx=W-pad-bw, by=pad+4;
+      roundRect(c,bx,by,bw,bh,bh/2); c.fillStyle='rgba(197,51,26,0.08)'; c.fill();
+      c.fillStyle=ACCENT; c.textBaseline='middle'; c.fillText('IN FOCUS',bx+22,by+bh/2+1);
+      c.letterSpacing='0px'; c.textBaseline='alphabetic';
+    }
+    c.fillStyle=INK; c.font="700 50px 'Schibsted Grotesk',system-ui,sans-serif";
+    wrapText(c,item.pt,pad,pad+108,W-pad*2,58);
+  }
+
+  // ── group configs ──
+  const GROUPS={
+    role3d:{ texW:1040, texH:690, cardW:3.2, gap:0.5, glass:false,
+      columnsFor:w=>w<720?1:2, bake:bakeRole,
+      items: wrap=>[...wrap.querySelectorAll('.cards3d-fallback .card')].map((el,i)=>({
+        title: el.querySelector('.sub').textContent.trim(),
+        body:  el.querySelector('.body').textContent.trim(), icon:i })) },
+    phase3d:{ texW:1240, texH:392, cardW:6.4, gap:0.42, glass:false,
+      columnsFor:()=>1, bake:bakePhase,
+      items: ()=>[
+        {pk:'Phase 1', pt:'Fundamental experience optimization', accent:ACCENT, focus:true},
+        {pk:'Phase 2', pt:'Increase automation features', accent:LAV},
+        {pk:'Phase 3', pt:'Expand use cases', accent:ACCENT},
+        {pk:'Phase 4', pt:'Centralized system for all large-number management scenarios', accent:LAV} ] }
+  };
+
+  // ONE shared WebGL renderer (multiple contexts fail in some browsers); each
+  // group renders into the shared offscreen canvas, then blits to its own 2D canvas.
+  const DPR = Math.min(2, window.devicePixelRatio||1);
+  let RENDERER=null, MAXANISO=1;
+
+  boot().catch(()=>{});
+  async function boot(){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; // keep static cards
+    try{ await Promise.all([
+      document.fonts.load("800 48px 'Schibsted Grotesk'"),
+      document.fonts.load("700 50px 'Schibsted Grotesk'"),
+      document.fonts.load("500 36px 'Schibsted Grotesk'"),
+      document.fonts.load("400 34px 'Schibsted Grotesk'"),
+      document.fonts.load("500 27px 'IBM Plex Mono'")
+    ]); await document.fonts.ready; }catch(e){}
+    try{ RENDERER=new THREE.WebGLRenderer({alpha:true, antialias:true}); }
+    catch(e){ return; }                                  // no WebGL → keep fallbacks
+    // blit happens in the same frame as render(), so the drawing buffer is still valid
+    RENDERER.setPixelRatio(DPR);
+    MAXANISO=RENDERER.capabilities.getMaxAnisotropy();
+    const groups=[];
+    for (const id in GROUPS){ const wrap=document.getElementById(id);
+      if (wrap) try{ const g=makeGroup(wrap, GROUPS[id]); if(g) groups.push(g); }catch(e){} }
+    if (!groups.length) return;
+    requestAnimationFrame(function loop(t){
+      for (const g of groups) if (g.visible){ updateGroup(g,t); renderGroup(g); }
+      requestAnimationFrame(loop);
+    });
+  }
+
+  function makeGroup(wrap, cfg){
+    const scene=new THREE.Scene();
+    const camera=new THREE.PerspectiveCamera(33,1,0.1,100);
+    const root=new THREE.Group(); scene.add(root);
+    const ASPECT=cfg.texW/cfg.texH, CW=cfg.cardW, CH=CW/ASPECT, GAP=cfg.gap;
+    const planeGeo=new THREE.PlaneGeometry(CW,CH);
+    const shadowGeo=new THREE.PlaneGeometry(CW*1.05,CH*1.16);
+    const shadowTex=makeShadowTexture(), sheenTex=null;   // additive sheen removed (read as an odd glow)
+    const bakeTex=(item,i)=>{ const cv=document.createElement('canvas'); cv.width=cfg.texW*2; cv.height=cfg.texH*2;
+      const c=cv.getContext('2d'); c.scale(2,2); cfg.bake(item,i,c,cfg.texW,cfg.texH);
+      const t=new THREE.CanvasTexture(cv); t.anisotropy=MAXANISO; t.colorSpace=THREE.SRGBColorSpace; t.needsUpdate=true; return t; };
+    const cards=cfg.items(wrap).map((item,i)=>{
+      const gr=new THREE.Group();
+      const mesh=new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({map:bakeTex(item,i), transparent:true}));
+      const sh=new THREE.Mesh(shadowGeo, new THREE.MeshBasicMaterial({map:shadowTex, transparent:true, depthWrite:false}));
+      sh.position.set(0,-0.05,-0.25); sh.renderOrder=0; mesh.renderOrder=1; gr.add(sh); gr.add(mesh);
+      let sheen=null;
+      if(sheenTex){ sheen=new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({
+        map:sheenTex, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, opacity:0.55 }));
+        sheen.position.z=0.02; sheen.renderOrder=2; gr.add(sheen); }
+      root.add(gr);
+      return {group:gr, mesh, sh, sheen, lift:0, tx:0, ty:0, baseX:0, baseY:0};
+    });
+
+    const canvas=document.createElement('canvas'); const ctx=canvas.getContext('2d');
+    wrap.classList.add('is-3d'); wrap.appendChild(canvas);
+    const g={wrap,cfg,scene,camera,root,cards,canvas,ctx,CW,CH,GAP,cssW:0,cssH:0,visible:true,
+      px:0,py:0,hovered:-1,huvX:0,huvY:0,ray:new THREE.Raycaster(),ptr:new THREE.Vector2()};
+    canvas.addEventListener('pointermove', e=>{
+      const r=canvas.getBoundingClientRect();
+      const nx=((e.clientX-r.left)/r.width)*2-1, ny=((e.clientY-r.top)/r.height)*2-1;
+      g.px=nx; g.py=ny; g.ptr.set(nx,-ny); g.ray.setFromCamera(g.ptr,g.camera);
+      const hit=g.ray.intersectObjects(g.cards.map(c=>c.mesh))[0];
+      if(hit){ g.hovered=g.cards.findIndex(c=>c.mesh===hit.object); g.huvX=(hit.uv.x-0.5)*0.12; g.huvY=-(hit.uv.y-0.5)*0.12; canvas.style.cursor='pointer'; }
+      else { g.hovered=-1; canvas.style.cursor=''; }
+    });
+    canvas.addEventListener('pointerleave', ()=>{ g.hovered=-1; g.px=0; g.py=0; });
+    layoutGroup(g); renderGroup(g);                       // initial paint (don't wait for first visible frame)
+    addEventListener('resize', ()=>{ layoutGroup(g); renderGroup(g); });  // resize clears the buffer → repaint
+    new IntersectionObserver(es=>{ g.visible=es[0].isIntersecting; },{threshold:0}).observe(wrap);
+    return g;
+  }
+
+  function layoutGroup(g){
+    const w=g.wrap.clientWidth, cols=g.cfg.columnsFor(w), rows=Math.ceil(g.cards.length/cols);
+    const stepX=g.CW+g.GAP, stepY=g.CH+g.GAP;
+    g.cards.forEach((c,i)=>{ const col=i%cols, row=(i/cols)|0;
+      c.baseX=(col-(cols-1)/2)*stepX; c.baseY=-(row-(rows-1)/2)*stepY; c.group.position.x=c.baseX; });
+    const gridW=cols*g.CW+(cols-1)*g.GAP, gridH=rows*g.CH+(rows-1)*g.GAP, h=w*(gridH/gridW);
+    g.wrap.style.height=h+'px'; g.cssW=w; g.cssH=h;
+    g.canvas.width=Math.round(w*DPR); g.canvas.height=Math.round(h*DPR);
+    g.canvas.style.width='100%'; g.canvas.style.height='100%';
+    g.camera.aspect=w/h;
+    const t=Math.tan(g.camera.fov*Math.PI/360);
+    g.camera.position.z=Math.max(gridH/(2*t), gridW/(2*t*g.camera.aspect))*1.05; g.camera.updateProjectionMatrix();
+  }
+
+  function updateGroup(g,t){
+    g.root.rotation.y += (g.px*0.04 - g.root.rotation.y)*0.06;
+    g.root.rotation.x += (-g.py*0.032 - g.root.rotation.x)*0.06;
+    g.cards.forEach((c,i)=>{
+      const on=i===g.hovered;
+      c.lift += ((on?0.3:0) - c.lift)*0.12;
+      c.tx += ((on?g.huvY:0) - c.tx)*0.12; c.ty += ((on?g.huvX:0) - c.ty)*0.12;
+      c.group.position.y = c.baseY;        // no idle float at rest
+      c.mesh.position.z = c.lift;
+      c.mesh.rotation.x = c.tx;             // no idle rotation at rest
+      c.mesh.rotation.y = c.ty;
+      const s=1+c.lift*0.16; c.sh.scale.set(s,s,1); c.sh.material.opacity=1-c.lift*0.4; c.sh.position.y=-0.05-c.lift*0.14;
+      if(c.sheen){ c.sheen.position.z=c.lift+0.02; c.sheen.rotation.x=c.mesh.rotation.x; c.sheen.rotation.y=c.mesh.rotation.y;
+        c.sheen.position.x=-c.ty*0.7; c.sheen.position.y=c.tx*0.7; }
+    });
+  }
+
+  function renderGroup(g){
+    const bw=Math.round(g.cssW*DPR), bh=Math.round(g.cssH*DPR);
+    if (RENDERER.domElement.width!==bw || RENDERER.domElement.height!==bh) RENDERER.setSize(g.cssW, g.cssH, false);
+    RENDERER.render(g.scene, g.camera);
+    g.ctx.clearRect(0,0,g.canvas.width,g.canvas.height);
+    g.ctx.drawImage(RENDERER.domElement, 0,0, g.canvas.width, g.canvas.height);
+  }
+
+  function makeShadowTexture(){
+    const s=256, cv=document.createElement('canvas'); cv.width=cv.height=s;
+    const c=cv.getContext('2d'), g=c.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+    g.addColorStop(0,'rgba(74,30,12,0.30)'); g.addColorStop(0.6,'rgba(74,30,12,0.13)'); g.addColorStop(1,'rgba(74,30,12,0)');
+    c.fillStyle=g; c.fillRect(0,0,s,s); return new THREE.CanvasTexture(cv);
+  }
+  function makeSheenTexture(){
+    const s=256, cv=document.createElement('canvas'); cv.width=cv.height=s;
+    const c=cv.getContext('2d'), g=c.createRadialGradient(s*0.36,s*0.3,0,s*0.5,s*0.5,s*0.62);
+    g.addColorStop(0,'rgba(255,255,255,0.5)'); g.addColorStop(0.5,'rgba(255,255,255,0.05)'); g.addColorStop(1,'rgba(255,255,255,0)');
+    c.fillStyle=g; c.fillRect(0,0,s,s); return new THREE.CanvasTexture(cv);
+  }
+</script>
+</body>
+</html>
