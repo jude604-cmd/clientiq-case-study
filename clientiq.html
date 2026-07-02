@@ -559,11 +559,11 @@
   #v2 .feat:hover{transform:translateY(-3px);background:rgba(255,255,255,.06);border-color:hsl(var(--g-hue,180) 90% 62% / .55);box-shadow:0 0 22px -4px hsl(var(--g-hue,180) 90% 55% / .3)}
   #v2 .feat h3{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--dark-ink);margin:0}
   #v2 .feat h3::before{content:'';flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.16)}
-  #v2 .feat p{margin:36px 0 0;font-size:14px;line-height:1.5;color:var(--dark-ink-3)}
+  #v2 .feat p{margin:auto 0 0;font-size:14px;line-height:1.5;color:var(--dark-ink-3)}
   /* pointer-tracking spotlight glow — ported from the spotlight-card component, scoped to the 2.0 module cards only */
   #v2 .v2-feats{--gx:0;--gy:0;--gxp:0}
   #v2 .feat{--g-base:140;--g-spread:80;--g-hue:calc(var(--g-base) + (var(--gxp,0) * var(--g-spread)));--g-spot:230px;
-    position:relative;isolation:isolate;
+    position:relative;isolation:isolate;display:flex;flex-direction:column;min-height:250px;
     background:
       radial-gradient(var(--g-spot) var(--g-spot) at calc(var(--gx,0)*1px) calc(var(--gy,0)*1px),
         hsl(var(--g-hue,120) 100% 65% / .13), transparent 100%) fixed,
