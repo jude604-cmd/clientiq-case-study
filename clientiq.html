@@ -560,6 +560,21 @@
   #v2 .feat h3{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--dark-ink);margin:0}
   #v2 .feat h3::before{content:'';flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(0,194,72,.16)}
   #v2 .feat p{margin:12px 0 0;font-size:14px;line-height:1.5;color:var(--dark-ink-3)}
+  /* pointer-tracking spotlight glow — ported from the spotlight-card component, scoped to the 2.0 module cards only */
+  #v2 .v2-feats{--gx:0;--gy:0;--gxp:0}
+  #v2 .feat{--g-base:120;--g-spread:200;--g-hue:calc(var(--g-base) + (var(--gxp,0) * var(--g-spread)));--g-spot:230px;
+    position:relative;isolation:isolate;
+    background:
+      radial-gradient(var(--g-spot) var(--g-spot) at calc(var(--gx,0)*1px) calc(var(--gy,0)*1px),
+        hsl(var(--g-hue,120) 100% 65% / .13), transparent 100%) fixed,
+      rgba(255,255,255,.04)}
+  #v2 .feat::before,#v2 .feat::after{content:"";position:absolute;inset:0;border-radius:16px;padding:1.5px;pointer-events:none;z-index:1;
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+  #v2 .feat::before{background:radial-gradient(calc(var(--g-spot)*.8) calc(var(--g-spot)*.8) at calc(var(--gx,0)*1px) calc(var(--gy,0)*1px),
+      hsl(var(--g-hue,120) 100% 55% / .9), transparent 100%) fixed;filter:brightness(1.5)}
+  #v2 .feat::after{background:radial-gradient(calc(var(--g-spot)*.5) calc(var(--g-spot)*.5) at calc(var(--gx,0)*1px) calc(var(--gy,0)*1px),
+      hsl(0 0% 100% / .9), transparent 100%) fixed}
+  @media (hover:none){#v2 .feat::before,#v2 .feat::after{display:none}}
   /* contextual AI chat — headline addition callout */
   #v2 .v2-chat{position:relative;isolation:isolate;border-radius:22px;padding:40px;display:grid;grid-template-columns:1fr 250px;gap:46px;align-items:center;
     background:linear-gradient(150deg,rgba(0,194,72,.14),rgba(17,166,184,.08) 52%,rgba(28,112,207,.10));
@@ -1751,6 +1766,18 @@
         <div class="feat"><h3>Suggested Goals</h3><p>Converts recurring signals into measurable client goals that can guide future planning.</p></div>
         <div class="feat"><h3>Meeting Analytics</h3><p>Preserves meeting history, decisions, and risks so each conversation builds on the last.</p></div>
       </div>
+      <script>
+      (function(){
+        var feats=document.querySelector('#v2 .v2-feats');
+        if(!feats||!window.matchMedia||!matchMedia('(hover:hover)').matches) return;
+        function move(e){
+          feats.style.setProperty('--gx',e.clientX.toFixed(1));
+          feats.style.setProperty('--gy',e.clientY.toFixed(1));
+          feats.style.setProperty('--gxp',(e.clientX/window.innerWidth).toFixed(3));
+        }
+        document.addEventListener('pointermove',move,{passive:true});
+      })();
+      </script>
     </div>
 
     <div class="v2-chat rev reveal">
